@@ -5,7 +5,7 @@
             [akar.combinators :refer :all]
             [clojure.test :refer :all]))
 
-(deftest collection-test
+(deftest collection-patterns-test
   (let [block (clauses
                 !empty (fn [] :empty)
                 !cons (fn [hd tl] {:hd hd :tl tl}))]

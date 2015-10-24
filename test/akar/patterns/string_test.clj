@@ -5,7 +5,8 @@
             [akar.combinators :refer :all]
             [clojure.test :refer :all]))
 
-(deftest string-combinators
+(deftest string-patterns-test
+
   (testing "!regex"
     (let [block (clauses
                   (!regex #"F (.*) (.*)") (fn [[handle name]]

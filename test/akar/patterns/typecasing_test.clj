@@ -6,9 +6,9 @@
             [clojure.test :refer :all])
   (:import [clojure.lang Keyword]))
 
-(deftest class-pattern
+(deftest typecasing-patterns-test
 
-  (testing "class match"
+  (testing "!class"
     (let [block (clauses
                   (!class String) (fn [] :string)
                   (!class Keyword) (fn [] :keyword))]
@@ -19,13 +19,13 @@
       (is (= nil
              (try-match 4 block)))))
 
-  (testing "tag match"
+  (testing "!tag"
     (let [block (clauses
                   (!tag :some-tag) (fn [] :yes))]
       (is (= :yes
              (try-match {:tag :some-tag} block)))))
 
-  (testing "tag match"
+  (testing "!type"
     (let [block (clauses
                   (!and (!type :card) !var) (fn [card] (:details card)))]
       (is (= "Details"

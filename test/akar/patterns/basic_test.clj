@@ -4,7 +4,7 @@
             [akar.combinators :refer :all]
             [clojure.test :refer :all]))
 
-(deftest simple-patterns-test
+(deftest basic-patterns-test
 
   (testing "!any"
     (is (= :success
