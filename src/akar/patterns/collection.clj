@@ -14,3 +14,7 @@
   (fn [map']
     (if-let [value (map' key)]
       [value])))
+
+(defn !optional-key [key]
+  (fn [map']
+    [(map' key)]))
