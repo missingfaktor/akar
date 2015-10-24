@@ -8,7 +8,7 @@
   (testing "clause"
     (testing "invokes no action if pattern did not match"
       (is (= nil
-             ((clause !pfail (fn [] :some-value)) :value))))
+             ((clause !fail (fn [] :some-value)) :value))))
     (testing "invokes the action on the captured value if pattern matched"
       (is (= 6
              ((clause !var (fn [x] (* 2 x))) 3)))))

@@ -1,12 +1,12 @@
 (ns akar.combinators
-  (:use [akar.patterns.basic :refer [!pfail]]
+  (:use [akar.patterns.basic :refer [!fail]]
         [akar.internal.utilities :refer [variadic-reducive-function]]))
 
 ; Combining patterns.
 
 (def !and
   (variadic-reducive-function
-    :zero !pfail
+    :zero !fail
     :combine (fn [!p1 !p2]
                (fn [arg]
                  (when-let [matches1 (!p1 arg)]
@@ -15,7 +15,7 @@
 
 (def !or
   (variadic-reducive-function
-    :zero !pfail
+    :zero !fail
     :combine (fn [!p1 !p2]
                (fn [arg]
                  (or (!p1 arg)
@@ -34,7 +34,7 @@
 ; Let's define a combinator that takes in a pattern, applies it, and if there are matches,
 ; passes them on to next set of patterns.
 
-(defn further [!root-pattern]
+(defn !furthering [!root-pattern]
   (fn [& !further-patterns]
     (fn [arg]
       (when-let [root-extracts (!root-pattern arg)]

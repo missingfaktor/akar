@@ -4,7 +4,7 @@
   (fn [_]
     []))
 
-(def !pfail
+(def !fail
   (fn [_]
     nil))
 

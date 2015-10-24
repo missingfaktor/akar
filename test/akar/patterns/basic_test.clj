@@ -14,7 +14,7 @@
   (testing "!pfail"
     (is (= nil
            (try-match :some-value (clauses
-                                    !pfail (fn [] :success))))))
+                                    !fail (fn [] :success))))))
 
   (testing "!var"
     (is (= :some-value
