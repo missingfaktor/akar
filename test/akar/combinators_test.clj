@@ -1,6 +1,7 @@
 (ns akar.combinators-test
   (:use [clojure.test :refer :all]
         [akar.patterns.basic :refer :all]
+        [akar.patterns.collection :refer :all]
         [akar.combinators :refer :all]
         [akar.primitives :refer :all]))
 
@@ -47,4 +48,13 @@
 
     (testing "reverses a bad match"
       (is (= []
-             ((!not !fail) 9))))))
+             ((!not !fail) 9)))))
+
+  (testing "!furthering"
+
+    (testing "'furthers' patterns"
+      (is (= {:hd 3 :tl [4 5]}
+             (match [3 4 5] (clauses
+                              (!furthering !cons !var !var) (fn [hd tl]
+                                                              {:hd hd
+                                                               :tl tl}))))))))
