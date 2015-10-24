@@ -1,5 +1,5 @@
 (ns akar.combinators
-  (:use [akar.patterns.basic :refer [!fail]]
+  (:use [akar.patterns.basic :refer [!fail !var]]
         [akar.internal.utilities :refer [variadic-reducive-function]]))
 
 ; Combining patterns.
@@ -12,6 +12,9 @@
                  (when-let [matches1 (!p1 arg)]
                    (when-let [matches2 (!p2 arg)]
                      (concat matches1 matches2)))))))
+
+(defn !at [!p]
+  (!and !var !p))
 
 (def !or
   (variadic-reducive-function

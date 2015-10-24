@@ -15,6 +15,18 @@
       (is (= [9 9]
              ((!and !any !var !var) 9)))))
 
+  (testing "!at"
+
+    (testing "if matched, gives the same input"
+      (is (= 2
+             (try-match 2 (clauses
+                            (!at (!pred even?)) (fn [x] x))))))
+
+    (testing "if not matched, gives nothing"
+      (is (= nil
+             (try-match 3 (clauses
+                            (!at (!pred even?)) (fn [x] x)))))))
+
   (testing "!or"
 
     (testing "fails if no pattern succeeds"
