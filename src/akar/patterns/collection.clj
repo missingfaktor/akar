@@ -6,9 +6,9 @@
   (!pred empty?))
 
 (def !cons
-  (!furthering (fn [arg]
-                 (when (not-empty arg)
-                   [(first arg) (rest arg)]))))
+  (fn [arg]
+    (when (not-empty arg)
+      [(first arg) (rest arg)])))
 
 (defn !key [key]
   (fn [map']
