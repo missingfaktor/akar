@@ -9,8 +9,8 @@
     :zero !fail
     :combine (fn [!p1 !p2]
                (fn [arg]
-                 (when-let [matches1 (!p1 arg)]
-                   (when-let [matches2 (!p2 arg)]
+                 (if-let [matches1 (!p1 arg)]
+                   (if-let [matches2 (!p2 arg)]
                      (concat matches1 matches2)))))))
 
 (defn !at [!p]
