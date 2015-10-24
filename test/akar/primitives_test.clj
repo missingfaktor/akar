@@ -48,35 +48,3 @@
                      !4-or-!5-or-!6 (fn [] :num)
                      !any (fn [] :num)))
           :num))))
-
-;(deftest simple-patterns-test
-;
-;  (testing "!any"
-;    (is (match :random-value (clauses
-;                               !any (constantly :success)))
-;        :success))
-;
-;  (testing "!var"
-;    (is (match :some-value (clauses
-;                             !var identity))
-;        :some-value))
-;
-;  (testing "!pred"
-;    (let [!even (!pred even?)
-;          !odd (!pred odd?)
-;          block (clauses
-;                  !even (constantly :even)
-;                  !odd (constantly :odd))]
-;      (is (match 9 block)
-;          :odd)
-;      (is (match 8 block)
-;          :even)))
-;
-;  (testing "!constant"
-;    (let [block (clauses
-;                  (!cst 4) (constantly :fier)
-;                  (!cst 5) (constantly :fünf))]
-;      (is (match 4 block)
-;          :fier)
-;      (is (match 5 block)
-;          :fünf))))
