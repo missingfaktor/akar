@@ -19,4 +19,7 @@
               :name "Doofus"}
              (try-match "F @doofus Doofus" block)))
       (is (= :bad-event
-             (try-match "F X" block))))))
+             (try-match "F X" block)))
+
+      (is (= :bad-event
+             (try-match :not-even-a-string block))))))

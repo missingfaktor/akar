@@ -2,5 +2,6 @@
 
 (defn !regex [rgx]
   (fn [arg]
-    (when-let [captures (re-seq rgx arg)]
-      [(->> captures first rest)])))
+    (if (string? arg)
+      (if-let [captures (re-seq rgx arg)]
+        [(->> captures first rest)]))))
