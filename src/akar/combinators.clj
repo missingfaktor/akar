@@ -11,12 +11,6 @@
                    (if-let [matches2 (!p2 arg)]
                      (concat matches1 matches2)))))))
 
-(defn !at [!p]
-  (!and !var !p))
-
-(defn !guard [!p cond]
-  (!and !p (!pred cond)))
-
 (def !or
   (variadic-reducive-function
     :zero !fail

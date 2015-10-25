@@ -3,7 +3,7 @@
             [akar.patterns.basic :refer :all]
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
-            [akar.further :refer :all]
+            [akar.special-operators :refer :all]
             [clojure.test :refer :all]))
 
 (deftest collection-patterns-test

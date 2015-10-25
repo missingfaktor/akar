@@ -1,4 +1,12 @@
-(ns akar.further)
+(ns akar.special-operators
+  (:require [akar.patterns.basic :refer [!var !pred]]
+            [akar.combinators :refer [!and]]))
+
+(defn !at [!p]
+  (!and !var !p))
+
+(defn !guard [!p cond]
+  (!and !p (!pred cond)))
 
 ; Pattern matching really shines when you have nested patterns. i.e. When Values extracted using
 ; one pattern can be further matched by other patterns. I am going to call this "furthering" a pattern.

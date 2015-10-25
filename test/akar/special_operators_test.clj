@@ -1,12 +1,36 @@
-(ns akar.further-test
+(ns akar.special-operators-test
   (:require [clojure.test :refer :all]
             [akar.patterns.basic :refer :all]
             [akar.patterns.collection :refer :all]
             [akar.patterns.string :refer :all]
-            [akar.further :refer :all]
+            [akar.special-operators :refer :all]
             [akar.primitives :refer :all]))
 
-(deftest further-test
+(deftest special-operators-test
+
+  (testing "!at"
+
+    (testing "if matched, gives the same input"
+      (is (= 2
+             (try-match 2 (clauses
+                            (!at (!pred even?)) (fn [x] x))))))
+
+    (testing "if not matched, gives nothing"
+      (is (= clause-not-applied
+             (try-match 3 (clauses
+                            (!at (!pred even?)) (fn [x] x)))))))
+
+  (testing "!guard"
+
+    (testing "original pattern succeeds, only if guard succeeds too"
+      (is (= :even-and-2
+             (try-match 2 (clauses
+                            (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2))))))
+
+    (testing "original pattern fails, if the guard fails"
+      (is (= clause-not-applied
+             (try-match 4 (clauses
+                            (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2)))))))
 
   (testing "!further"
     (let [block (clauses
