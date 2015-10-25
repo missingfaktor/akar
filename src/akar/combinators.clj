@@ -37,7 +37,7 @@
 
 (defn !furthering [!root-pattern & !further-patterns]
   (fn [arg]
-    (when-let [root-extracts (!root-pattern arg)]
+    (if-let [root-extracts (!root-pattern arg)]
       (let [pairings (map vector root-extracts !further-patterns)]
         (reduce
           (fn [extracts [in pattern]]

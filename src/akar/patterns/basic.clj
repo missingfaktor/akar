@@ -14,7 +14,7 @@
 
 (defn !pred [pred]
   (fn [x]
-    (when (pred x)
+    (if (pred x)
       [])))
 
 (defn !cst [value]

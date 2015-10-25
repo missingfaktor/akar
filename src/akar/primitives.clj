@@ -10,7 +10,7 @@
 
 (defn clause [pattern f]
   (fn [arg]
-    (when-let [matches (pattern arg)]
+    (if-let [matches (pattern arg)]
       (apply f matches))))
 
 ; A function to compose multiple clauses into one clause.
