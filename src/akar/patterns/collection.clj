@@ -1,6 +1,5 @@
 (ns akar.patterns.collection
-  (:require [akar.patterns.basic :refer [!pred]]
-            [akar.combinators :refer [!furthering]]))
+  (:require [akar.patterns.basic :refer [!pred]]))
 
 (def !empty
   (!pred (fn [arg]
