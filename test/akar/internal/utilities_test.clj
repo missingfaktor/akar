@@ -3,6 +3,7 @@
             [clojure.test :refer :all]))
 
 (deftest internal-utilities-test
+
   (testing "variadic-reducive-function"
     (let [f (variadic-reducive-function :zero 0
                                         :combine (fn [x y] (+ x y)))]
@@ -20,4 +21,30 @@
 
       (testing "many"
         (is (= (f 3 6 9 0)
-               18))))))
+               18)))))
+
+  (testing "append"
+
+    (testing "for list"
+      (is (= '(3 4 5)
+             (append '(3 4) 5))))
+
+    (testing "for vector"
+      (is (= [3 4 5]
+             (append [3 4] 5)))))
+
+  (testing "clump-after"
+
+    (is (= [3 4 [5 6]]
+           (clump-after 2 [3 4 5 6])))
+    (is (= [3 4 []]
+           (clump-after 2 [3 4]))))
+
+  (testing "same-size?"
+
+    (is (= true
+           (same-size? [1 2] [3 4])))
+    (is (= true
+           (same-size? [] [])))
+    (is (= false
+           (same-size? [1] [2 3])))))
