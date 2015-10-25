@@ -8,20 +8,29 @@
 ; A clause is a function that accepts a pattern p and a function f, and returns a function that
 ; invokes f with p's matches, when p matches.
 
+(def clause-not-applied
+  ::clause-not-applied)
+
+(defn clause-applied? [result]
+  (not= clause-not-applied result))
+
 (defn clause [pattern f]
   (fn [arg]
     (if-let [matches (pattern arg)]
-      (apply f matches))))
+      (apply f matches)
+      clause-not-applied)))
 
 ; A function to compose multiple clauses into one clause.
 
 (def or-else
   (variadic-reducive-function
-    :zero (constantly nil)
+    :zero (constantly clause-not-applied)
     :combine (fn [clause1 clause2]
                (fn [arg]
-                 (or (clause1 arg)
-                     (clause2 arg))))))
+                 (let [result (clause1 arg)]
+                   (if (clause-applied? result)
+                     result
+                     (clause2 arg)))))))
 
 ; Sugar for defining a pattern matching block.
 
@@ -37,5 +46,7 @@
   (clause' value))
 
 (defn match [value clause']
-  (or (try-match value clause')
-      (throw (RuntimeException. (str "Match error: " value)))))
+  (let [result (try-match value clause')]
+    (if (clause-applied? result)
+      result
+      (throw (RuntimeException. (str "Match error: " value))))))

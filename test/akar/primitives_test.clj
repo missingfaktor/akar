@@ -6,14 +6,21 @@
 (deftest primitives-test
 
   (testing "clause"
+
     (testing "invokes no action if pattern did not match"
-      (is (= nil
+      (is (= clause-not-applied
              ((clause !fail (fn [] :some-value)) :value))))
+
     (testing "invokes the action on the captured value if pattern matched"
       (is (= 6
-             ((clause !var (fn [x] (* 2 x))) 3)))))
+             ((clause !var (fn [x] (* 2 x))) 3))))
+
+    (testing "allows nil values to be returned from the action"
+      (is (= nil
+             ((clause !var (fn [x] nil)) 3)))))
 
   (testing "clauses"
+
     (testing "runs through the clauses in order"
       (let [!zero (!pred zero?)
             !odd (!pred odd?)
@@ -27,13 +34,15 @@
                  (match 9 block)))))))
 
   (testing "match"
+
     (testing "throws an error if pattern did not match"
       (is (thrown? RuntimeException
                    (match :some-value (clauses))))))
 
   (testing "try-match"
+
     (testing "returns nil if pattern did not match"
-      (is (= nil
+      (is (= clause-not-applied
              (try-match :some-value (clauses))))))
 
   (testing "or-else"

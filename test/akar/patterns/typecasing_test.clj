@@ -16,7 +16,7 @@
              (try-match "SomeString" block)))
       (is (= :keyword
              (try-match :some-keyword block)))
-      (is (= nil
+      (is (= clause-not-applied
              (try-match 4 block)))))
 
   (testing "!tag"

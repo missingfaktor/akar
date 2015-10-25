@@ -24,7 +24,7 @@
                             (!at (!pred even?)) (fn [x] x))))))
 
     (testing "if not matched, gives nothing"
-      (is (= nil
+      (is (= clause-not-applied
              (try-match 3 (clauses
                             (!at (!pred even?)) (fn [x] x)))))))
 
@@ -36,7 +36,7 @@
                             (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2))))))
 
     (testing "original pattern fails, if the guard fails"
-      (is (= nil
+      (is (= clause-not-applied
              (try-match 4 (clauses
                             (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2)))))))
 

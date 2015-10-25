@@ -12,7 +12,7 @@
                                   !any (fn [] :success))))))
 
   (testing "!pfail"
-    (is (= nil
+    (is (= clause-not-applied
            (try-match :some-value (clauses
                                     !fail (fn [] :success))))))
 
