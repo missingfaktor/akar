@@ -35,7 +35,6 @@
                 !any (fn [] :stuff))]
 
     (testing "!key"
-
       (is (= [:x :y nil]
              (match {:k :x :l :y} block)))
 

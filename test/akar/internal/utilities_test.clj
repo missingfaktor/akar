@@ -47,4 +47,13 @@
     (is (= true
            (same-size? [] [])))
     (is (= false
-           (same-size? [1] [2 3])))))
+           (same-size? [1] [2 3]))))
+
+  (testing "single"
+
+    (is (= 3
+           (single [3])))
+    (is (thrown? RuntimeException
+                 (single [1 4])))
+    (is (thrown? RuntimeException
+                 (single [])))))

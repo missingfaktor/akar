@@ -16,3 +16,10 @@
 
 (defn same-size? [xs ys]
   (= (count xs) (count ys)))
+
+(defn single [coll]
+  (let [[x xs] [(first coll) (next coll)]]
+    (if (and x (not xs))
+      x
+      (throw (RuntimeException.
+               (str "Collection does not contain a single element. The size is " (count coll)))))))
