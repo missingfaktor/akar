@@ -1,5 +1,5 @@
 (ns akar.combinators
-  (:require [akar.patterns.basic :refer [!fail !var]]
+  (:require [akar.patterns.basic :refer [!fail !var !pred]]
             [akar.internal.utilities :refer [variadic-reducive-function]]))
 
 ; Combining patterns.
@@ -15,6 +15,9 @@
 
 (defn !at [!p]
   (!and !var !p))
+
+(defn !guard [!p cond]
+  (!and !p (!pred cond)))
 
 (def !or
   (variadic-reducive-function

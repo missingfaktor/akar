@@ -28,6 +28,18 @@
              (try-match 3 (clauses
                             (!at (!pred even?)) (fn [x] x)))))))
 
+  (testing "!guard"
+
+    (testing "original pattern succeeds, only if guard succeeds too"
+      (is (= :even-and-2
+             (try-match 2 (clauses
+                            (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2))))))
+
+    (testing "original pattern fails, if the guard fails"
+      (is (= nil
+             (try-match 4 (clauses
+                            (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2)))))))
+
   (testing "!or"
 
     (testing "fails if no pattern succeeds"
