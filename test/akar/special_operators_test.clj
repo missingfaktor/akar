@@ -34,9 +34,9 @@
 
   (testing "!further"
     (let [block (clauses
-                  (!further !cons !var !var) (fn [hd tl]
-                                               {:hd hd
-                                                :tl tl}))]
+                  (!further !cons [!var !var]) (fn [hd tl]
+                                                 {:hd hd
+                                                  :tl tl}))]
       (testing "'furthers' a pattern"
         (is (= {:hd 3 :tl [4 5]}
                (match [3 4 5] block))))))

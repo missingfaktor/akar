@@ -30,7 +30,7 @@
               []
               pairings)))))))
 
-(defn !further [!root & !nexts]
+(defn !further [!root !nexts]
   (fan-out :!root !root
            :!nexts !nexts
            :modify-root-extracts identity
