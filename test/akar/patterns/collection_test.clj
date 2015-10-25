@@ -3,6 +3,7 @@
             [akar.patterns.basic :refer :all]
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
+            [akar.further :refer :all]
             [clojure.test :refer :all]))
 
 (deftest collection-patterns-test
@@ -22,6 +23,12 @@
     (testing "non-sequential data fallthrough for both !empty and !cons"
       (is (= :not-sequential
              (match :some-random-data block)))))
+
+  (let [block (clauses
+                (!further-many !seq [!var !any !var]) (fn [a b] [a b]))]
+    (testing "!seq"
+      (is (= [2 4]
+             (match [2 3 4] block)))))
 
   (let [block (clauses
                 (!and (!key :k) (!optional-key :l) (!optional-key :m)) (fn [a b c] [a b c])

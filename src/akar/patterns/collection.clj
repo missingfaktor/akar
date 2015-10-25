@@ -11,6 +11,11 @@
     (if (and (sequential? arg) (not-empty arg))
       [(first arg) (rest arg)])))
 
+(def !seq
+  (fn [arg]
+    (if (sequential? arg)
+      [(vec arg)])))
+
 (defn !key [key]
   (fn [map']
     (if (map? map')
