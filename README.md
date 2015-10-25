@@ -2,7 +2,9 @@
 
 Akar is a 1st class patterns library for Clojure.
 
-This library is based on Brent Yorgey's Haskell library [`Data.Pattern`](https://hackage.haskell.org/package/first-class-patterns-0.3.2/docs/Data-Pattern.html).
+This is very much a work in progress, and not ready yet. Star/Watch for updates.
+
+This effort draws a heavy inspiration from Brent Yorgey's Haskell library [`Data.Pattern`](https://hackage.haskell.org/package/first-class-patterns-0.3.2/docs/Data-Pattern.html).
 
 ## License
 
