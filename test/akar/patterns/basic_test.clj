@@ -45,4 +45,13 @@
     (let [block (clauses
                   (!view inc) (fn [x] x))]
       (is (= 10
-             (block 9))))))
+             (match 9 block)))))
+
+  (testing "!some and !nil"
+    (let [block (clauses
+                  !some (fn [x] x)
+                  !nil (fn [] :default))]
+      (is (= 21
+             (match 21 block)))
+      (is (= :default
+             (match nil block))))))

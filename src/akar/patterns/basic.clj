@@ -25,6 +25,12 @@
   (fn [arg]
     [(f arg)]))
 
+(def !some
+  (fn [arg]
+    (if (nil? arg)
+      nil
+      [arg])))
+
 (def !true
   (!cst true))
 
