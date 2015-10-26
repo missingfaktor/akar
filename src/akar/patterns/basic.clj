@@ -31,11 +31,11 @@
       nil
       [arg])))
 
+(def !nil
+  (!cst nil))
+
 (def !true
   (!cst true))
 
 (def !false
   (!cst false))
-
-(def !nil
-  (!cst nil))
