@@ -34,9 +34,22 @@
                 (!and (!key :k) (!optional-key :l) (!optional-key :m)) (fn [a b c] [a b c])
                 !any (fn [] :stuff))]
 
-    (testing "!key"
+    (testing "!key and !optional-key"
       (is (= [:x :y nil]
              (match {:k :x :l :y} block)))
 
       (is (= :stuff
-             (match [] block))))))
+             (match [] block)))))
+
+  (let [block (clauses
+                (!further (!variant :add) [(!cst 0) !var]) (fn [y] [:num y])
+                (!further (!variant :sub) [!var (!cst 0)]) (fn [x] [:num x])
+                (!at (!variant :num)) (fn [node _] node))]
+
+    (testing "!variant"
+      (is (= [:num 3]
+             (match [:add 0 3] block)))
+      (is (= [:num 5]
+             (match [:sub 5 0] block)))
+      (is (= [:num 11]
+             (match [:num 11] block))))))

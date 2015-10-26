@@ -17,12 +17,18 @@
       [(vec arg)])))
 
 (defn !key [key]
-  (fn [map']
-    (if (map? map')
-      (if-let [value (map' key)]
+  (fn [arg]
+    (if (map? arg)
+      (if-let [value (arg key)]
         [value]))))
 
 (defn !optional-key [key]
-  (fn [map']
-    (if (map? map')
-      [(map' key)])))
+  (fn [arg]
+    (if (map? arg)
+      [(arg key)])))
+
+; Variants, as described by Jeanine Adkisson here - https://www.youtube.com/watch?v=ZQkIWWTygio
+(defn !variant [tag]
+  (fn [arg]
+    (if (and (vector? arg) (= (first arg) tag))
+      (vec (rest arg)))))
