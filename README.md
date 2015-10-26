@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/missingfaktor/akar.svg)](https://travis-ci.org/missingfaktor/akar)
 
-<img src="logo.jpg" width="300">
+<img src="logo.png" width="300">
 
 Akar is a 1st class patterns library for Clojure.
 
