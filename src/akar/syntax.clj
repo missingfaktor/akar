@@ -23,9 +23,15 @@
             (cap (sy/alt :_ :any)
                  (constantly `!any)))
 
+(sy/defrule non-extracting-pattern
+            (cap symbol?
+                 (fn [[sym]]
+                   sym)))
+
 (sy/defrule pattern-rule
             (sy/alt any-rule
-                    literal))
+                    literal
+                    non-extracting-pattern))
 
 (sy/defrule clause-rule
             (recap (sy/cat pattern-rule (cap sy/form))

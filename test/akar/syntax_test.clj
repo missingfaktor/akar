@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [akar.primitives :refer :all]
             [akar.patterns.basic :refer :all]
+            [akar.patterns.collection :refer :all]
             [akar.syntax :refer :all]))
 
 (deftest syntax-test
@@ -59,4 +60,8 @@
 
     (testing "nil literal"
       (is (= `(clause* (!cst nil) (fn [] :val))
-             (macroexpand-1 `(clause nil :val)))))))
+             (macroexpand-1 `(clause nil :val)))))
+
+    (testing "non extracting pattern functions"
+      (is (= `(clause* !empty (fn [] :zilch))
+             (macroexpand-1 `(clause !empty :zilch)))))))
