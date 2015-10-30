@@ -17,16 +17,20 @@
                          keyword-literal
                          nil-literal)
                  (fn [[lit]]
-                   `(!cst ~lit))))
+                   {:pattern  `(!cst ~lit)
+                    :bindings []})))
 
 (sy/defrule any-rule
             (cap (sy/alt :_ :any)
-                 (constantly `!any)))
+                 (fn [_]
+                   {:pattern  `!any
+                    :bindings []})))
 
 (sy/defrule non-extracting-pattern
             (recap (sy/vec-form (cap symbol?))
                    (fn [[sym]]
-                     sym)))
+                     {:pattern  sym
+                      :bindings []})))
 
 (sy/defrule pattern-rule
             (sy/alt any-rule
@@ -35,9 +39,9 @@
 
 (sy/defrule clause-rule
             (recap (sy/cat pattern-rule (cap sy/form))
-                   (fn [pat [action]]
-                     `(clause* ~pat (fn []
-                                      ~action)))))
+                   (fn [{:keys [pattern bindings]} [action]]
+                     `(clause* ~pattern (fn [~@bindings]
+                                          ~action)))))
 
 (sy/defrule clauses-rule
             (recap (sy/rep+ clause-rule)
