@@ -38,11 +38,17 @@
                          {:pattern  sym
                           :bindings []})))
 
-(sy/defrule pattern-rule
+(sy/defrule simple-pattern-rule
             (sy/alt any-rule
                     literal
-                    binding-rule
-                    non-extracting-pattern))
+                    binding-rule))
+
+(sy/defrule complex-pattern-rule
+            (sy/alt non-extracting-pattern))
+
+(sy/defrule pattern-rule
+            (sy/alt simple-pattern-rule
+                    complex-pattern-rule))
 
 (sy/defrule clause-rule
             (recap (sy/cat pattern-rule (cap sy/form))
