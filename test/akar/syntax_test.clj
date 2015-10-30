@@ -64,4 +64,4 @@
 
     (testing "non extracting pattern functions"
       (is (= `(clause* !empty (fn [] :zilch))
-             (macroexpand-1 `(clause !empty :zilch)))))))
+             (macroexpand-1 `(clause [!empty] :zilch)))))))

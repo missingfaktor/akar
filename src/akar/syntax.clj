@@ -24,9 +24,9 @@
                  (constantly `!any)))
 
 (sy/defrule non-extracting-pattern
-            (cap symbol?
-                 (fn [[sym]]
-                   sym)))
+            (recap (sy/vec-form (cap symbol?))
+                   (fn [[sym]]
+                     sym)))
 
 (sy/defrule pattern-rule
             (sy/alt any-rule
