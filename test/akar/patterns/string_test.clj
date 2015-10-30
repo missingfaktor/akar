@@ -8,7 +8,7 @@
 (deftest string-patterns-test
 
   (testing "!regex"
-    (let [block (clauses
+    (let [block (clauses*
                   (!regex #"^F (.*) (.*)$") (fn [[handle name]]
                                               {:event  :followed
                                                :handle handle
@@ -19,24 +19,24 @@
         (is (= {:event  :followed
                 :handle "@doofus"
                 :name   "Doofus"}
-               (try-match "F @doofus Doofus" block))))
+               (try-match* "F @doofus Doofus" block))))
 
       (testing "doesn't match invalid strings"
         (is (= :bad-event
-               (try-match "F X" block))))
+               (try-match* "F X" block))))
 
       (testing "doesn't match non-strings"
         (is (= :bad-event
-               (try-match :not-even-a-string block)))))
+               (try-match* :not-even-a-string block)))))
 
-    (let [block (clauses
+    (let [block (clauses*
                   (!regex #"^F [0-9]{1}$") (fn [] :match)
                   !any (fn [] :no-match))]
 
       (testing "matches a string against a regex that captures nothing"
         (is (= :match
-               (try-match "F 7" block))))
+               (try-match* "F 7" block))))
 
       (testing "doesn't match invalid srings"
         (is (= :no-match
-               (try-match "F 11" block)))))))
+               (try-match* "F 11" block)))))))

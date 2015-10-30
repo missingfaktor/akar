@@ -14,7 +14,7 @@
 (defn clause-applied? [result]
   (not= clause-not-applied result))
 
-(defn clause [pattern f]
+(defn clause* [pattern f]
   (fn [arg]
     (if-let [matches (pattern arg)]
       (apply f matches)
@@ -34,19 +34,19 @@
 
 ; Sugar for defining a pattern matching block.
 
-(defn clauses [& args]
+(defn clauses* [& args]
   (->> args
        (partition 2)
-       (map (partial apply clause))
+       (map (partial apply clause*))
        (apply or-else)))
 
 ; Functions to match a value against a pattern matching clause.
 
-(defn try-match [value clause']
+(defn try-match* [value clause']
   (clause' value))
 
-(defn match [value clause']
-  (let [result (try-match value clause')]
+(defn match* [value clause']
+  (let [result (try-match* value clause')]
     (if (clause-applied? result)
       result
       (throw (RuntimeException. (str "Match error: " value))))))

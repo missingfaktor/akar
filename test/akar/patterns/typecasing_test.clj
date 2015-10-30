@@ -9,24 +9,24 @@
 (deftest typecasing-patterns-test
 
   (testing "!class"
-    (let [block (clauses
+    (let [block (clauses*
                   (!class String) (fn [] :string)
                   (!class Keyword) (fn [] :keyword))]
       (is (= :string
-             (try-match "SomeString" block)))
+             (try-match* "SomeString" block)))
       (is (= :keyword
-             (try-match :some-keyword block)))
+             (try-match* :some-keyword block)))
       (is (= clause-not-applied
-             (try-match 4 block)))))
+             (try-match* 4 block)))))
 
   (testing "!tag"
-    (let [block (clauses
+    (let [block (clauses*
                   (!tag :some-tag) (fn [] :yes))]
       (is (= :yes
-             (try-match {:tag :some-tag} block)))))
+             (try-match* {:tag :some-tag} block)))))
 
   (testing "!type"
-    (let [block (clauses
+    (let [block (clauses*
                   (!and (!type :card) !var) (fn [card] (:details card)))]
       (is (= "Details"
-             (try-match (with-meta {:details "Details"} {:type :card}) block))))))
+             (try-match* (with-meta {:details "Details"} {:type :card}) block))))))
