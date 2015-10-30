@@ -3,7 +3,9 @@
             [akar.primitives :refer :all]
             [akar.patterns.basic :refer :all]
             [akar.patterns.collection :refer :all]
-            [akar.syntax :refer :all]))
+            [n01se.syntax :as sy]
+            [akar.syntax :refer :all])
+  (:import [java.io StringWriter]))
 
 (deftest syntax-test
 
@@ -68,4 +70,13 @@
 
     (testing "non extracting pattern functions"
       (is (= `(clause* !empty (fn [] :zilch))
-             (macroexpand-1 `(clause [!empty] :zilch)))))))
+             (macroexpand-1 `(clause [!empty] :zilch))))))
+
+  (testing "Sensible syndoc"
+
+    (testing "No terminal should be marked as a rule"
+      (is (let [writer (StringWriter.)
+                _ (binding [*out* writer]
+                    (sy/syndoc match))
+                doc (.toString writer)]
+            (not (.contains doc "#<")))))))
