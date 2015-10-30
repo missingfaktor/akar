@@ -26,6 +26,12 @@
                    {:pattern  `!any
                     :bindings []})))
 
+(sy/defrule binding-rule
+            (cap symbol?
+                 (fn [[sym]]
+                   {:pattern `!var
+                    :bindings [sym]})))
+
 (sy/defrule non-extracting-pattern
             (recap (sy/vec-form (cap symbol?))
                    (fn [[sym]]
@@ -35,6 +41,7 @@
 (sy/defrule pattern-rule
             (sy/alt any-rule
                     literal
+                    binding-rule
                     non-extracting-pattern))
 
 (sy/defrule clause-rule

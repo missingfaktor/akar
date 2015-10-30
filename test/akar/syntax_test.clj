@@ -62,6 +62,10 @@
       (is (= `(clause* (!cst nil) (fn [] :val))
              (macroexpand-1 `(clause nil :val)))))
 
+    (testing "simple binding"
+      (is (= `(clause* !var (fn [x] (inc x)))
+             (macroexpand-1 `(clause x (inc x))))))
+
     (testing "non extracting pattern functions"
       (is (= `(clause* !empty (fn [] :zilch))
              (macroexpand-1 `(clause [!empty] :zilch)))))))
