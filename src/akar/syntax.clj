@@ -4,6 +4,12 @@
             [akar.primitives :refer :all]
             [akar.patterns.basic :refer :all]))
 
+(sy/defrule any-rule
+            (cap (sy/alt :_ :any)
+                 (fn [_]
+                   {:pattern  `!any
+                    :bindings []})))
+
 (sy/defterminal number-literal number?)
 (sy/defterminal string-literal string?)
 (sy/defterminal boolean-literal (partial instance? Boolean))
@@ -18,12 +24,6 @@
                          nil-literal)
                  (fn [[lit]]
                    {:pattern  `(!cst ~lit)
-                    :bindings []})))
-
-(sy/defrule any-rule
-            (cap (sy/alt :_ :any)
-                 (fn [_]
-                   {:pattern  `!any
                     :bindings []})))
 
 (sy/defterminal binding-rule
