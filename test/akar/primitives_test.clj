@@ -49,11 +49,11 @@
     (let [[!4 !5 !6] (map !cst [4 5 6])
           !4-or-!5 (or-else !4 !5)
           !4-or-!5-or-!6 (or-else !4 !5 !6)]
-      (is (match* 6 (clauses*
-                      !4-or-!5 (fn [] :num)
-                      !any (fn [] :any)))
-          :any)
-      (is (match* 6 (clauses*
-                      !4-or-!5-or-!6 (fn [] :num)
-                      !any (fn [] :num)))
-          :num))))
+      (is (= :any
+             (match* 6 (clauses*
+                         !4-or-!5 (fn [] :num)
+                         !any (fn [] :any)))))
+      (is (= :num
+             (match* 6 (clauses*
+                         !4-or-!5-or-!6 (fn [] :num)
+                         !any (fn [] :num))))))))
