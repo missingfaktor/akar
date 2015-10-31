@@ -68,7 +68,7 @@
       (is (= `(clause* !var (fn [x] (inc x)))
              (macroexpand-1 `(clause x (inc x))))))
 
-    (testing "non extracting pattern functions"
+    (testing "arbitrary pattern functions"
       (is (= `(clause* !empty (fn [] :zilch))
              (macroexpand-1 `(clause [!empty] :zilch))))))
 

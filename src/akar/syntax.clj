@@ -32,7 +32,7 @@
                        {:pattern  `!var
                         :bindings [sym]})))
 
-(sy/defterminal non-extracting-pattern
+(sy/defterminal arbitrary-pattern
                 (recap (sy/vec-form (cap symbol?))
                        (fn [[sym]]
                          {:pattern  sym
@@ -44,7 +44,7 @@
                     binding-rule))
 
 (sy/defrule complex-pattern-rule
-            (sy/alt non-extracting-pattern))
+            (sy/alt arbitrary-pattern))
 
 (sy/defrule pattern-rule
             (sy/alt simple-pattern-rule
