@@ -3,13 +3,14 @@
             [akar.primitives :refer :all]
             [akar.patterns.basic :refer :all]
             [akar.patterns.collection :refer :all]
+            [akar.special-operators :refer :all]
             [n01se.syntax :as sy]
             [akar.syntax :refer :all])
   (:import [java.io StringWriter]))
 
 (deftest syntax-test
 
-  (testing "Translation of primitives"
+  (testing "Translation of primitives:"
 
     (testing "clause"
       (is (= `(clause* !any (fn [] :val))
@@ -35,7 +36,7 @@
                                         1 :one
                                         :_ :val))))))
 
-  (testing "Translation of patterns"
+  (testing "Translation of patterns:"
 
     (testing "'any' patterns"
       ; Yes, this is a duplicate test.
@@ -68,11 +69,16 @@
       (is (= `(clause* !var (fn [x] (inc x)))
              (macroexpand-1 `(clause x (inc x))))))
 
-    (testing "arbitrary pattern functions"
+    (testing "arbitrary pattern functions that emit no values"
       (is (= `(clause* !empty (fn [] :zilch))
              (macroexpand-1 `(clause [!empty] :zilch))))
       (is (= `(clause* (!cst 2) (fn [] :val))
-             (macroexpand-1 `(clause [(!cst 2)] :val))))))
+             (macroexpand-1 `(clause [(!cst 2)] :val)))))
+
+    (testing "arbitrary pattern functions that emit values, to be further matched by other patterns"
+      (is (= `(clause* (!further !cons [!var (!further !cons [(!cst 2) !var])])
+                       (fn [hd tl-1] {:hd hd :tl-1 tl-1}))
+             (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1}))))))
 
   (testing "Sensible syndoc"
 

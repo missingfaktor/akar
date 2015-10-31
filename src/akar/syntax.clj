@@ -2,6 +2,7 @@
   (:require [n01se.syntax :as sy]
             [n01se.seqex :refer [cap recap]]
             [akar.primitives :refer :all]
+            [akar.special-operators :refer :all]
             [akar.patterns.basic :refer :all]))
 
 (sy/defrule any-rule
@@ -32,11 +33,16 @@
                        {:pattern  `!var
                         :bindings [sym]})))
 
-(sy/defterminal arbitrary-pattern
-                (recap (sy/vec-form (cap sy/form))
-                       (fn [[pat]]
-                         {:pattern  pat
-                          :bindings []})))
+(declare pattern-rule)
+
+(sy/defrule arbitrary-pattern
+            (recap (sy/vec-form (sy/cat (cap sy/form)
+                                        (sy/rep* (delay pattern-rule))))
+                   (fn [[pat] & pats]
+                     {:pattern  (if (empty? pats)
+                                  pat
+                                  `(!further ~pat [~@(map :pattern pats)]))
+                      :bindings (vec (mapcat :bindings pats))})))
 
 (sy/defrule simple-pattern-rule
             (sy/alt any-rule
