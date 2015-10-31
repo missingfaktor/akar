@@ -13,7 +13,7 @@
       (is (= nil
              ((!and !any !var !fail) 9))))
 
-    (testing "gives all the extracts when all patterns succeed"
+    (testing "emits all the values, when all patterns succeed"
       (is (= [9 9]
              ((!and !any !var !var) 9)))))
 
@@ -23,7 +23,7 @@
       (is (= nil
              ((!or !fail !fail !fail) 9))))
 
-    (testing "gives extracts from the first matched pattern"
+    (testing "emits values from the first matched pattern"
       (is (= []
              ((!or !any !var) 9)))
       (is (= [9]

@@ -1,9 +1,9 @@
 (ns akar.primitives
   (:require [akar.internal.utilities :refer [variadic-reducive-function]]))
 
-; A pattern is a function that from one argument to either a sequence of extracted values or `nil`.
+; A pattern is a function that from one argument to either a sequence of emitted values or `nil`.
 ; `nil` indicates that the pattern match did not succeed.
-; Empty sequence would mean that the pattern matched, but no values were extracted.
+; Empty sequence would mean that the pattern matched, but no values were emitted.
 
 ; A clause is a function that accepts a pattern p and a function f, and returns a function that
 ; invokes f with p's matches, when p matches.

@@ -9,43 +9,42 @@
 (defn !guard [!p cond]
   (!and !p (!pred cond)))
 
-; Pattern matching really shines when you have nested patterns. i.e. When Values extracted using
-; one pattern can be further matched by other patterns. I am going to call this "furthering" a pattern.
-;
-; Let's define a combinator that allows us to "further" patterns.
+; To support nested patterns, we must allow values emitted by one pattern to be further
+; matched by other patterns. What follows are a set of combinators that support such
+; "furthering", and related features.
 
-(defn ^:private fan-out [& {:keys [!root !nexts modify-root-extracts modify-nexts]}]
+(defn ^:private fan-out [& {:keys [!root !nexts modify-root-emissions modify-nexts]}]
   (fn [arg]
-    (if-let [root-extracts (!root arg)]
-      (let [root-extracts' (modify-root-extracts root-extracts)
+    (if-let [root-emissions (!root arg)]
+      (let [root-emissions' (modify-root-emissions root-emissions)
             !nexts' (modify-nexts !nexts)]
-        (if (same-size? root-extracts' !nexts')
-          (let [pairings (map vector root-extracts' !nexts')]
+        (if (same-size? root-emissions' !nexts')
+          (let [pairings (map vector root-emissions' !nexts')]
             (reduce
-              (fn [extracts [in pattern]]
-                (let [new-extracts (pattern in)]
-                  (if (nil? new-extracts)
+              (fn [emissions [in pattern]]
+                (let [new-emissions (pattern in)]
+                  (if (nil? new-emissions)
                     (reduced nil)
-                    (concat extracts new-extracts))))
+                    (concat emissions new-emissions))))
               []
               pairings)))))))
 
 (defn !further [!root !nexts]
   (fan-out :!root !root
            :!nexts !nexts
-           :modify-root-extracts identity
+           :modify-root-emissions identity
            :modify-nexts identity))
 
 (defn !further-many
   ([!root !nexts] (fan-out :!root !root
                            :!nexts !nexts
-                           :modify-root-extracts single
+                           :modify-root-emissions single
                            :modify-nexts identity))
   ([!root !nexts !rest] (fan-out :!root !root
                                  :!nexts !nexts
-                                 :modify-root-extracts (fn [root-extracts]
-                                                         (->> root-extracts
-                                                              single
-                                                              (clump-after (count !nexts))))
+                                 :modify-root-emissions (fn [root-emissions]
+                                                          (->> root-emissions
+                                                               single
+                                                               (clump-after (count !nexts))))
                                  :modify-nexts (fn [!nexts]
                                                  (append !nexts !rest)))))
