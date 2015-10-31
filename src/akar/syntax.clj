@@ -44,13 +44,23 @@
                                   `(!further ~pat [~@(map :pattern pats)]))
                       :bindings (vec (mapcat :bindings pats))})))
 
+(sy/defrule at-pattern
+            (recap (sy/list-form (sy/cat :as
+                                         (cap sy/sym)
+                                         (delay pattern-rule)))
+                   (fn [[at-binding] inner-pat-results]
+                     {:pattern  `(!at ~(:pattern inner-pat-results))
+                      :bindings (vec (concat [at-binding]
+                                             (:bindings inner-pat-results)))})))
+
 (sy/defrule simple-pattern-rule
             (sy/alt any-rule
                     literal
                     binding-rule))
 
 (sy/defrule complex-pattern-rule
-            (sy/alt arbitrary-pattern))
+            (sy/alt at-pattern
+                    arbitrary-pattern))
 
 (sy/defrule pattern-rule
             (sy/alt simple-pattern-rule

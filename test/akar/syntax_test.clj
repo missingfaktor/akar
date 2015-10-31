@@ -78,7 +78,12 @@
     (testing "arbitrary pattern functions that emit values, to be further matched by other patterns"
       (is (= `(clause* (!further !cons [!var (!further !cons [(!cst 2) !var])])
                        (fn [hd tl-1] {:hd hd :tl-1 tl-1}))
-             (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1}))))))
+             (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1})))))
+
+    (testing "at-patterns"
+      (is (= [[3 4] 3]
+             (match [3 4]
+                    (:as a [!cons hd :_]) [a hd])))))
 
   (testing "Sensible syndoc"
 
