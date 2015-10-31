@@ -70,7 +70,9 @@
 
     (testing "arbitrary pattern functions"
       (is (= `(clause* !empty (fn [] :zilch))
-             (macroexpand-1 `(clause [!empty] :zilch))))))
+             (macroexpand-1 `(clause [!empty] :zilch))))
+      (is (= `(clause* (!cst 2) (fn [] :val))
+             (macroexpand-1 `(clause [(!cst 2)] :val))))))
 
   (testing "Sensible syndoc"
 

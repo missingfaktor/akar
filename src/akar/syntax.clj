@@ -33,9 +33,9 @@
                         :bindings [sym]})))
 
 (sy/defterminal arbitrary-pattern
-                (recap (sy/vec-form (cap symbol?))
-                       (fn [[sym]]
-                         {:pattern  sym
+                (recap (sy/vec-form (cap sy/form))
+                       (fn [[pat]]
+                         {:pattern  pat
                           :bindings []})))
 
 (sy/defrule simple-pattern-rule
