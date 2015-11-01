@@ -5,115 +5,115 @@
             [akar.combinators :refer :all]
             [akar.patterns :refer :all]))
 
-(sy/defrule any-rule
+(sy/defrule any'
             (cap (sy/alt :_ :any)
                  (fn [_]
                    {:pattern  `!any
                     :bindings []})))
 
-(sy/defterminal number-literal number?)
-(sy/defterminal string-literal string?)
-(sy/defterminal boolean-literal (partial instance? Boolean))
-(sy/defterminal keyword-literal keyword?)
-(sy/defterminal nil-literal nil?)
+(sy/defterminal number-literal' number?)
+(sy/defterminal string-literal' string?)
+(sy/defterminal boolean-literal' (partial instance? Boolean))
+(sy/defterminal keyword-literal' keyword?)
+(sy/defterminal nil-literal' nil?)
 
-(sy/defrule literal
-            (cap (sy/alt number-literal
-                         string-literal
-                         boolean-literal
-                         keyword-literal
-                         nil-literal)
+(sy/defrule literal'
+            (cap (sy/alt number-literal'
+                         string-literal'
+                         boolean-literal'
+                         keyword-literal'
+                         nil-literal')
                  (fn [[lit]]
                    {:pattern  `(!cst ~lit)
                     :bindings []})))
 
-(sy/defterminal binding-rule
-                (cap symbol?
+(sy/defterminal binding'
+                (cap sy/sym
                      (fn [[sym]]
                        {:pattern  `!var
                         :bindings [sym]})))
 
-(declare pattern-rule)
+(declare pattern')
 
-(sy/defrule arbitrary-pattern
+(sy/defrule arbitrary-pattern'
             (recap (sy/vec-form (sy/cat (cap sy/form)
-                                        (sy/rep* (delay pattern-rule))))
+                                        (sy/rep* (delay pattern'))))
                    (fn [[pat] & pats]
                      {:pattern  (if (empty? pats)
                                   pat
                                   `(!further ~pat [~@(map :pattern pats)]))
                       :bindings (vec (mapcat :bindings pats))})))
 
-(sy/defterminal map-key keyword?)
+(sy/defterminal map-key' keyword?)
 
-(sy/defrule map-entry
-            (recap (sy/map-pair (cap map-key)
-                                (delay pattern-rule))
+(sy/defrule map-entry'
+            (recap (sy/map-pair (cap map-key')
+                                (delay pattern'))
                    (fn [[k] pat-result]
                      {:pattern  `(!further (!key ~k) [~(:pattern pat-result)])
                       :bindings (:bindings pat-result)})))
 
-(sy/defrule map-pattern
-            (recap (sy/map-form (sy/rep* map-entry))
+(sy/defrule map-pattern'
+            (recap (sy/map-form (sy/rep* map-entry'))
                    (fn [& pat-results]
                      {:pattern  `(!and (!pred map?)
                                        ~@(map :pattern pat-results))
                       :bindings (vec (mapcat :bindings pat-results))})))
 
-(sy/defrule seq-pattern
+(sy/defrule seq-pattern'
             (recap (sy/list-form (sy/cat :seq
-                                         (sy/vec-form (sy/rep* (delay pattern-rule)))))
+                                         (sy/vec-form (sy/rep* (delay pattern')))))
                    (fn [& pat-results]
                      {:pattern  `(!further-many !seq [~@(map :pattern pat-results)])
                       :bindings (vec (mapcat :bindings pat-results))})))
 
-(sy/defrule at-pattern
+(sy/defrule at-pattern'
             (recap (sy/list-form (sy/cat :as
                                          (cap sy/sym)
-                                         (delay pattern-rule)))
+                                         (delay pattern')))
                    (fn [[at-binding] inner-pat-results]
                      {:pattern  `(!at ~(:pattern inner-pat-results))
                       :bindings (vec (concat [at-binding]
                                              (:bindings inner-pat-results)))})))
 
-(sy/defrule simple-pattern-rule
-            (sy/alt any-rule
-                    literal
-                    binding-rule))
+(sy/defrule simple-pattern'
+            (sy/alt any'
+                    literal'
+                    binding'))
 
-(sy/defrule complex-pattern-rule
-            (sy/alt seq-pattern
-                    map-pattern
-                    at-pattern
-                    arbitrary-pattern))
+(sy/defrule complex-pattern'
+            (sy/alt seq-pattern'
+                    map-pattern'
+                    at-pattern'
+                    arbitrary-pattern'))
 
-(sy/defrule pattern-rule
-            (sy/alt simple-pattern-rule
-                    complex-pattern-rule))
+(sy/defrule pattern'
+            (sy/alt simple-pattern'
+                    complex-pattern'))
 
-(sy/defrule clause-rule
-            (recap (sy/cat pattern-rule (cap sy/form))
+(sy/defrule clause'
+            (recap (sy/cat pattern' (cap sy/form))
                    (fn [{:keys [pattern bindings]} [action]]
                      `(clause* ~pattern (fn [~@bindings]
                                           ~action)))))
 
-(sy/defrule clauses-rule
-            (recap (sy/rep+ clause-rule)
+(sy/defrule clauses'
+            (recap (sy/rep+ clause')
                    (fn [& clss]
                      `(or-else ~@clss))))
 
-(sy/defrule match-rule
-            (recap (sy/cat (cap sy/form) clauses-rule)
+(sy/defrule match'
+            (recap (sy/cat (cap sy/form) clauses')
                    (fn [[arg] clss]
                      `(match* ~arg ~clss))))
 
-(sy/defrule try-match-rule
-            (recap (sy/cat (cap sy/form) clauses-rule)
+(sy/defrule try-match'
+            (recap (sy/cat (cap sy/form) clauses')
                    (fn [[arg] clss]
                      `(try-match* ~arg ~clss))))
 
 ; Macros
-(sy/defsyntax clause clause-rule)
-(sy/defsyntax clauses clauses-rule)
-(sy/defsyntax match match-rule)
-(sy/defsyntax try-match try-match-rule)
+(sy/defsyntax clause clause')
+(sy/defsyntax clauses clauses')
+(sy/defsyntax match match')
+(sy/defsyntax try-match try-match')
