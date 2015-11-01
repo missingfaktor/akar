@@ -110,13 +110,13 @@
                      {:pattern  `(!further (!view ~view-fn) [~(:pattern syntactic-pattern)])
                       :bindings (:bindings syntactic-pattern)})))
 
-(sy/defrule simple-pattern'
+(sy/defrule non-emitting-pattern'
             (sy/alt any'
-                    literal'
-                    binding'))
+                    literal'))
 
-(sy/defrule complex-pattern'
-            (sy/alt seq-pattern'
+(sy/defrule emitting-pattern'
+            (sy/alt binding'
+                    seq-pattern'
                     map-pattern'
                     guard-pattern'
                     at-pattern'
@@ -124,8 +124,8 @@
                     arbitrary-pattern'))
 
 (sy/defrule pattern'
-            (sy/alt simple-pattern'
-                    complex-pattern'))
+            (sy/alt non-emitting-pattern'
+                    emitting-pattern'))
 
 (sy/defrule clause'
             (recap (sy/cat pattern' (cap sy/form))
