@@ -129,8 +129,5 @@
   (testing "Sensible syndoc"
 
     (testing "No terminal should be marked as a rule"
-      (is (let [writer (StringWriter.)
-                _ (binding [*out* writer]
-                    (sy/syndoc match))
-                doc (.toString writer)]
+      (is (let [doc (with-out-str (sy/syndoc match))]
             (not (.contains doc "#<")))))))
