@@ -68,6 +68,10 @@
       (is (= `(clause* !var (fn [x] (inc x)))
              (macroexpand-1 `(clause x (inc x))))))
 
+    (testing "disallow & in bindings"
+      (is (thrown? Exception
+                   (macroexpand-1 `(clause & &)))))
+
     (testing "arbitrary pattern functions that emit no values"
       (is (= `(clause* !empty (fn [] :zilch))
              (macroexpand-1 `(clause [!empty] :zilch))))

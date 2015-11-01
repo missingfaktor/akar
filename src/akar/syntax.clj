@@ -17,6 +17,10 @@
 (sy/defterminal keyword-literal' keyword?)
 (sy/defterminal nil-literal' nil?)
 
+(sy/defterminal valid-symbol' (fn [sym]
+                                (and (symbol? sym)
+                                     (not= sym '&))))
+
 (sy/defrule literal'
             (cap (sy/alt number-literal'
                          string-literal'
@@ -28,7 +32,7 @@
                     :bindings []})))
 
 (sy/defterminal binding'
-                (cap sy/sym
+                (cap valid-symbol'
                      (fn [[sym]]
                        {:pattern  `!var
                         :bindings [sym]})))
@@ -69,7 +73,7 @@
 
 (sy/defrule at-pattern'
             (recap (sy/list-form (sy/cat :as
-                                         (cap sy/sym)
+                                         (cap valid-symbol')
                                          (delay pattern')))
                    (fn [[at-binding] inner-pat-results]
                      {:pattern  `(!at ~(:pattern inner-pat-results))
