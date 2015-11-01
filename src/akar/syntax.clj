@@ -2,7 +2,10 @@
   (:require [n01se.syntax :as sy]
             [n01se.seqex :refer [cap recap]]
             [akar.primitives :refer :all]
+            [akar.combinators :refer :all]
             [akar.special-operators :refer :all]
+            [akar.patterns.collection :refer :all]
+            [akar.patterns.typecasing :refer :all]
             [akar.patterns.basic :refer :all]))
 
 (sy/defrule any-rule
@@ -44,6 +47,22 @@
                                   `(!further ~pat [~@(map :pattern pats)]))
                       :bindings (vec (mapcat :bindings pats))})))
 
+(sy/defterminal map-key keyword?)
+
+(sy/defrule map-entry
+            (recap (sy/map-pair (cap map-key)
+                                (delay pattern-rule))
+                   (fn [[k] pat-result]
+                     {:pattern  `(!further (!key ~k) [~(:pattern pat-result)])
+                      :bindings (:bindings pat-result)})))
+
+(sy/defrule map-pattern
+            (recap (sy/map-form (sy/rep* map-entry))
+                   (fn [& pat-results]
+                     {:pattern  `(!and (!pred map?)
+                                       ~@(map :pattern pat-results))
+                      :bindings (vec (mapcat :bindings pat-results))})))
+
 (sy/defrule at-pattern
             (recap (sy/list-form (sy/cat :as
                                          (cap sy/sym)
@@ -59,7 +78,8 @@
                     binding-rule))
 
 (sy/defrule complex-pattern-rule
-            (sy/alt at-pattern
+            (sy/alt map-pattern
+                    at-pattern
                     arbitrary-pattern))
 
 (sy/defrule pattern-rule
