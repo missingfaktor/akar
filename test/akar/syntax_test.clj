@@ -1,8 +1,7 @@
 (ns akar.syntax-test
   (:require [clojure.test :refer :all]
             [akar.primitives :refer :all]
-            [akar.patterns.basic :refer :all]
-            [akar.patterns.collection :refer :all]
+            [akar.patterns :refer :all]
             [akar.special-operators :refer :all]
             [n01se.syntax :as sy]
             [akar.syntax :refer :all])

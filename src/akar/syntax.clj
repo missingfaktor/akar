@@ -4,9 +4,7 @@
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
             [akar.special-operators :refer :all]
-            [akar.patterns.collection :refer :all]
-            [akar.patterns.typecasing :refer :all]
-            [akar.patterns.basic :refer :all]))
+            [akar.patterns :refer :all]))
 
 (sy/defrule any-rule
             (cap (sy/alt :_ :any)

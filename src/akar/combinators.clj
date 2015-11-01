@@ -1,5 +1,5 @@
 (ns akar.combinators
-  (:require [akar.patterns.basic :refer [!fail !var !pred]]
+  (:require [akar.patterns :refer [!fail !var !pred]]
             [akar.internal.utilities :refer [variadic-reducive-function]]))
 
 (def !and

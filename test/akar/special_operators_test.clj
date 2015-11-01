@@ -1,8 +1,6 @@
 (ns akar.special-operators-test
   (:require [clojure.test :refer :all]
-            [akar.patterns.basic :refer :all]
-            [akar.patterns.collection :refer :all]
-            [akar.patterns.string :refer :all]
+            [akar.patterns :refer :all]
             [akar.special-operators :refer :all]
             [akar.primitives :refer :all]))
 

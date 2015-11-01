@@ -1,5 +1,5 @@
 (ns akar.special-operators
-  (:require [akar.patterns.basic :refer [!var !pred]]
+  (:require [akar.patterns :refer [!var !pred]]
             [akar.internal.utilities :refer [append clump-after same-size? single]]
             [akar.combinators :refer [!and]]))
 

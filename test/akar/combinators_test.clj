@@ -1,7 +1,6 @@
 (ns akar.combinators-test
   (:require [clojure.test :refer :all]
-            [akar.patterns.basic :refer :all]
-            [akar.patterns.collection :refer :all]
+            [akar.patterns :refer :all]
             [akar.combinators :refer :all]
             [akar.primitives :refer :all]))
 
