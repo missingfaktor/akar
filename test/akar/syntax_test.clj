@@ -84,14 +84,14 @@
              (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1})))))
 
     (testing "map patterns"
-      (let [block (clauses {:sex :f :age :_} :be-polite
-                           {:sex :m :age age} age
-                           {} :umm)]
-        (is (= :be-polite
-               (match* {:sex :f :age 30} block)))
+      (let [block (clauses {:tracking-cookies-allowed? false :cookie-id :_} nil
+                           {:tracking-cookies-allowed? true :cookie-id id} id
+                           {} :malformed-request)]
+        (is (= nil
+               (match* {:tracking-cookies-allowed? false :cookie-id 25} block)))
         (is (= 25
-               (match* {:sex :m :age 25} block)))
-        (is (= :umm
+               (match* {:tracking-cookies-allowed? true :cookie-id 25} block)))
+        (is (= :malformed-request
                (match* {} block)))))
 
     (testing "seq patterns"
