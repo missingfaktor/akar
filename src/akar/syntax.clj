@@ -84,6 +84,15 @@
                      {:pattern  `(!guard ~(:pattern inner-pat-result) ~cond)
                       :bindings (:bindings inner-pat-result)})))
 
+; https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns
+(sy/defrule view-pattern'
+            (recap (sy/list-form (sy/cat :view
+                                         (cap sy/form)
+                                         (delay pattern')))
+                   (fn [[view-fn] pat]
+                     {:pattern  `(!further (!view ~view-fn) [~(:pattern pat)])
+                      :bindings (:bindings pat)})))
+
 (sy/defrule simple-pattern'
             (sy/alt any'
                     literal'
@@ -94,6 +103,7 @@
                     map-pattern'
                     guard-pattern'
                     at-pattern'
+                    view-pattern'
                     arbitrary-pattern'))
 
 (sy/defrule pattern'

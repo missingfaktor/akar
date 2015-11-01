@@ -121,6 +121,16 @@
         (is (= :nope
                (match* 4 block)))))
 
+    (testing "view patterns"
+      (let [block (clauses (:view #(Math/abs %) 5) :five-ish
+                           :_ :not-so-five-ish)]
+        (is (= :five-ish
+               (match* 5 block)))
+        (is (= :five-ish
+               (match* -5 block)))
+        (is (= :not-so-five-ish
+               (match* -1 block)))))
+
     (testing "at-patterns"
       (is (= [[3 4] 3]
              (match [3 4]
