@@ -150,6 +150,15 @@
                    :two-somewhere-there (match* [:node 6 2] block)
                    :no-match (match* [:node 1 1] block))))
 
+    (testing "and patterns"
+      (let [!order-nr (!key :order-nr)
+            !credibility (fn [o] (if (> (:props o) 5) [:great] [:okay]))
+            block (clauses (:and [!order-nr n] [!credibility :great]) {:foo n}
+                           (:and [!order-nr n] [!credibility :okay]) {:bar n})]
+        (are [x y] (= x y)
+                   {:foo 11} (match* {:order-nr 11 :props 7} block)
+                   {:bar 19} (match* {:order-nr 19 :props 4} block))))
+
     (testing "view patterns"
       (let [block (clauses (:view #(Math/abs %) 5) :five-ish
                            :_ :not-so-five-ish)]
