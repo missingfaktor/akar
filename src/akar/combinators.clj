@@ -7,8 +7,8 @@
     :zero !fail
     :combine (fn [!p1 !p2]
                (fn [arg]
-                 (if-let [matches1 (!p1 arg)]
-                   (if-let [matches2 (!p2 arg)]
+                 (if-some [matches1 (!p1 arg)]
+                   (if-some [matches2 (!p2 arg)]
                      (concat matches1 matches2)))))))
 
 (def !or
@@ -37,7 +37,7 @@
 
 (defn ^:private fan-out [& {:keys [!root !nexts modify-root-emissions modify-nexts]}]
   (fn [arg]
-    (if-let [root-emissions (!root arg)]
+    (if-some [root-emissions (!root arg)]
       (let [root-emissions' (modify-root-emissions root-emissions)
             !nexts' (modify-nexts !nexts)]
         (if (same-size? root-emissions' !nexts')

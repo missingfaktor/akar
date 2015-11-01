@@ -64,7 +64,7 @@
 (defn !key [key]
   (fn [arg]
     (if (map? arg)
-      (if-let [value (arg key)]
+      (if-some [value (arg key)]
         [value]))))
 
 (defn !optional-key [key]
@@ -84,9 +84,9 @@
 (defn !regex [rgx]
   (fn [arg]
     (if (string? arg)
-      (if-let [out (some->> arg
-                            (re-seq rgx)
-                            first)]
+      (if-some [out (some->> arg
+                             (re-seq rgx)
+                             first)]
         (cond
           (string? out) []
           (sequential? out) [(rest out)])))))

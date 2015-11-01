@@ -16,7 +16,7 @@
 
 (defn clause* [pattern f]
   (fn [arg]
-    (if-let [matches (pattern arg)]
+    (if-some [matches (pattern arg)]
       (apply f matches)
       clause-not-applied)))
 
