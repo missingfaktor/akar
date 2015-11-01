@@ -43,34 +43,36 @@
 (sy/defrule arbitrary-pattern'
             (recap (sy/vec-form (sy/cat (cap sy/form)
                                         (sy/rep* (delay pattern'))))
-                   (fn [[pat] & pats]
-                     {:pattern  (if (empty? pats)
-                                  pat
-                                  `(!further ~pat [~@(map :pattern pats)]))
-                      :bindings (vec (mapcat :bindings pats))})))
+                   (fn [[syntactic-pattern] & further-syntactic-patterns]
+                     {:pattern  (if (empty? further-syntactic-patterns)
+                                  syntactic-pattern
+                                  `(!further ~syntactic-pattern [~@(map :pattern further-syntactic-patterns)]))
+                      :bindings (vec (mapcat :bindings further-syntactic-patterns))})))
 
 (sy/defterminal map-key' keyword?)
 
 (sy/defrule map-entry'
             (recap (sy/map-pair (cap map-key')
                                 (delay pattern'))
-                   (fn [[k] pat-result]
-                     {:pattern  `(!further (!key ~k) [~(:pattern pat-result)])
-                      :bindings (:bindings pat-result)})))
+                   (fn [[k] syntactic-pattern]
+                     {:pattern  `(!further (!key ~k) [~(:pattern syntactic-pattern)])
+                      :bindings (:bindings syntactic-pattern)})))
 
 (sy/defrule map-pattern'
             (recap (sy/map-form (sy/rep* map-entry'))
-                   (fn [& pat-results]
+                   (fn [& syntactic-patterns]
                      {:pattern  `(!and (!pred map?)
-                                       ~@(map :pattern pat-results))
-                      :bindings (vec (mapcat :bindings pat-results))})))
+                                       ~@(map :pattern syntactic-patterns))
+                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
 
 (sy/defrule seq-pattern'
             (recap (sy/list-form (sy/cat :seq
                                          (sy/vec-form (sy/cat (recap (sy/rep* (delay pattern'))
-                                                                     (fn [& pats] {:patterns pats}))
+                                                                     (fn [& synactic-patterns]
+                                                                       {:patterns synactic-patterns}))
                                                               (sy/opt (recap (sy/cat '& (delay pattern'))
-                                                                             (fn [rest] {:rest rest})))))))
+                                                                             (fn [rest-synactic-pattern]
+                                                                               {:rest rest-synactic-pattern})))))))
                    (fn [& captures]
                      (let [captures-map (apply merge captures)
                            patterns (:patterns captures-map)
@@ -86,27 +88,27 @@
             (recap (sy/list-form (sy/cat :as
                                          (cap valid-symbol')
                                          (delay pattern')))
-                   (fn [[at-binding] inner-pat-results]
-                     {:pattern  `(!at ~(:pattern inner-pat-results))
+                   (fn [[at-binding] inner-syntactic-patterns]
+                     {:pattern  `(!at ~(:pattern inner-syntactic-patterns))
                       :bindings (vec (concat [at-binding]
-                                             (:bindings inner-pat-results)))})))
+                                             (:bindings inner-syntactic-patterns)))})))
 
 (sy/defrule guard-pattern'
             (recap (sy/list-form (sy/cat :guard
                                          (delay pattern')
                                          (cap sy/form)))
-                   (fn [inner-pat-result [cond]]
-                     {:pattern  `(!guard ~(:pattern inner-pat-result) ~cond)
-                      :bindings (:bindings inner-pat-result)})))
+                   (fn [inner-syntactic-pattern [cond]]
+                     {:pattern  `(!guard ~(:pattern inner-syntactic-pattern) ~cond)
+                      :bindings (:bindings inner-syntactic-pattern)})))
 
 ; https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns
 (sy/defrule view-pattern'
             (recap (sy/list-form (sy/cat :view
                                          (cap sy/form)
                                          (delay pattern')))
-                   (fn [[view-fn] pat]
-                     {:pattern  `(!further (!view ~view-fn) [~(:pattern pat)])
-                      :bindings (:bindings pat)})))
+                   (fn [[view-fn] syntactic-pattern]
+                     {:pattern  `(!further (!view ~view-fn) [~(:pattern syntactic-pattern)])
+                      :bindings (:bindings syntactic-pattern)})))
 
 (sy/defrule simple-pattern'
             (sy/alt any'
