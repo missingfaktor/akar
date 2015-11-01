@@ -1,6 +1,6 @@
 (ns akar.internal.utilities)
 
-(defn variadic-reducive-function [& {:keys [zero combine]}]
+(defn variadic-reductive-function [& {:keys [zero combine]}]
   (fn
     ([] zero)
     ([f] f)

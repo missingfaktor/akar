@@ -3,7 +3,7 @@
             [akar.internal.utilities :refer :all]))
 
 (def !and
-  (variadic-reducive-function
+  (variadic-reductive-function
     :zero !fail
     :combine (fn [!p1 !p2]
                (fn [arg]
@@ -12,7 +12,7 @@
                      (concat matches1 matches2)))))))
 
 (def !or
-  (variadic-reducive-function
+  (variadic-reductive-function
     :zero !fail
     :combine (fn [!p1 !p2]
                (fn [arg]

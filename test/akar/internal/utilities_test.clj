@@ -5,8 +5,8 @@
 (deftest internal-utilities-test
 
   (testing "variadic-reducive-function"
-    (let [f (variadic-reducive-function :zero 0
-                                        :combine (fn [x y] (+ x y)))]
+    (let [f (variadic-reductive-function :zero 0
+                                         :combine (fn [x y] (+ x y)))]
       (testing "zero"
         (is (= (f)
                0)))

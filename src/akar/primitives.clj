@@ -1,5 +1,5 @@
 (ns akar.primitives
-  (:require [akar.internal.utilities :refer [variadic-reducive-function]]))
+  (:require [akar.internal.utilities :refer [variadic-reductive-function]]))
 
 ; A pattern is a function that from one argument to either a sequence of emitted values or `nil`.
 ; `nil` indicates that the pattern match did not succeed.
@@ -23,7 +23,7 @@
 ; A function to compose multiple clauses into one clause.
 
 (def or-else
-  (variadic-reducive-function
+  (variadic-reductive-function
     :zero (constantly clause-not-applied)
     :combine (fn [clause1 clause2]
                (fn [arg]
