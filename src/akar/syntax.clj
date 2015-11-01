@@ -3,6 +3,7 @@
             [n01se.seqex :refer [cap recap]]
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
+            [akar.internal.utilities :refer :all]
             [akar.patterns :refer :all]))
 
 (sy/defrule any'
@@ -66,10 +67,20 @@
 
 (sy/defrule seq-pattern'
             (recap (sy/list-form (sy/cat :seq
-                                         (sy/vec-form (sy/rep* (delay pattern')))))
-                   (fn [& pat-results]
-                     {:pattern  `(!further-many !seq [~@(map :pattern pat-results)])
-                      :bindings (vec (mapcat :bindings pat-results))})))
+                                         (sy/vec-form (sy/cat (recap (sy/rep* (delay pattern'))
+                                                                     (fn [& pats] {:patterns pats}))
+                                                              (sy/opt (recap (sy/cat '& (delay pattern'))
+                                                                             (fn [rest] {:rest rest})))))))
+                   (fn [& captures]
+                     (let [captures-map (apply merge captures)
+                           patterns (:patterns captures-map)
+                           rest (:rest captures-map)]
+                       {:pattern  (if (nil? rest)
+                                    `(!further-many !seq [~@(map :pattern patterns)])
+                                    `(!further-many !seq [~@(map :pattern patterns)] ~(:pattern rest)))
+                        :bindings (if (nil? rest)
+                                    (vec (mapcat :bindings patterns))
+                                    (vec (mapcat :bindings (append patterns rest))))}))))
 
 (sy/defrule at-pattern'
             (recap (sy/list-form (sy/cat :as

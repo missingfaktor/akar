@@ -107,6 +107,16 @@
                    :two (match* [4 5] block)
                    :welp (match* [4 5 6] block))))
 
+    (testing "seq patterns, with rest"
+      (let [block (clauses (:seq [1 2 & xs]) xs
+                           (:seq [1 :_ & :_]) :has-at-least-two
+                           :_ :welp)]
+        (are [x y] (= x y)
+                   [4 5] (match* [1 2 4 5] block)
+                   :has-at-least-two (match* [1 8] block)
+                   :welp (match* [1] block)
+                   :welp (match* [2 4 5] block))))
+
     (testing "seq patterns, with regex"
       (let [!address (!regex #"^(.*), (.*)$")
             block (clauses [!address (:seq [street house-nr])] {:street   street
