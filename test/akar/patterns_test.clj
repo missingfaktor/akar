@@ -2,7 +2,6 @@
   (:require [akar.patterns :refer :all]
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
-            [akar.special-operators :refer :all]
             [clojure.test :refer :all])
   (:import [clojure.lang Keyword]))
 

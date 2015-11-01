@@ -3,7 +3,6 @@
             [n01se.seqex :refer [cap recap]]
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
-            [akar.special-operators :refer :all]
             [akar.patterns :refer :all]))
 
 (sy/defrule any-rule

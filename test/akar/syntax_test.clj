@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [akar.primitives :refer :all]
             [akar.patterns :refer :all]
-            [akar.special-operators :refer :all]
+            [akar.combinators :refer :all]
             [n01se.syntax :as sy]
             [akar.syntax :refer :all])
   (:import [java.io StringWriter]))
