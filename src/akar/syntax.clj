@@ -60,6 +60,13 @@
                                        ~@(map :pattern pat-results))
                       :bindings (vec (mapcat :bindings pat-results))})))
 
+(sy/defrule seq-pattern
+            (recap (sy/list-form (sy/cat :seq
+                                         (sy/vec-form (sy/rep* (delay pattern-rule)))))
+                   (fn [& pat-results]
+                     {:pattern  `(!further-many !seq [~@(map :pattern pat-results)])
+                      :bindings (vec (mapcat :bindings pat-results))})))
+
 (sy/defrule at-pattern
             (recap (sy/list-form (sy/cat :as
                                          (cap sy/sym)
@@ -75,7 +82,8 @@
                     binding-rule))
 
 (sy/defrule complex-pattern-rule
-            (sy/alt map-pattern
+            (sy/alt seq-pattern
+                    map-pattern
                     at-pattern
                     arbitrary-pattern))
 

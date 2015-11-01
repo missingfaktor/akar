@@ -90,6 +90,19 @@
         (is (= :umm
                (match* {} block)))))
 
+    (testing "seq patterns"
+      (let [block (clauses (:seq [1 2]) :one-two
+                           (:seq [1 x]) x
+                           (:seq []) :empty
+                           (:seq [:_ :_]) :two
+                           :_ :welp)]
+        (are [x y] (= x y)
+                   :one-two (match* [1 2] block)
+                   3 (match* [1 3] block)
+                   :empty (match* [] block)
+                   :two (match* [4 5] block)
+                   :welp (match* [4 5 6] block))))
+
     (testing "at-patterns"
       (is (= [[3 4] 3]
              (match [3 4]
