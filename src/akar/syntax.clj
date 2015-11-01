@@ -85,6 +85,13 @@
                      {:pattern  `(!guard ~(:pattern inner-syntactic-pattern) ~cond)
                       :bindings (:bindings inner-syntactic-pattern)})))
 
+(sy/defrule or-pattern'
+            (recap (sy/list-form (sy/cat :or
+                                         (sy/rep+ (delay pattern'))))
+                   (fn [& syntactic-patterns]
+                     {:pattern  `(!or ~@(map :pattern syntactic-patterns))
+                      :bindings []})))
+
 ; https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns
 (sy/defrule view-pattern'
             (recap (sy/list-form (sy/cat :view
@@ -117,6 +124,7 @@
                     seq-pattern'
                     at-pattern'
                     guard-pattern'
+                    or-pattern'
                     view-pattern'
                     map-pattern'
                     arbitrary-pattern'))
