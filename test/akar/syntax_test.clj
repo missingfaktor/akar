@@ -103,6 +103,16 @@
                    :two (match* [4 5] block)
                    :welp (match* [4 5 6] block))))
 
+    (testing "seq patterns, with regex"
+      (let [!address (!regex #"^(.*), (.*)$")
+            block (clauses [!address (:seq [street house-nr])] {:street   street
+                                                                :house-nr house-nr}
+                           :_ :invalid-address)]
+        (is (= {:street "Goblinstraße" :house-nr "21"}
+               (match* "Goblinstraße, 21" block)))
+        (is (= :invalid-address
+               (match* "Gondwanaland" block)))))
+
     (testing "guard patterns"
       (let [block (clauses (:guard a odd?) a
                            (:guard :_ even?) :nope)]
