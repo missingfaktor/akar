@@ -49,22 +49,6 @@
                                   `(!further ~syntactic-pattern [~@(map :pattern further-syntactic-patterns)]))
                       :bindings (vec (mapcat :bindings further-syntactic-patterns))})))
 
-(sy/defterminal map-key' keyword?)
-
-(sy/defrule map-entry'
-            (recap (sy/map-pair (cap map-key')
-                                (delay pattern'))
-                   (fn [[k] syntactic-pattern]
-                     {:pattern  `(!further (!key ~k) [~(:pattern syntactic-pattern)])
-                      :bindings (:bindings syntactic-pattern)})))
-
-(sy/defrule map-pattern'
-            (recap (sy/map-form (sy/rep* map-entry'))
-                   (fn [& syntactic-patterns]
-                     {:pattern  `(!and (!pred map?)
-                                       ~@(map :pattern syntactic-patterns))
-                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
-
 (sy/defrule seq-pattern'
             (recap (sy/list-form (sy/cat :seq
                                          (sy/vec-form (sy/cat (recap (sy/rep* (delay pattern'))
@@ -110,6 +94,22 @@
                      {:pattern  `(!further (!view ~view-fn) [~(:pattern syntactic-pattern)])
                       :bindings (:bindings syntactic-pattern)})))
 
+(sy/defterminal map-key' keyword?)
+
+(sy/defrule map-entry'
+            (recap (sy/map-pair (cap map-key')
+                                (delay pattern'))
+                   (fn [[k] syntactic-pattern]
+                     {:pattern  `(!further (!key ~k) [~(:pattern syntactic-pattern)])
+                      :bindings (:bindings syntactic-pattern)})))
+
+(sy/defrule map-pattern'
+            (recap (sy/map-form (sy/rep* map-entry'))
+                   (fn [& syntactic-patterns]
+                     {:pattern  `(!and (!pred map?)
+                                       ~@(map :pattern syntactic-patterns))
+                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
+
 (sy/defrule non-emitting-pattern'
             (sy/alt any'
                     literal'))
@@ -117,10 +117,10 @@
 (sy/defrule emitting-pattern'
             (sy/alt binding'
                     seq-pattern'
-                    map-pattern'
-                    guard-pattern'
                     at-pattern'
+                    guard-pattern'
                     view-pattern'
+                    map-pattern'
                     arbitrary-pattern'))
 
 (sy/defrule pattern'
