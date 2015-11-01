@@ -103,6 +103,14 @@
                    :two (match* [4 5] block)
                    :welp (match* [4 5 6] block))))
 
+    (testing "guard patterns"
+      (let [block (clauses (:guard a odd?) a
+                           (:guard :_ even?) :nope)]
+        (is (= 5
+               (match* 5 block)))
+        (is (= :nope
+               (match* 4 block)))))
+
     (testing "at-patterns"
       (is (= [[3 4] 3]
              (match [3 4]

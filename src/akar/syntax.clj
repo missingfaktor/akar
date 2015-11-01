@@ -76,6 +76,14 @@
                       :bindings (vec (concat [at-binding]
                                              (:bindings inner-pat-results)))})))
 
+(sy/defrule guard-pattern'
+            (recap (sy/list-form (sy/cat :guard
+                                         (delay pattern')
+                                         (cap sy/form)))
+                   (fn [inner-pat-result [cond]]
+                     {:pattern  `(!guard ~(:pattern inner-pat-result) ~cond)
+                      :bindings (:bindings inner-pat-result)})))
+
 (sy/defrule simple-pattern'
             (sy/alt any'
                     literal'
@@ -84,6 +92,7 @@
 (sy/defrule complex-pattern'
             (sy/alt seq-pattern'
                     map-pattern'
+                    guard-pattern'
                     at-pattern'
                     arbitrary-pattern'))
 
