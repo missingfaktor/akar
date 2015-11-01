@@ -110,22 +110,16 @@
                                        ~@(map :pattern syntactic-patterns))
                       :bindings (vec (mapcat :bindings syntactic-patterns))})))
 
-(sy/defrule non-emitting-pattern'
+(sy/defrule pattern'
             (sy/alt any'
-                    literal'))
-
-(sy/defrule emitting-pattern'
-            (sy/alt binding'
+                    literal'
+                    binding'
                     seq-pattern'
                     at-pattern'
                     guard-pattern'
                     view-pattern'
                     map-pattern'
                     arbitrary-pattern'))
-
-(sy/defrule pattern'
-            (sy/alt non-emitting-pattern'
-                    emitting-pattern'))
 
 (sy/defrule clause'
             (recap (sy/cat pattern' (cap sy/form))
