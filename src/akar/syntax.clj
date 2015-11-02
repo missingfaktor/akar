@@ -68,15 +68,6 @@
                                     (vec (mapcat :bindings patterns))
                                     (vec (mapcat :bindings (append patterns rest))))}))))
 
-(sy/defrule at-pattern'
-            (recap (sy/list-form (sy/cat :as
-                                         (cap valid-symbol')
-                                         (delay pattern')))
-                   (fn [[at-binding] inner-syntactic-patterns]
-                     {:pattern  `(!at ~(:pattern inner-syntactic-patterns))
-                      :bindings (vec (concat [at-binding]
-                                             (:bindings inner-syntactic-patterns)))})))
-
 (sy/defrule guard-pattern'
             (recap (sy/list-form (sy/cat :guard
                                          (delay pattern')
@@ -129,7 +120,6 @@
                     literal'
                     binding'
                     seq-pattern'
-                    at-pattern'
                     guard-pattern'
                     or-pattern'
                     and-pattern'

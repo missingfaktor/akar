@@ -159,6 +159,11 @@
                    {:foo 11} (match* {:order-nr 11 :props 7} block)
                    {:bar 19} (match* {:order-nr 19 :props 4} block))))
 
+    (testing "and-patterns, as at-patterns"
+      (is (= [[3 4] 3]
+             (match [3 4]
+                    (:and a [!cons hd :_]) [a hd]))))
+
     (testing "view patterns"
       (let [block (clauses (:view #(Math/abs %) 5) :five-ish
                            :_ :not-so-five-ish)]
@@ -167,12 +172,7 @@
         (is (= :five-ish
                (match* -5 block)))
         (is (= :not-so-five-ish
-               (match* -1 block)))))
-
-    (testing "at-patterns"
-      (is (= [[3 4] 3]
-             (match [3 4]
-                    (:as a [!cons hd :_]) [a hd])))))
+               (match* -1 block))))))
 
   (testing "Sensible syndoc"
 
