@@ -70,3 +70,7 @@
                                                                (clump-after (count !nexts))))
                                  :modify-nexts (fn [!nexts]
                                                  (append !nexts !rest)))))
+
+; Aliases for succinctness in direct use
+(define-alias !f !further)
+(define-alias !f* !further-many)
