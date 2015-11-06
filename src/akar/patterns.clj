@@ -89,7 +89,7 @@
                              first)]
         (cond
           (string? out) []
-          (sequential? out) [(rest out)])))))
+          (sequential? out) (vec (rest out)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; "Type" introspection patterns

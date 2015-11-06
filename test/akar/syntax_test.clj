@@ -119,8 +119,8 @@
 
     (testing "seq patterns, with regex"
       (let [!address (!regex #"^(.*), (.*)$")
-            block (clauses [!address (:seq [street house-nr])] {:street   street
-                                                                :house-nr house-nr}
+            block (clauses [!address street house-nr] {:street   street
+                                                       :house-nr house-nr}
                            :_ :invalid-address)]
         (is (= {:street "Goblinstraße" :house-nr "21"}
                (match* "Goblinstraße, 21" block)))

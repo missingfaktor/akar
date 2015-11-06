@@ -74,16 +74,12 @@
   (testing "!further-many"
 
     (testing "'furthers' a pattern into variadic patterns list"
-      (let [!address (!regex #"(.*) (.*), (.*)")
-            !berlin (!cst "Berlin")
-            block (clauses*
-                    (!further-many !address [!var !var !berlin]) (fn [street house-nr]
-                                                                   {:street   street
-                                                                    :house-nr house-nr}))]
-        (is (= {:street "Jahnstraße" :house-nr "21"}
-               (try-match* "Jahnstraße 21, Berlin" block)))
+      (let [block (clauses*
+                    (!further-many !seq [!var !any !true !var]) (fn [x y] [x y]))]
+        (is (= [1 3]
+               (try-match* [1 :whatevs true 3] block)))
         (is (= clause-not-applied
-               (try-match* "Jahnstraße 21, Hamburg" block)))))
+               (try-match* [1 :whatevs false] block)))))
 
     (testing "supports 'rest' patterns"
       (let [block (clauses*

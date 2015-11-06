@@ -111,7 +111,7 @@
 
     (testing "!regex"
       (let [block (clauses*
-                    (!regex #"^F (.*) (.*)$") (fn [[handle name]]
+                    (!regex #"^F (.*) (.*)$") (fn [handle name]
                                                 {:event  :followed
                                                  :handle handle
                                                  :name   name})
