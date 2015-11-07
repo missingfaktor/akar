@@ -46,7 +46,7 @@
              (try-match* :some-value (clauses*))))))
 
   (testing "or-else"
-    (let [[!4 !5 !6] (map !cst [4 5 6])
+    (let [[!4 !5 !6] (map !constant [4 5 6])
           !4-or-!5 (or-else !4 !5)
           !4-or-!5-or-!6 (or-else !4 !5 !6)]
       (is (= :any

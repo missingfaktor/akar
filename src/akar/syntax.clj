@@ -29,7 +29,7 @@
                          keyword-literal'
                          nil-literal')
                  (fn [[lit]]
-                   {:pattern  `(!cst ~lit)
+                   {:pattern  `(!constant ~lit)
                     :bindings []})))
 
 (sy/defterminal binding'

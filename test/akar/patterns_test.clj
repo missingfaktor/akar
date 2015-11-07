@@ -37,8 +37,8 @@
 
     (testing "!cst"
       (let [block (clauses*
-                    (!cst 4) (fn [] :fier)
-                    (!cst 5) (fn [] :fünf))]
+                    (!constant 4) (fn [] :fier)
+                    (!constant 5) (fn [] :fünf))]
         (is (= :fier
                (match* 4 block)))
         (is (= :fünf
@@ -95,8 +95,8 @@
                (match* [] block)))))
 
     (let [block (clauses*
-                  (!further (!variant :add) [(!cst 0) !bind]) (fn [y] [:num y])
-                  (!further (!variant :sub) [!bind (!cst 0)]) (fn [x] [:num x])
+                  (!further (!variant :add) [(!constant 0) !bind]) (fn [y] [:num y])
+                  (!further (!variant :sub) [!bind (!constant 0)]) (fn [x] [:num x])
                   (!at (!variant :num)) (fn [node _] node))]
 
       (testing "!variant"

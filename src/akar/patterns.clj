@@ -20,7 +20,7 @@
     (if (pred x)
       [])))
 
-(defn !cst [value]
+(defn !constant [value]
   (!pred (fn [arg]
            (= value arg))))
 
@@ -35,13 +35,13 @@
       [arg])))
 
 (def !nil
-  (!cst nil))
+  (!constant nil))
 
 (def !true
-  (!cst true))
+  (!constant true))
 
 (def !false
-  (!cst false))
+  (!constant false))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Collection patterns
