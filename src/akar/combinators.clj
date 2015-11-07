@@ -1,5 +1,5 @@
 (ns akar.combinators
-  (:require [akar.patterns :refer [!fail !var !pred]]
+  (:require [akar.patterns :refer [!fail !bind !pred]]
             [akar.internal.utilities :refer :all]))
 
 (def !and
@@ -26,7 +26,7 @@
       nil)))
 
 (defn !at [!p]
-  (!and !var !p))
+  (!and !bind !p))
 
 (defn !guard [!p cond]
   (!and !p (!pred cond)))

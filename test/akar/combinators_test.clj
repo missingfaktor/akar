@@ -10,11 +10,11 @@
 
     (testing "fails if any of the patterns fails"
       (is (= nil
-             ((!and !any !var !fail) 9))))
+             ((!and !any !bind !fail) 9))))
 
     (testing "emits all the values, when all patterns succeed"
       (is (= [9 9]
-             ((!and !any !var !var) 9)))))
+             ((!and !any !bind !bind) 9)))))
 
   (testing "!or"
 
@@ -24,15 +24,15 @@
 
     (testing "emits values from the first matched pattern"
       (is (= []
-             ((!or !any !var) 9)))
+             ((!or !any !bind) 9)))
       (is (= [9]
-             ((!or !var !any) 9)))))
+             ((!or !bind !any) 9)))))
 
   (testing "!not"
 
     (testing "reverse a good match"
       (is (= nil
-             ((!not !var) 9))))
+             ((!not !bind) 9))))
 
     (testing "reverses a bad match"
       (is (= []
@@ -64,9 +64,9 @@
 
   (testing "!further"
     (let [block (clauses*
-                  (!further !cons [!var !var]) (fn [hd tl]
-                                                 {:hd hd
-                                                  :tl tl}))]
+                  (!further !cons [!bind !bind]) (fn [hd tl]
+                                                   {:hd hd
+                                                    :tl tl}))]
       (testing "'furthers' a pattern"
         (is (= {:hd 3 :tl [4 5]}
                (match* [3 4 5] block))))))
@@ -75,7 +75,7 @@
 
     (testing "'furthers' a pattern into variadic patterns list"
       (let [block (clauses*
-                    (!further-many !seq [!var !any !true !var]) (fn [x y] [x y]))]
+                    (!further-many !seq [!bind !any !true !bind]) (fn [x y] [x y]))]
         (is (= [1 3]
                (try-match* [1 :whatevs true 3] block)))
         (is (= clause-not-applied
@@ -83,8 +83,8 @@
 
     (testing "supports 'rest' patterns"
       (let [block (clauses*
-                    (!further-many !seq [!var !var] !var) (fn [a b rest]
-                                                            [a b rest]))]
+                    (!further-many !seq [!bind !bind] !bind) (fn [a b rest]
+                                                               [a b rest]))]
         (is (= [3 4 [5 6]]
                (try-match* [3 4 5 6] block)))
         (is (= [3 4 []]

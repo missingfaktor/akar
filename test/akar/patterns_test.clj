@@ -22,7 +22,7 @@
     (testing "!var"
       (is (= :some-value
              (match* :some-value (clauses*
-                                   !var (fn [x] x))))))
+                                   !bind (fn [x] x))))))
 
     (testing "!pred"
       (let [!even (!pred even?)
@@ -78,7 +78,7 @@
                (match* :some-random-data block)))))
 
     (let [block (clauses*
-                  (!further-many !seq [!var !any !var]) (fn [a b] [a b]))]
+                  (!further-many !seq [!bind !any !bind]) (fn [a b] [a b]))]
       (testing "!seq"
         (is (= [2 4]
                (match* [2 3 4] block)))))
@@ -95,8 +95,8 @@
                (match* [] block)))))
 
     (let [block (clauses*
-                  (!further (!variant :add) [(!cst 0) !var]) (fn [y] [:num y])
-                  (!further (!variant :sub) [!var (!cst 0)]) (fn [x] [:num x])
+                  (!further (!variant :add) [(!cst 0) !bind]) (fn [y] [:num y])
+                  (!further (!variant :sub) [!bind (!cst 0)]) (fn [x] [:num x])
                   (!at (!variant :num)) (fn [node _] node))]
 
       (testing "!variant"
@@ -164,6 +164,6 @@
 
     (testing "!type"
       (let [block (clauses*
-                    (!and (!type :card) !var) (fn [card] (:details card)))]
+                    (!and (!type :card) !bind) (fn [card] (:details card)))]
         (is (= "Details"
                (try-match* (with-meta {:details "Details"} {:type :card}) block)))))))

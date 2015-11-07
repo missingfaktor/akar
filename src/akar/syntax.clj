@@ -35,7 +35,7 @@
 (sy/defterminal binding'
                 (cap valid-symbol'
                      (fn [[sym]]
-                       {:pattern  `!var
+                       {:pattern  `!bind
                         :bindings [sym]})))
 
 (declare pattern')

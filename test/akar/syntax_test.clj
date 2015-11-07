@@ -65,7 +65,7 @@
              (macroexpand-1 `(clause nil :val)))))
 
     (testing "simple binding"
-      (is (= `(clause* !var (fn [x] (inc x)))
+      (is (= `(clause* !bind (fn [x] (inc x)))
              (macroexpand-1 `(clause x (inc x))))))
 
     (testing "disallow & in bindings"
@@ -79,7 +79,7 @@
              (macroexpand-1 `(clause [(!cst 2)] :val)))))
 
     (testing "arbitrary pattern functions that emit values, to be further matched by other patterns"
-      (is (= `(clause* (!further !cons [!var (!further !cons [(!cst 2) !var])])
+      (is (= `(clause* (!further !cons [!bind (!further !cons [(!cst 2) !bind])])
                        (fn [hd tl-1] {:hd hd :tl-1 tl-1}))
              (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1})))))
 

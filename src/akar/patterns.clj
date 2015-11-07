@@ -11,7 +11,7 @@
   (fn [_]
     nil))
 
-(def !var
+(def !bind
   (fn [arg]
     [arg]))
 

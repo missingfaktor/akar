@@ -13,11 +13,11 @@
 
     (testing "invokes the action on the captured value if pattern matched"
       (is (= 6
-             ((clause* !var (fn [x] (* 2 x))) 3))))
+             ((clause* !bind (fn [x] (* 2 x))) 3))))
 
     (testing "allows nil values to be returned from the action"
       (is (= nil
-             ((clause* !var (fn [x] nil)) 3)))))
+             ((clause* !bind (fn [x] nil)) 3)))))
 
   (testing "clauses"
 
