@@ -172,7 +172,15 @@
         (is (= :five-ish
                (match* -5 block)))
         (is (= :not-so-five-ish
-               (match* -1 block))))))
+               (match* -1 block)))))
+
+    (testing "type patterns"
+      (let [block (clauses (:type RuntimeException ex) (.getMessage ex)
+                           (:type String s) (.length s))]
+        (is (= "fatt gaya"
+               (match* (RuntimeException. "fatt gaya") block)))
+        (is (= 5
+               (match* "pqrst" block))))))
 
   (testing "Sensible syndoc"
 

@@ -99,6 +99,14 @@
                      {:pattern  `(!further (!view ~view-fn) [~(:pattern syntactic-pattern)])
                       :bindings (:bindings syntactic-pattern)})))
 
+(sy/defrule type-pattern'
+            (recap (sy/list-form (sy/cat :type
+                                         (cap valid-symbol')
+                                         (delay pattern')))
+                   (fn [[cls] syntactic-pattern]
+                     {:pattern  `(!and (!type ~cls) ~(:pattern syntactic-pattern))
+                      :bindings (:bindings syntactic-pattern)})))
+
 (sy/defterminal map-key' keyword?)
 
 (sy/defrule map-entry'
@@ -124,6 +132,7 @@
                     or-pattern'
                     and-pattern'
                     view-pattern'
+                    type-pattern'
                     map-pattern'
                     arbitrary-pattern'))
 
