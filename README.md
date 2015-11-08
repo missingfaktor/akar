@@ -58,7 +58,7 @@ To learn more, read the [Akar tutorial](TUTORIAL.md).
                     <node>This is <i>deeper</i> stuff.</node>
                   </node>
                   <node>I am some text.
-                    <title>I am <i>{title}</i>.</title>
+                    <title>I am <i>a title</i>.</title>
                     This is a sentence with an <i>italicized</i> entry.
                   </node>
                 </node>")))
@@ -66,9 +66,9 @@ To learn more, read the [Akar tutorial](TUTORIAL.md).
 (italics xml-doc)
 
 ; prints:
-;   Italic: some
-;   Italic: deeper
-;   Italic: italicized
+;   some
+;   deeper
+;   italicized
 ```
  
 ## License
