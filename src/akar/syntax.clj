@@ -101,7 +101,7 @@
 
 (sy/defrule type-pattern'
             (recap (sy/list-form (sy/cat :type
-                                         (cap valid-symbol')
+                                         (cap sy/form)
                                          (delay pattern')))
                    (fn [[cls] syntactic-pattern]
                      {:pattern  `(!and (!type ~cls) ~(:pattern syntactic-pattern))
