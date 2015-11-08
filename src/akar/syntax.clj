@@ -115,6 +115,14 @@
                      {:pattern  `(!further (!variant ~tag) [~@(map :pattern syntactic-patterns)])
                       :bindings (vec (mapcat :bindings syntactic-patterns))})))
 
+(sy/defrule record-pattern'
+            (recap (sy/list-form (sy/cat :record
+                                         (cap sy/form)
+                                         (sy/vec-form (sy/rep* (delay pattern')))))
+                   (fn [[cls] & syntactic-patterns]
+                     {:pattern  `(!further (!record ~cls) [~@(map :pattern syntactic-patterns)])
+                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
+
 (sy/defterminal map-key' keyword?)
 
 (sy/defrule map-entry'
@@ -142,6 +150,7 @@
                     view-pattern'
                     type-pattern'
                     variant-pattern'
+                    record-pattern'
                     map-pattern'
                     arbitrary-pattern'))
 

@@ -4,8 +4,9 @@
             [akar.patterns :refer :all]
             [akar.combinators :refer :all]
             [n01se.syntax :as sy]
-            [akar.syntax :refer :all])
-  (:import [java.io StringWriter]))
+            [akar.syntax :refer :all]
+            [akar.test-support :refer :all])
+  (:import [akar.test_support Add Sub Num Node]))
 
 (deftest syntax-test
 
@@ -188,7 +189,12 @@
         (is (= "hello"
                (match* [:i "hello"] block)))
         (is (= [:i "hello"]
-               (match* [:node "top" [:i "hello"]] block))))))
+               (match* [:node "top" [:i "hello"]] block)))))
+
+    (testing "record patterns"
+      (let [block (clauses (:record Add [m n]) [m n])]
+        (is (= [3 6]
+               (match* (->Add 3 6) block))))))
 
   (testing "Sensible syndoc"
 
