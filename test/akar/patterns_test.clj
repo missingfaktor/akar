@@ -87,7 +87,7 @@
                   (!and (!key :k) (!optional-key :l) (!optional-key :m)) (fn [a b c] [a b c])
                   !any (fn [] :stuff))]
 
-      (testing "!key and !optional-key"
+      (testing "!key and !optional-key, with regular maps"
         (is (= [:x :y nil]
                (match* {:k :x :l :y} block)))
 
@@ -99,7 +99,7 @@
     (let [block (clauses*
                   (!key :tag) (fn [tag] tag)
                   (!optional-key :contents) (fn [contents] contents))]
-      (testing "!key and !optional-key"
+      (testing "!key and !optional-key, with records"
         (is (= "i"
                (match* (->Node "i" "k") block)))
         (is (= "c"
