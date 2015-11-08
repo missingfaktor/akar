@@ -24,10 +24,6 @@
   (!pred (fn [arg]
            (= value arg))))
 
-(defn !view [f]
-  (fn [arg]
-    [(f arg)]))
-
 (def !some
   (fn [arg]
     (if (nil? arg)

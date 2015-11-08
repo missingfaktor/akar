@@ -31,6 +31,9 @@
 (defn !guard [!p cond]
   (!and !p (!pred cond)))
 
+(defn !view [f !p]
+  (comp !p f))
+
 ; To support nested patterns, we must allow values emitted by one pattern to be further
 ; matched by other patterns. What follows are a set of combinators that support such
 ; "furthering", and related features.

@@ -62,6 +62,13 @@
              (try-match* 4 (clauses*
                              (!guard (!pred even?) (partial = 2)) (fn [] :even-and-2)))))))
 
+  (testing "!view"
+
+    (let [block (clauses*
+                  (!view inc !bind) (fn [x] x))]
+      (is (= 10
+             (match* 9 block)))))
+
   (testing "!further"
     (let [block (clauses*
                   (!further !cons [!bind !bind]) (fn [hd tl]

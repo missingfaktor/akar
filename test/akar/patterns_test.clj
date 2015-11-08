@@ -46,12 +46,6 @@
         (is (= :fünf
                (match* 5 block)))))
 
-    (testing "!view"
-      (let [block (clauses*
-                    (!view inc) (fn [x] x))]
-        (is (= 10
-               (match* 9 block)))))
-
     (testing "!some and !nil"
       (let [block (clauses*
                     !some (fn [x] x)

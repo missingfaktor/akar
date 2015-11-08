@@ -73,27 +73,52 @@
       (is (thrown? Exception
                    (macroexpand-1 `(clause & &)))))
 
-    (testing "arbitrary pattern functions that emit no values"
-      (is (= `(clause* !empty (fn [] :zilch))
-             (macroexpand-1 `(clause [!empty] :zilch))))
-      (is (= `(clause* (!constant 2) (fn [] :val))
-             (macroexpand-1 `(clause [(!constant 2)] :val)))))
+    (testing "guard patterns"
+      (let [block (clauses (:guard a odd?) a
+                           (:guard :_ even?) :nope)]
+        (is (= 5
+               (match* 5 block)))
+        (is (= :nope
+               (match* 4 block)))))
 
-    (testing "arbitrary pattern functions that emit values, to be further matched by other patterns"
-      (is (= `(clause* (!further !cons [!bind (!further !cons [(!constant 2) !bind])])
-                       (fn [hd tl-1] {:hd hd :tl-1 tl-1}))
-             (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1})))))
+    (testing "view patterns"
+      (let [block (clauses (:view #(Math/abs %) 5) :five-ish
+                           :_ :not-so-five-ish)]
+        (is (= :five-ish
+               (match* 5 block)))
+        (is (= :five-ish
+               (match* -5 block)))
+        (is (= :not-so-five-ish
+               (match* -1 block)))))
 
-    (testing "map patterns"
-      (let [block (clauses {:tracking-cookies-allowed? false :cookie-id :_} nil
-                           {:tracking-cookies-allowed? true :cookie-id id} id
-                           {} :malformed-request)]
-        (is (= nil
-               (match* {:tracking-cookies-allowed? false :cookie-id 25} block)))
-        (is (= 25
-               (match* {:tracking-cookies-allowed? true :cookie-id 25} block)))
-        (is (= :malformed-request
-               (match* {} block)))))
+    (testing "or patterns"
+      (let [!node (fn [[_ left right]] [left right])
+            !zero (!pred (fn [n]
+                           (and (number? n)
+                                (zero? n))))
+            block (clauses (:or 9 [!zero]) :good-number
+                           (:or [!node 2 :_] [!node :_ 2]) :two-somewhere-there
+                           :_ :no-match)]
+        (are [x y] (= x y)
+                   :good-number (match* 9 block)
+                   :good-number (match* 0 block)
+                   :two-somewhere-there (match* [:node 2 3] block)
+                   :two-somewhere-there (match* [:node 6 2] block)
+                   :no-match (match* [:node 1 1] block))))
+
+    (testing "and patterns"
+      (let [!order-nr (!key :order-nr)
+            !credibility (fn [o] (if (> (:props o) 5) [:great] [:okay]))
+            block (clauses (:and [!order-nr n] [!credibility :great]) {:foo n}
+                           (:and [!order-nr n] [!credibility :okay]) {:bar n})]
+        (are [x y] (= x y)
+                   {:foo 11} (match* {:order-nr 11 :props 7} block)
+                   {:bar 19} (match* {:order-nr 19 :props 4} block))))
+
+    (testing "and-patterns, as at-patterns"
+      (is (= [[3 4] 3]
+             (match [3 4]
+                    (:and a [!cons hd :_]) [a hd]))))
 
     (testing "seq patterns"
       (let [block (clauses (:seq [1 2]) :one-two
@@ -128,60 +153,16 @@
         (is (= :invalid-address
                (match* "Gondwanaland" block)))))
 
-    (testing "guard patterns"
-      (let [block (clauses (:guard a odd?) a
-                           (:guard :_ even?) :nope)]
-        (is (= 5
-               (match* 5 block)))
-        (is (= :nope
-               (match* 4 block)))))
-
-    (testing "or patterns"
-      (let [!node (fn [[_ left right]] [left right])
-            !zero (!pred (fn [n]
-                           (and (number? n)
-                                (zero? n))))
-            block (clauses (:or 9 [!zero]) :good-number
-                           (:or [!node 2 :_] [!node :_ 2]) :two-somewhere-there
-                           :_ :no-match)]
-        (are [x y] (= x y)
-                   :good-number (match* 9 block)
-                   :good-number (match* 0 block)
-                   :two-somewhere-there (match* [:node 2 3] block)
-                   :two-somewhere-there (match* [:node 6 2] block)
-                   :no-match (match* [:node 1 1] block))))
-
-    (testing "and patterns"
-      (let [!order-nr (!key :order-nr)
-            !credibility (fn [o] (if (> (:props o) 5) [:great] [:okay]))
-            block (clauses (:and [!order-nr n] [!credibility :great]) {:foo n}
-                           (:and [!order-nr n] [!credibility :okay]) {:bar n})]
-        (are [x y] (= x y)
-                   {:foo 11} (match* {:order-nr 11 :props 7} block)
-                   {:bar 19} (match* {:order-nr 19 :props 4} block))))
-
-    (testing "and-patterns, as at-patterns"
-      (is (= [[3 4] 3]
-             (match [3 4]
-                    (:and a [!cons hd :_]) [a hd]))))
-
-    (testing "view patterns"
-      (let [block (clauses (:view #(Math/abs %) 5) :five-ish
-                           :_ :not-so-five-ish)]
-        (is (= :five-ish
-               (match* 5 block)))
-        (is (= :five-ish
-               (match* -5 block)))
-        (is (= :not-so-five-ish
-               (match* -1 block)))))
-
-    (testing "type patterns"
-      (let [block (clauses (:type RuntimeException ex) (.getMessage ex)
-                           (:type String s) (.length s))]
-        (is (= "fatt gaya"
-               (match* (RuntimeException. "fatt gaya") block)))
-        (is (= 5
-               (match* "pqrst" block)))))
+    (testing "map patterns"
+      (let [block (clauses {:tracking-cookies-allowed? false :cookie-id :_} nil
+                           {:tracking-cookies-allowed? true :cookie-id id} id
+                           {} :malformed-request)]
+        (is (= nil
+               (match* {:tracking-cookies-allowed? false :cookie-id 25} block)))
+        (is (= 25
+               (match* {:tracking-cookies-allowed? true :cookie-id 25} block)))
+        (is (= :malformed-request
+               (match* {} block)))))
 
     (testing "variant patterns"
       (let [block (clauses (:variant :i [content]) content
@@ -194,7 +175,26 @@
     (testing "record patterns"
       (let [block (clauses (:record Add [m n]) [m n])]
         (is (= [3 6]
-               (match* (->Add 3 6) block))))))
+               (match* (->Add 3 6) block)))))
+
+    (testing "type patterns"
+      (let [block (clauses (:type RuntimeException ex) (.getMessage ex)
+                           (:type String s) (.length s))]
+        (is (= "fatt gaya"
+               (match* (RuntimeException. "fatt gaya") block)))
+        (is (= 5
+               (match* "pqrst" block)))))
+
+    (testing "arbitrary pattern functions that emit no values"
+      (is (= `(clause* !empty (fn [] :zilch))
+             (macroexpand-1 `(clause [!empty] :zilch))))
+      (is (= `(clause* (!constant 2) (fn [] :val))
+             (macroexpand-1 `(clause [(!constant 2)] :val)))))
+
+    (testing "arbitrary pattern functions that emit values, to be further matched by other patterns"
+      (is (= `(clause* (!further !cons [!bind (!further !cons [(!constant 2) !bind])])
+                       (fn [hd tl-1] {:hd hd :tl-1 tl-1}))
+             (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1}))))))
 
   (testing "Sensible syndoc"
 
