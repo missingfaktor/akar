@@ -36,6 +36,10 @@ Akar (IPA: \[ɑkɑɾ], IAST: ākār, Devanagari: आकार) is a Sanskrit wor
  
 To learn more, read the [Akar tutorial](TUTORIAL.md).
  
+## Releases and Dependency Information
+
+The first release will soon be available on Clojars. Star/Watch for updates.
+ 
 ## Example
 
 ```clojure
