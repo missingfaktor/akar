@@ -75,6 +75,10 @@ The first release will soon be available on Clojars. Star/Watch for updates.
 ;   italicized
 ```
  
+## Contributing
+
+Do you wish to contribute to Akar? Splendid! Get started [here](CONTRIBUTING.md). 
+ 
 ## License
 
 Copyright © 2015 Rahul Goma Phulore
