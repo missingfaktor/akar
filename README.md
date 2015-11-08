@@ -48,7 +48,7 @@ The first release will soon be available on Clojars. Star/Watch for updates.
             [akar.syntax :refer :all]
             [clojure.data.xml :as xml]))
 
-; Example borrowed from: https://wiki.scala-lang.org/display/SYGN/Xml-pattern-matching
+; Example borrowed from https://wiki.scala-lang.org/display/SYGN/Xml-pattern-matching
 (defn italics [xml-node]
   (match xml-node
          {:tag :i :content (:seq [contents])} (println contents)

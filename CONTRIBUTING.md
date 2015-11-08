@@ -20,7 +20,7 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 ### Pull Requests
  
 * Always make the PR against the `master` branch. Except when it's a hotfix, in which case it should be made against the latest release branch.  
-* Add a prefix [WIP] to a PR's title until it's ready for review.
+* Add a prefix `[WIP]` to a PR's title until it's ready for review.
 * Break the changes into small commits.
 * Ensure a clean Git history before submitting a PR. Rebase judiciously.
 * Ensure that the PR is up-to-date with the target branch.
