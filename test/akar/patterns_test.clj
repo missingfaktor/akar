@@ -2,8 +2,10 @@
   (:require [akar.patterns :refer :all]
             [akar.primitives :refer :all]
             [akar.combinators :refer :all]
-            [clojure.test :refer :all])
-  (:import [clojure.lang Keyword]))
+            [clojure.test :refer :all]
+            [akar.test-support :refer :all])
+  (:import [clojure.lang Keyword]
+           [akar.test_support Add Sub Num Node]))
 
 (deftest patterns-test
 
@@ -94,8 +96,6 @@
         (is (= :stuff
                (match* [] block)))))
 
-    (defrecord Node [tag contents])
-
     (let [block (clauses*
                   (!key :tag) (fn [tag] tag)
                   (!optional-key :contents) (fn [contents] contents))]
@@ -118,7 +118,19 @@
         (is (= [:num 5]
                (match* [:sub 5 0] block)))
         (is (= [:num 11]
-               (match* [:num 11] block))))))
+               (match* [:num 11] block)))))
+
+    (let [block (clauses*
+                  (!further (!record Add) [(!constant 0) !bind]) (fn [y] (->Num y))
+                  (!further (!record Sub) [!bind (!constant 0)]) (fn [x] (->Num x))
+                  (!at (!record Num)) (fn [node _] node))]
+      (testing "!variant"
+        (is (= (->Num 3)
+               (match* (->Add 0 3) block)))
+        (is (= (->Num 5)
+               (match* (->Sub 5 0) block)))
+        (is (= (->Num 11)
+               (match* (->Num 11) block))))))
 
   (testing "string patterns"
 

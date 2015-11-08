@@ -72,11 +72,19 @@
     (if (map? arg)
       [(key arg)])))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Data type patterns
+
 ; Variants, as described by Jeanine Adkisson here - https://www.youtube.com/watch?v=ZQkIWWTygio
 (defn !variant [tag]
   (fn [arg]
     (if (and (vector? arg) (= (first arg) tag))
       (vec (rest arg)))))
+
+(defn !record [cls]
+  (fn [arg]
+    (if (and (record? arg) (instance? cls arg))
+      (vec (vals arg)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; String patterns
