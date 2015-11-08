@@ -180,7 +180,15 @@
         (is (= "fatt gaya"
                (match* (RuntimeException. "fatt gaya") block)))
         (is (= 5
-               (match* "pqrst" block))))))
+               (match* "pqrst" block)))))
+
+    (testing "variant patterns"
+      (let [block (clauses (:variant :i [content]) content
+                           (:variant :node [:_ child]) child)]
+        (is (= "hello"
+               (match* [:i "hello"] block)))
+        (is (= [:i "hello"]
+               (match* [:node "top" [:i "hello"]] block))))))
 
   (testing "Sensible syndoc"
 
