@@ -94,6 +94,19 @@
         (is (= :stuff
                (match* [] block)))))
 
+    (defrecord Node [tag contents])
+
+    (let [block (clauses*
+                  (!key :tag) (fn [tag] tag)
+                  (!optional-key :contents) (fn [contents] contents))]
+      (testing "!key and !optional-key"
+        (is (= "i"
+               (match* (->Node "i" "k") block)))
+        (is (= "c"
+               (match* (->Node nil "c") block)))
+        (is (= nil
+               (match* (->Node nil nil) block)))))
+
     (let [block (clauses*
                   (!further (!variant :add) [(!constant 0) !bind]) (fn [y] [:num y])
                   (!further (!variant :sub) [!bind (!constant 0)]) (fn [x] [:num x])

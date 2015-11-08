@@ -64,13 +64,13 @@
 (defn !key [key]
   (fn [arg]
     (if (map? arg)
-      (if-some [value (arg key)]
+      (if-some [value (key arg)]
         [value]))))
 
 (defn !optional-key [key]
   (fn [arg]
     (if (map? arg)
-      [(arg key)])))
+      [(key arg)])))
 
 ; Variants, as described by Jeanine Adkisson here - https://www.youtube.com/watch?v=ZQkIWWTygio
 (defn !variant [tag]
