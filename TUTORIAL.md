@@ -1,3 +1,0 @@
-# Akar Tutorial
-
-TODO
