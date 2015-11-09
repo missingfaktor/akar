@@ -25,6 +25,7 @@ Compare this with an equivalent Scheme definition:
 ```
 
 As the author points out, the Scheme version is less readable than the Miranda one for following reasons:
+
 0. The symmetry between the two cases is obscured. The empty case is tested for explicitly, and the cons case is assumed otherwise.
 0. The extraction happens independently of the tests, even though there's a clear dependency of the former on the latter. 
 
@@ -151,3 +152,5 @@ Mention why !or special features and !not cannot make it to syntax.
 ### FAQs
 Comparison with core.match
 Interesting frontiers. Prisms? OTOH, Bondi.
+
+is relevant in clojure? hickey. slingshot. and so on.
