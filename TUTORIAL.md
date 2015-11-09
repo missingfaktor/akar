@@ -8,7 +8,7 @@ Let's consider a very simple example from Phil Wadler's [critique of SICP](http:
 
 Here's how you sum a list of numbers in [Miranda](https://en.wikipedia.org/wiki/Miranda_programming_language):
 
-```miranda
+```haskell
 sum []     = 0
 sum (x:xs) = x + sum xs
 ```
