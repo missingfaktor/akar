@@ -2,19 +2,41 @@
 
 ## Pattern matching
 
-In their report ["Pattern Matching for an Object-oriented and Dynamically Typed Programming Language"](https://publishup.uni-potsdam.de/files/4204/tbhpi36.pdf), Geller et al introduce the concept of pattern matching so (paraphrased):
+Pattern matching is a standard feature found in typed functional languages, such as Haskell, Scala, and the ML family. It allows you to decompose data, inspect it for the desired structure or properties, and if affirmative, extract the relevant pieces. Patterns can also be arbitrarily nested, allowing for deep data deconstruction. You could think of pattern matching as `if`/`switch` on steroids.
 
-> Pattern matching facilities were [first developed](http://comjnl.oxfordjournals.org/content/12/1/41.full.pdf) for functional programming languages. Today it is a well established feature and is part of mature languages such as Haskell or members of [the ML family](http://www.amazon.com/exec/obidos/ASIN/0262631326/acmorg-20). The original work on pattern matching describes syntactic extensions to a functional programming language that facilitate the definition of programs by means of structural induction. Supporting such a technique coincides with the mathematical approach of functional programming languages and the aim to promote equational reasoning. 
+Let's consider a very simple example from Phil Wadler's [critique of SICP](http://www.cs.kent.ac.uk/people/staff/dat/miranda/wadler87.pdf).
 
-Pattern matching can be thought of as `if` on steroids. It allows you to decompose the data, inspect it for the desired structure or properties, and if affirmative, extract the relevant pieces. Patterns can be arbitrarily nested, allowing for deep data deconstruction. Quoting Geller et al again:
+Here's how you sum a list of numbers in [Miranda](https://en.wikipedia.org/wiki/Miranda_programming_language):
 
-> In contrast to regular accessors and conditional statements, it can be argued that deep pattern matching allows concise, read-able deconstruction of complex data structures. More specifically, multiple nested conditional expressions quickly become difficult to read, while nested patterns allow destructuring of nested data containers in a single expression.
+```haskell
+sum []     = 0
+sum (x:xs) = x + sum xs
+```
 
+There are two clauses in this definition: one for an empty list (base case), and another for cons. `[]` is the Miranda notation for an empty list, and `(x:xs)` is a notation for a cons list with head `x` and tail `xs`.
 
+Compare this with an equivalent Scheme definition:
 
-sicp example: http://www.cs.kent.ac.uk/people/staff/dat/miranda/wadler87.pdf
+```scheme
+(define (sum a-list)
+  (if (null? a-list)
+    0
+    (+ (car a-list) (sum (cdr a-list))))) 
+```
 
-establish pattern matching is awesome
+As the author points out, the Scheme version is less readable than the Miranda one for following reasons:
+0. The symmetry between the two cases is obscured. The empty case is tested for explicitly, and the cons case is assumed otherwise.
+0. The extraction happens independently of the tests, even though there's a clear dependency of the former on the latter. 
+
+To quote the author further:   
+
+> A good choice of notation can greatly aid learning and thought, and a poor choice can hinder it. In particular, pattern-matching seems to aid thought about **case analysis**, making it easier to construct programs and to prove their properties by **structural induction**.
+
+In their report ["Pattern Matching for an Object-oriented and Dynamically Typed Programming Language"](https://publishup.uni-potsdam.de/files/4204/tbhpi36.pdf), Geller et al also echo a similar sentiment:
+
+> In contrast to regular accessors and conditional statements, it can be argued that deep pattern matching allows concise, readable deconstruction of complex data structures. More specifically, multiple nested conditional expressions quickly become difficult to read, while nested patterns allow destructuring of nested data containers in a single expression.
+
+As it turns out, pattern matching can also be useful without a typing discipline, as illustrated by Erlang's example where it's an integral feature of the language. There exist implementations for [Newspeak](http://gbracha.blogspot.de/2010/06/patterns-as-objects-in-newspeak.html), [Common Lisp](https://github.com/m2ym/optima), [Racket](http://docs.racket-lang.org/reference/match.html), and even for [Clojure](https://github.com/clojure/core.match).
 
 ## Drawbacks with traditional implementations
 
