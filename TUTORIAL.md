@@ -37,32 +37,42 @@ In their report ["Pattern Matching for an Object-oriented and Dynamically Typed 
 
 > In contrast to regular accessors and conditional statements, it can be argued that deep pattern matching allows concise, readable deconstruction of complex data structures. More specifically, multiple nested conditional expressions quickly become difficult to read, while nested patterns allow destructuring of nested data containers in a single expression.
 
-As it turns out, pattern matching can also be useful without a typing discipline, as illustrated by Erlang's example where it's an integral feature of the language. There exist implementations for [Newspeak](http://gbracha.blogspot.de/2010/06/patterns-as-objects-in-newspeak.html), [Common Lisp](https://github.com/m2ym/optima), [Racket](http://docs.racket-lang.org/reference/match.html), and even for [Clojure](https://github.com/clojure/core.match).
+As it turns out, pattern matching can also be useful without a typing discipline, as illustrated by [Erlang](http://learnyousomeerlang.com/syntax-in-functions)'s example where it's an integral feature of the language. There exist implementations for [Newspeak](http://gbracha.blogspot.de/2010/06/patterns-as-objects-in-newspeak.html), [Common Lisp](https://github.com/m2ym/optima), [Racket](http://docs.racket-lang.org/reference/match.html), and even for [Clojure](https://github.com/clojure/core.match).
 
-## Drawbacks with traditional implementations
+### Drawbacks of traditional implementations
 
-syntactic. Not values. Prevent abstraction. Necessitate extensions like pattern synonyms and view patterns.  
+In his paper ["First Class Patterns"](www.cs.yale.edu/~tullsen/patterns.ps), Mark Tullsen points out that patterns as typically implemented tend to be very complex. They bring in a lot of other special features, and even a small semantic change requires a large change in the compiler.
 
-they are a shadow language.
+More syntactic extensions, such as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns) and [pattern synonyms](https://ghc.haskell.org/trac/ghc/wiki/PatternSynonyms), are needed to support any abstraction. This complicates the implementation further.
+ 
+Tullsen ascribes most of these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html). This hinders our ability to abstract over them, limiting expressivity greatly. See section 1.2 of the paper for some examples.
 
-## Prior art
+### First class patterns
 
-Brent Yorgey
-Newspeak Felix: Bracha's post, Felix' paper
-John A De Goes' presentation, JS lib
-patterns.ps paper
-Active patterns in F#
-Scala extractors
+Let's put on our "functional goggles" for a bit, and try to see patterns as functions.
 
-Mention that we use explanation from these resources.
+A pattern is something that **matches** the data against some structure or properties, and can potentially **extract** some values in case of a match. The following signature captures this contract precisely:
+ 
+```
+data -> (extracts | nil)
+```
 
-## First class patterns
+`extracts` is a sequence of extracted values. `nil` would mean that the match failed.
 
-Magic. Hinders abstraction. 
+This is the formulation of patterns used by Akar. There's nothing more to it!
 
-Akar patterns are plain functions i.e. first class values. Simple contract. Opens up abstraction possibilities. You can manipulate them like any other values. Compose them. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation, are implemented in Akar. This simple model makes Akar pattern matching extremely extensible. 
+Treating patterns as regular functions opens up new possibilities. You can abstract over and compose them, like you do with any other functions. It's much simpler do build new features. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation, are implemented in Akar. That should serve as a testament to the simplicity and power of this model.
 
-Let's look at these in more depth.
+This is not a novel idea, and there is quite a bit of "prior art" out there:
+
+0. [first-class-patterns](http://hackage.haskell.org/package/first-class-patterns), a Haskell library by Brent Yorgey. (Akar is largely based on this library.) 
+0. [Newspeak](http://gbracha.blogspot.de/2010/06/patterns-as-objects-in-newspeak.html) [patterns](https://publishup.uni-potsdam.de/files/4204/tbhpi36.pdf).
+0. John De Goes' [presentation](http://www.slideshare.net/jdegoes/firstclass-patterns), where he also links to a Javascript fiddle illustrating the ideas.
+0. ["First Class Patterns"](www.cs.yale.edu/~tullsen/patterns.ps), a paper by Mark Tullsen. (Previously referred in this article.)
+0. [Active patterns](http://fsharpforfunandprofit.com/posts/convenience-active-patterns/) in F#.
+0. Scala [extractors](http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf). (Kind of, but not quite).
+
+Note that this tutorial borrows many explanations and examples from the above mentioned resources.
 
 ## Akar Concepts
 
@@ -154,3 +164,7 @@ Comparison with core.match
 Interesting frontiers. Prisms? OTOH, Bondi.
 
 is relevant in clojure? hickey. slingshot. and so on.
+
+Trade offs 
+what did we trade? exh. runs against grain.
+
