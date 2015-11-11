@@ -37,7 +37,7 @@
         (is (= :even
                (match* 8 block)))))
 
-    (testing "!cst"
+    (testing "!constant"
       (let [block (clauses*
                     (!constant 4) (fn [] :fier)
                     (!constant 5) (fn [] :fünf))]
@@ -48,11 +48,11 @@
 
     (testing "!some and !nil"
       (let [block (clauses*
-                    !some (fn [x] x)
-                    !nil (fn [] :default))]
-        (is (= 21
+                    !some (fn [] :some)
+                    !nil (fn [] :nil))]
+        (is (= :some
                (match* 21 block)))
-        (is (= :default
+        (is (= :nil
                (match* nil block))))))
 
   (testing "collection patterns"

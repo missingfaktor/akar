@@ -25,10 +25,7 @@
            (= value arg))))
 
 (def !some
-  (fn [arg]
-    (if (nil? arg)
-      nil
-      [arg])))
+  (!pred (comp not nil?)))
 
 (def !nil
   (!constant nil))
