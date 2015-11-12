@@ -435,6 +435,7 @@ user=> (defn act-on-event [evt]
 
 user=> (act-on-event {:evt-type :child-added :data "d" :path "p"})
 nil
+
 user=> cache
 {"p" "d"}
 
@@ -471,16 +472,28 @@ The point I am trying to make is that [notation is a tool of thought](http://www
 
 Akar acknowledges this, and features a syntactic layer that makes common use cases convenient, but at the same time stays true to the first-class spirit of the core model. 
 
-## seqex
+### seqex
 
-
+In ClojureConj 2013, [Jonathan Claggett](https://github.com/jclaggett) and [Chris Houser](https://github.com/Chouser) had a talk called ["Illuminated Projects"](https://www.youtube.com/watch?v=o75g9ZRoLaw), where they presented [seqex](https://github.com/jclaggett/seqex), a project they had been working on. (If you write Clojure (or, are simply enthusiastic about it), I cannot recommend you this talk enough. Queue it up!)  
  
-"Macro is a compiler." We created this with the seqex library. Better error messages (by Clojure standards) and auto-generated documentation.
+seqex is pure brilliance. It allows you to define new syntax as a set of grammar rules. This makes it much simpler to create new syntax, gives you auto-generated documentation, and produces better error messages (by Clojure standards).
+   
+The syntax module in Akar was built using seqex.  
+
+Run the following lines in your REPL, and marvel at the output. :smile: 
   
-(syndoc pattern')
-(syndoc clause)
-(syndoc clauses)
 (syndoc match)
+(syndoc pattern')
+
+`match` is a syntax version of the function `match*`. We also have `clause`, `clauses`, and so on.
+
+### akar.syntax
+
+We will go over the important bits of syntax supported by Akar. We will use functions `syndoc`, `parse-forms` (from seqex) and `macroexpand-1` to study these. You have already seen `syndoc`. The latter two will help us see how various syntactic patterns translate to corresponding functions. 
+     
+Let's begin with `any-pattern'`. 
+
+
 
 As we go, we will introduce various features, both the function versions and syntax versions. Some features only exist in functions land and have no syntactic equivalents.
 
@@ -489,8 +502,6 @@ As we go, we will introduce various features, both the function versions and syn
 The syntax is designed in a way that still stays true to the "first-class"/"value" spirit, at the same time making the common use cases convenient. The translation rules will be simple and easily tractable. 
 
 The syntax is not here to shield users from the underlying model. Users are expected to know the underlying functions in order to be able to use this library effectively.
-
-Uses brilliant library seqex. You can see the grammar with `syndoc`. 
 
 >>
 
