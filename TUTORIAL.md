@@ -408,15 +408,72 @@ Look up the definitions of `!view`, `!guard`, and `!at` in your REPL. Look how s
 
 ## Syntax
 
-Consider 
-  
-As we marvel at the functional elegance of this piece, we can't help but notice that this is the kind of syntax only a mother would love. 
+### Motivation
 
-Don't feel bad about yourself for caring about syntax. You should totally care.
+Let's consider a bigger, more realistic example to motivate this section.
+ 
+```clojure
+; We receive events from a remote Zookeeper cluster, and in response, we need to 
+; update the local cache. On `:child-added` and `:child-updated` events, we must 
+; put the entry in local cache. On `:child-removed` event, we must remove the 
+; entry from local cache as well.
 
-Syntax matters. UI of a language. 
+user=> (def cache (java.util.concurrent.ConcurrentHashMap.))
+#'user/cache
 
-The direct usage of functions gets unwieldy quickly, and should be avoided. We feature a syntactic layer which makes common use cases convenient but stays true to the first class spirit.
+user=> (defn act-on-event [evt]
+  #_=>   (match* evt (clauses* (!and (!further (!key :evt-type) [(!or (!constant :child-added)
+  #_=>                                                                (!constant :child-updated))])
+  #_=>                               (!key :data)
+  #_=>                               (!key :path)) (fn [data path] (.put cache path data))
+  #_=>
+  #_=>                         (!and (!further (!key :evt-type) [(!constant :child-removed)])
+  #_=>                               (!key :path)) (fn [path] (.remove cache path))
+  #_=>
+  #_=>                         !any (fn [] nil))))
+#'user/act-on-event
+
+user=> (act-on-event {:evt-type :child-added :data "d" :path "p"})
+nil
+user=> cache
+{"p" "d"}
+
+user=> (act-on-event {:evt-type :child-updated :data "e" :path "q"})
+nil
+
+user=> cache
+{"p" "d", "q" "e"}
+
+user=> (act-on-event {:evt-type :child-updated :data "e" :path "r"})
+nil
+
+user=> cache
+{"p" "d", "q" "e", "r" "e"}
+
+user=> (act-on-event {:evt-type :child-removed :path "r"})
+"e"
+
+user=> cache
+{"p" "d", "q" "e"}
+
+user=> (act-on-event {:evt-type :child-transmogrified :path "r"})
+nil
+
+user=> cache
+{"p" "d", "q" "e"}
+```
+
+Well... That escalated quickly!
+
+As we marvel at the functional elegance of this piece, we can't help but notice that this is the kind of syntax only a mother would love. We could define helper pattern functions, but for such a simple logic, it would be nice not to have to do that.
+
+The point I am trying to make is that [notation is a tool of thought](http://www.eecg.toronto.edu/~jzhu/csc326/readings/iverson.pdf), and therefore [syntax matters](http://tomasp.net/academic/papers/computation-zoo/talk-tfp.pdf).  
+
+Akar acknowledges this, and features a syntactic layer that makes common use cases convenient, but at the same time stays true to the first-class spirit of the core model. 
+
+## seqex
+
+
  
 "Macro is a compiler." We created this with the seqex library. Better error messages (by Clojure standards) and auto-generated documentation.
   
