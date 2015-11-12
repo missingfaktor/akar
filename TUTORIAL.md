@@ -1,6 +1,8 @@
 # Akar Tutorial
 
-## Pattern matching
+## Background
+
+### Pattern matching
 
 Pattern matching is a standard feature found in typed functional languages, such as Haskell, Scala, and the ML family. It allows you to decompose data, inspect it for the desired structure or properties, and if affirmative, extract the relevant pieces. Patterns can also be arbitrarily nested, allowing for deep data deconstruction. You could think of pattern matching as `if`/`switch` on steroids.
 
@@ -57,7 +59,7 @@ data -> (extracts | nil)
 
 `extracts` is a sequence of extracted values. `nil` would mean that the match failed.
 
-This is the formulation of patterns used by Akar. There's nothing more to it!
+This is the formulation of patterns used by Akar. There's literally nothing more to it!
 
 Treating patterns as regular functions opens up new possibilities. You can abstract over and compose them, like you do with any other functions. It's much simpler do build new features. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation, are implemented in Akar. That should serve as a testament to the simplicity and power of this model.
 
@@ -70,26 +72,120 @@ This is not a novel idea, and there is quite a bit of "prior art" out there:
 0. [Active patterns](http://fsharpforfunandprofit.com/posts/convenience-active-patterns/) in F#.
 0. Scala [extractors](http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf). (Kind of, but not quite).
 
-Note that this tutorial borrows many explanations and examples from the above mentioned resources.
+*(This tutorial borrows many explanations and examples from the above mentioned resources.)*
 
-## Akar Concepts
+## Akar
 
-Before we get into it: Fire up a lein repl. Best way is to clone the project, and start a lein repl from inside. 
+Without further ado, let's jump right in! 
 
-Imports: clojure repl, akar patterns, akar syntax
+Start a Clojure REPL with Akar on path. The easiest way to do so might be to clone this project, and firing `lein repl` from inside the directory. Alternatively, you could use [`lein-try`](https://github.com/rkneufeld/lein-try). 
 
-### Patterns and clauses
+We will be needing following `use`s:
 
-Describe.
-nil -> ?
-[] -> ?
-[..] -> ?
+```clojure
+(use 'clojure.repl :reload-all)
+(use 'akar.primitives :reload-all)
+(use 'akar.patterns :reload-all)
+(use 'akar.combinators :reload-all)
+(use 'akar.syntax :reload-all)
+(use 'n01se.syntax :reload-all)
+```
 
-Mention clauses. or-else and so on.
+Let's start defining some patterns.
 
-Mention that starry functions are not "special" really. They just stick to macro-fn convention. Can be used directly still. Perfectly fine.
+All pattern matching implementations feature a way to **ignore** an argument being matched. The typical syntax is `_`. Consider the following Haskell example:
  
+```haskell
+case n of
+     2 -> True       -- Give True if n == 2
+     _ -> False      -- Otherwise give False
+```
+
+How will you formulate the "ignore" pattern as a function? Easy! It should always return an empty sequence (i.e. no extracts) regardless of its input. Akar ships with such a function, and it's called `!any`. Look up its source in your REPL.
+
+```clojure
+user=> (source !any)
+(def !any
+  (fn [_]
+    []))
+nil
+```
+
+*(If you are going "WTF! What are those bangs?" at this point, please read [this](stuff).)*
+
+Test it out!
+
+```clojure
+user=> (!any 2)
+[]
+
+user=> (!any :banana)
+[]
+```
+
+Sweet!
+
+Let's try and define another common pattern matching feature: **Binding**. In pattern matching, you can bind values to names, that are available in a certain scope. 
+
+This happens in two parts. First, you must define a function that emits its arguments as-is, indiscriminately. Akar defines such a function for you. It's called `!bind`.
+ 
+```clojure
+user=> (source !bind)
+(def !bind
+  (fn [arg]
+    [arg]))
+nil
+
+user=> (!bind 2)
+[2]
+
+user=> (!bind :banana)
+[:banana]
+```
+
+The other part allows us to consume the emitted values. At this point, we must learn about another Akar concept: **clauses**.
+
+A clause is essentially a function that accepts a pattern and another function. If the former matches, the latter is invoked with the emitted values. `clause*` is a function we use to create a clause.
+
+Let's see this in action.
+
+```clojure
+user=> (def c (clause* !any (fn [] :hey)))
+#'user/c
+
+user=> (c 2)
+:hey
+
+user=> (c :banana)
+:hey
+
+user=> (def c2 (clause* !bind (fn [x] [:result x])))
+#'user/c2
+
+user=> (c2 2)
+[:result 2]
+
+user=> (c2 :banana)
+[:result :banana]
+``` 
+
+If the number of values emitted by a pattern do not match the number of arguments accepted by the action, there will be an error.
+
+```clojure
+user=> (def c3 (clause* !any (fn [x] [:result x])))
+#'user/c3
+
+user=> (c3 2)
+ArityException Wrong number of args (0) passed to: user/fn--2607  clojure.lang.AFn.throwArity (AFn.java:429)
+```
+
+
+
+## Putting it all together
+
 ## Syntax
+
+Don't feel bad about yourself for caring about syntax. You should totally care.
 
 Syntax matters. UI of a language. 
 
@@ -113,6 +209,8 @@ The syntax is not here to shield users from the underlying model. Users are expe
 Uses brilliant library seqex. You can see the grammar with `syndoc`. 
 
 >>
+
+## clause
 
 #### Simple patterns
 
@@ -166,3 +264,4 @@ is relevant in clojure? hickey. slingshot. and so on.
 Trade offs 
 what did we trade? exh. runs against grain.
 
+bangvar
