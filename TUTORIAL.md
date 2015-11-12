@@ -91,6 +91,8 @@ We will be needing following `use`s:
 (use 'n01se.syntax :reload-all)
 ```
 
+### Pattern functions
+
 Let's start defining some patterns.
 
 All pattern matching implementations feature a way to **ignore** an argument being matched. The typical syntax is `_`. Consider the following Haskell example:
@@ -125,7 +127,7 @@ user=> (!any :banana)
 
 Sweet!
 
-Let's try and define another common pattern matching feature: **Binding**. In pattern matching, you can bind values to names, that are available in a certain scope. 
+Let's try and define another common pattern matching feature: **Binding**. In pattern matching, you can bind values to names, that will be made available in a certain scope. 
 
 This happens in two parts. First, you must define a function that emits its arguments as-is, indiscriminately. Akar defines such a function for you. It's called `!bind`.
  
@@ -179,9 +181,150 @@ user=> (c3 2)
 ArityException Wrong number of args (0) passed to: user/fn--2607  clojure.lang.AFn.throwArity (AFn.java:429)
 ```
 
+Moving on, let's define a pattern that matches specifically for value `1`.
+ 
+```clojure
+user=> (def !one
+  #_=>   (fn [arg] (if (= arg 1) [])))
+#'user/!one
+
+user=> (!one 1)
+[]
+
+user=> (!one 2)
+nil
+```
+
+That works. But it would suck to have to define a new pattern for every new constant we want to test for. How could we generalize this further to work with any **constants**? Easy! Parametrize it.
+ 
+```clojure
+user=> (defn !cst [x]
+  #_=>   (fn [arg] (if (= arg x) [])))
+#'user/!cst
+
+user=> ((!cst :woop) :woop)
+[]
+
+user=> ((!cst :woop) :not-so-woop)
+nil
+```
+
+Akar already has this function, and it's called `!constant`.
 
 
-## Putting it all together
+We could generalize this even further to accept any **predicate**, and not be restricted to just equality tests. Sure enough, Akar has this as well.
+
+```clojure
+user=> (source !pred)
+(defn !pred [pred]
+  (fn [x]
+    (if (pred x)
+      [])))
+nil
+
+user=> ((!pred odd?) 3)
+[]
+
+user=> ((!pred odd?) 2)
+nil
+```
+ 
+I hope this gives you an idea of how pattern functions work. I suggest you skim through [patterns.clj](src/akar/patterns.clj) before continuing further.
+
+...
+
+Hi, good to see you again!
+
+Now that we have seen a bunch of pattern functions, let's try and put it all together in a pattern matching block.
+
+You can compose clauses with a function named `or-else`. There's a utility function named `clauses*` which allows you define a group of clauses with slightly less noise. 
+
+The function `match*` allows you to match a value against a bunch of clauses. 
+    
+Here is a full example.
+
+```clojure
+user=> (defn foo [n]
+  #_=>   (match* n (clauses* (!constant 4) (fn [] :four)
+  #_=>                       (!pred even?) (fn [] :even)
+  #_=>                       !bind         (fn [x] x)
+  #_=>                       !any          (fn [] :we-will-never-get-here))))
+#'user/foo
+
+user=> (foo 4)
+:four
+
+user=> (foo 2)
+:even
+
+user=> (foo 3)
+3
+```
+
+### Nested patterns 
+
+We mentioned in passing that pattern matching allows for deep deconstruction. Consider the following Haskell example to understand what we mean:
+ 
+```haskell
+foo xs = case xs of
+              2:_ -> "starts with 2"
+              x:_ -> "starts with " ++ show x
+              _   -> "empty"
+```
+
+In the first clause, not only do we split up the list into its head and tail, but also further match that the head is equal to `2`. In the second clause, we bind the head to a value, but discard the tail. This is nested pattern matching. 
+ 
+Akar has a pattern `!cons` that splits the head and tail of a list.
+
+```clojure
+user=> (!cons [2 3 4])
+[2 (3 4)]
+```
+
+How do we further match on head and rest? 
+
+Enter `!further`! 
+
+`!further` is a combinator that takes a root pattern, and a sequence of further patterns, that will be applied with the values emitted by the root pattern, when it matches.
+
+Let's see some examples.
+
+```clojure
+user=> ((!further !cons [(!constant 2) !bind]) [2 3 4])
+((3 4))
+
+user=> ((!further !cons [(!constant 2) !bind]) [5 3 4])
+nil
+
+user=> ((!further !cons [!bind !bind]) [5 3 4])
+(5 (3 4))
+
+user=> ((!further !cons [!any !any]) [5 3 4])
+()
+```
+
+As you can see, all the bindings from the nested patterns are being correctly accumulated. 
+
+The Haskell example we saw previously can be written with Akar as follows:
+
+```clojure
+user=> (defn foo [xs]
+  #_=>   (match* xs (clauses* (!further !cons [(!constant 2) !any]) (fn [] "starts with 2")
+  #_=>                        (!further !cons [!bind !any])         (fn [x] (str "starts with " x))
+  #_=>                        !any                                  (fn [] "empty"))))
+#'user/foo
+
+user=> (foo [2 3 4])
+"starts with 2"
+
+user=> (foo [5 3 4])
+"starts with 5"
+
+user=> (foo [])
+"empty"
+```
+
+### Pattern combinators
 
 ## Syntax
 
