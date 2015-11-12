@@ -326,7 +326,91 @@ user=> (foo [])
 
 ### Pattern combinators
 
+You can manipulate and combine patterns in a number of ways. 
+ 
+- Negating a pattern.
+
+```clojure
+user=> ((!not (!constant 3)) 3)
+nil
+
+user=> ((!not (!constant 4)) 3)
+[]
+```
+
+- Conjunction of multiple patterns.
+
+```clojure
+user=> ((!and (!key :name) (!key :age)) {:name "quentin" :age 25})
+("quentin" 25)
+
+user=> ((!and (!key :name) (!key :age)) {:name "quentin"})
+nil
+```
+
+- Disjunction of multiple patterns. (Aka, alternation.)
+
+```clojure
+user=> ((!or (!constant 2) (!constant 3)) 2)
+[]
+
+user=> ((!or (!constant 2) (!constant 3)) 3)
+[]
+
+user=> ((!or (!constant 2) (!constant 3)) 4)
+nil
+
+user=> ((!or (!key :kr-number) (!key :tr-number)) {:kr-number "k 11" :tr-number "t 25"})
+["k 11"]
+
+user=> ((!or (!key :kr-number) (!key :tr-number)) {:tr-number "t 25"})
+["t 25"]
+
+```
+
+- Applying a function to an argument, and then matching its result against a pattern. This is known in Haskell world as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns).
+
+```clojure
+user=> (def five-ish (!view #(Math/abs %) (!constant 5)))
+#'user/five-ish
+
+user=> (five-ish 5)
+[]
+
+user=> (five-ish -5)
+[]
+
+user=> (five-ish 6)
+nil
+```
+
+- Guard a pattern with an additional predicate.
+
+```
+user=> ((!guard !cons vector?) [2 3])
+(2 (3))
+
+user=> ((!guard !cons vector?) '(2 3))
+nil
+```
+
+- Apart from the emitted values, also bind the value being matched. These are called at-patterns or as-patterns.
+ 
+```clojure
+user=> ((!at (!constant 3)) 3)
+(3)
+
+user=> ((!at (!constant 3)) 4)
+nil
+```
+
+Look up the definitions of `!view`, `!guard`, and `!at` in your REPL. Look how simple they are!
+
 ## Syntax
+
+Consider 
+  
+As we marvel at the functional elegance of this piece, we can't help but notice that this is the kind of syntax only a mother would love. 
 
 Don't feel bad about yourself for caring about syntax. You should totally care.
 
