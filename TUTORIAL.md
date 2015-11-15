@@ -482,16 +482,74 @@ The syntax module in Akar was built using seqex.
 
 Run the following lines in your REPL, and marvel at the output. :smile: 
   
+```clojure
 (syndoc match)
 (syndoc pattern')
+```
 
-`match` is a syntax version of the function `match*`. We also have `clause`, `clauses`, and so on.
+`match` is a syntax/macro version of the function `match*`. We also have `clause`, `clauses`, and so on.
 
 ### akar.syntax
 
-We will go over the important bits of syntax supported by Akar. We will use functions `syndoc`, `parse-forms` (from seqex) and `macroexpand-1` to study these. You have already seen `syndoc`. The latter two will help us see how various syntactic patterns translate to corresponding functions. 
+We will go over the important bits of syntax supported by Akar. We will use functions `syndoc`, `parse-forms` (also from seqex) and `macroexpand-1` to study these. You have already seen `syndoc`. The latter two will help us see how various syntactic patterns translate to corresponding functions. 
      
-Let's begin with `any-pattern'`. 
+Syntactic patterns map to corresponding pattern functions, plus name bindings introduced by that pattern. 
+
+Let's start with `any'` syntactic patterns.
+  
+```clojure
+user=> (syndoc any')
+  any' => :_ | :any
+nil
+
+user=> (parse-forms any' '(:_))
+{:pattern akar.patterns/!any, :bindings []}
+
+user=> (parse-forms any' '(:any))
+{:pattern akar.patterns/!any, :bindings []}
+
+user=> (parse-forms any' '(:wrong-keyword))
+Bad value: :wrong-keyword
+Expected any of:
+    :_
+    :any
+nil
+```
+
+`any'` syntactic patterns map to `!any` function, and introduce no bindings.
+
+Next let's look at `binding'` syntactic patterns.
+  
+```clojure
+user=> (parse-forms binding' '(x))
+{:pattern akar.patterns/!bind, :bindings [x]}
+```
+
+As can be seen, the symbol is being introduced as a binding. 
+
+To see how this gets consumed, let's write a full `match` expressions.
+
+```clojure
+user=> (match 3
+  #_=>        x (inc x))
+4
+```
+
+It's educational to see what this expands to:
+
+```clojure
+user=> (pprint (macroexpand-1 '(match 3 x (inc x))))
+(akar.primitives/match* 3 (akar.primitives/or-else
+                            (akar.primitives/clause* akar.patterns/!bind (clojure.core/fn [x] (inc x)))))
+nil
+```
+
+
+
+
+
+
+
 
 
 
