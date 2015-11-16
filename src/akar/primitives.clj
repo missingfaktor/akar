@@ -49,4 +49,5 @@
   (let [result (try-match* value clause')]
     (if (clause-applied? result)
       result
-      (throw (RuntimeException. (str "Match error: " value))))))
+      (throw (RuntimeException.
+               (str "Pattern match failed. None of the clauses applicable to the value: " value))))))
