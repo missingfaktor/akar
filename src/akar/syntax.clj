@@ -35,11 +35,11 @@
                                 (and (symbol? sym)
                                      (not= sym '&))))
 
-(sy/defterminal binding'
-                (cap valid-symbol'
-                     (fn [[sym]]
-                       {:pattern  `!bind
-                        :bindings [sym]})))
+(sy/defrule binding'
+            (cap valid-symbol'
+                 (fn [[sym]]
+                   {:pattern  `!bind
+                    :bindings [sym]})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinators / special pattern matching features
