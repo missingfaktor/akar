@@ -57,13 +57,13 @@
 (defn !key [key]
   (fn [arg]
     (if (map? arg)
-      (if-some [value (key arg)]
+      (if-some [value (get arg key)]
         [value]))))
 
 (defn !optional-key [key]
   (fn [arg]
     (if (map? arg)
-      [(key arg)])))
+      [(get arg key)])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Data type patterns

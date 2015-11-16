@@ -80,12 +80,12 @@
                (match* [2 3 4] block)))))
 
     (let [block (clauses*
-                  (!and (!key :k) (!optional-key :l) (!optional-key :m)) (fn [a b c] [a b c])
+                  (!and (!key "k") (!optional-key :l) (!optional-key :m)) (fn [a b c] [a b c])
                   !any (fn [] :stuff))]
 
       (testing "!key and !optional-key, with regular maps"
         (is (= [:x :y nil]
-               (match* {:k :x :l :y} block)))
+               (match* {"k" :x :l :y} block)))
 
         (is (= :stuff
                (match* [] block)))))
