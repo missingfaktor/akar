@@ -35,7 +35,7 @@
                                 (and (symbol? sym)
                                      (not= sym '&))))
 
-(sy/defrule binding'
+(sy/defrule bind'
             (cap valid-symbol'
                  (fn [[sym]]
                    {:pattern  `!bind
@@ -163,7 +163,7 @@
 (sy/defrule pattern'
             (sy/alt any'
                     literal'
-                    binding'
+                    bind'
                     guard-pattern'
                     view-pattern'
                     or-pattern'
