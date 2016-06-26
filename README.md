@@ -81,6 +81,6 @@ Do you wish to contribute to Akar? Splendid! Get started [here](CONTRIBUTING.md)
  
 ## License
 
-Copyright © 2015 Rahul Goma Phulore
+Copyright © 2016 Rahul Goma Phulore
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under MIT License.
