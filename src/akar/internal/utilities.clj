@@ -1,5 +1,9 @@
 (ns akar.internal.utilities)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; General utilities used elsewhere in the library. Not intended for public
+;;; consumption.
+
 (defn variadic-reductive-function [& {:keys [zero combine]}]
   (fn
     ([] zero)
@@ -22,7 +26,7 @@
     (if (and x (not xs))
       x
       (throw (RuntimeException.
-               (str "Collection does not contain a single element. The size is " (count coll)))))))
+               (str "Collection does not contain a single element. The size is " (count coll) "."))))))
 
 (defmacro define-alias [alias original]
   `(def ~(vary-meta alias assoc :alias-for original) ~original))

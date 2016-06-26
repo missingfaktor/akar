@@ -2,6 +2,9 @@
   (:require [akar.patterns :refer [!fail !bind !pred]]
             [akar.internal.utilities :refer :all]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Combinators to compose a number of patterns into one
+
 (def !and
   (variadic-reductive-function
     :zero !fail
@@ -19,6 +22,9 @@
                  (or (!p1 arg)
                      (!p2 arg))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Combinators corresponding to common pattern operations
+
 (defn !not [!p]
   (fn [arg]
     (if (nil? (!p arg))
@@ -33,6 +39,9 @@
 
 (defn !view [f !p]
   (comp !p f))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; "Further" combinators
 
 ; To support nested patterns, we must allow values emitted by one pattern to be further
 ; matched by other patterns. What follows are a set of combinators that support such

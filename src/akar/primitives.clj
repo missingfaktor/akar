@@ -1,7 +1,10 @@
 (ns akar.primitives
   (:require [akar.internal.utilities :refer [variadic-reductive-function]]))
 
-; A pattern is a function that from one argument to either a sequence of emitted values or `nil`.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Pattern matching primitives
+
+; A pattern is a function from one argument to either a sequence of emitted values or `nil`.
 ; `nil` indicates that the pattern match did not succeed.
 ; Empty sequence would mean that the pattern matched, but no values were emitted.
 
@@ -50,4 +53,4 @@
     (if (clause-applied? result)
       result
       (throw (RuntimeException.
-               (str "Pattern match failed. None of the clauses applicable to the value: " value))))))
+               (str "Pattern match failed. None of the clauses applicable to the value: " value "."))))))
