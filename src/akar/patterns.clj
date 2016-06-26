@@ -106,14 +106,3 @@
 (defn !class [class']
   (!pred (fn [arg]
            (instance? class' arg))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Peano numbers
-
-(def !zero
-  (!constant 0))
-
-(def !succ
-  (fn [arg]
-    (if (pos? arg)
-      [(dec arg)])))

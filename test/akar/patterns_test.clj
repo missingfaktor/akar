@@ -185,13 +185,4 @@
       (let [block (clauses*
                     (!and (!type :card) !bind) (fn [card] (:details card)))]
         (is (= "Details"
-               (try-match* (with-meta {:details "Details"} {:type :card}) block))))))
-
-  (testing "Peano number patterns"
-
-    (let [add (fn rec [x y]
-                (match* [x y]
-                        (clauses* (!further-many !seq [!zero !bind]) (fn [b] b)
-                                  (!further-many !seq [!succ !bind]) (fn [a b] (inc (rec a b))))))]
-      (is (= 5
-             (add 2 3))))))
+               (try-match* (with-meta {:details "Details"} {:type :card}) block)))))))
