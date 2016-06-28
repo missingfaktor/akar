@@ -32,7 +32,7 @@ Akar patterns are first class values (just functions, actually), that can be man
 
 The library also features a syntactic layer that makes common use cases convenient, but at the same time stays true to the first-class spirit of the core model. 
 
-Akar (IPA: \[ɑkɑɾ], IAST: ākār, Devanagari: आकार) is a Sanskrit word for shape. The logo is a [Saraswati](https://en.wikipedia.org/wiki/Saraswati) [Kolam](https://en.wikipedia.org/wiki/Kolam), a diagrammatic representation of Hindu goddess of wisdom.
+Akar (IPA: \[ɑkɑɾ], Devanagari: आकार) is a Sanskrit/Marathi word for shape. The logo is a [Saraswati](https://en.wikipedia.org/wiki/Saraswati) [Kolam](https://en.wikipedia.org/wiki/Kolam), a diagrammatic representation of Hindu goddess of wisdom.
  
 To learn more, read the [Akar tutorial](TUTORIAL.md).
  
