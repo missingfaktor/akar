@@ -1,5 +1,5 @@
 (ns akar.combinators
-  (:require [akar.patterns :refer [!fail !bind !pred]]
+  (:require [akar.patterns :refer [!fail !bind !pred !any]]
             [akar.internal.utilities :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -7,7 +7,7 @@
 
 (def !and
   (variadic-reductive-function
-    :zero !fail
+    :zero !any
     :combine (fn [!p1 !p2]
                (fn [arg]
                  (if-some [matches1 (!p1 arg)]

@@ -14,7 +14,11 @@
 
     (testing "emits all the values, when all patterns succeed"
       (is (= [9 9]
-             ((!and !any !bind !bind) 9)))))
+             ((!and !any !bind !bind) 9))))
+
+    (testing "succeeds if no patterns are available"
+      (is (= []
+             ((!and) 9)))))
 
   (testing "!or"
 
@@ -26,7 +30,11 @@
       (is (= []
              ((!or !any !bind) 9)))
       (is (= [9]
-             ((!or !bind !any) 9)))))
+             ((!or !bind !any) 9))))
+
+    (testing "fails if no pattern is available"
+      (is (= nil
+             ((!or) 9)))))
 
   (testing "!not"
 
