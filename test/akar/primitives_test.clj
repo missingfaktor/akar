@@ -41,7 +41,7 @@
 
   (testing "try-match"
 
-    (testing "returns nil if pattern did not match"
+    (testing "returns clause-not-applied if pattern did not match"
       (is (= clause-not-applied
              (try-match* :some-value (clauses*))))))
 
