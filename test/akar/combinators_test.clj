@@ -38,7 +38,7 @@
 
   (testing "!not"
 
-    (testing "reverse a good match"
+    (testing "reverses a good match"
       (is (= nil
              ((!not !bind) 9))))
 
