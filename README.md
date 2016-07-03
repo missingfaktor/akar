@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/missingfaktor/akar](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/missingfaktor/akar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 [![Build Status](https://travis-ci.org/missingfaktor/akar.svg)](https://travis-ci.org/missingfaktor/akar)
 
-<img src="logo.png" width="300">
+<img src="graphics/logo.png" width="300">
 
 > \[Speech] <br/>
 > Queen: Hmm... <br/>
