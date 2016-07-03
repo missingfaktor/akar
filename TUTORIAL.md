@@ -72,7 +72,7 @@ On some successful pattern matches, we can extract parts of the structure, and b
 
 Let's now put on our "functional goggles" for a bit, and try to see these constructs as functions.
 
-![functionalgoggles](graphics/functional.goggles.png)
+![functionalgoggles](graphics/functional.goggles.jpg)
 
 A **pattern** is something that **matches** the data against some structure or properties, and can potentially **emit** some values in case of a match. The following signature captures this contract precisely:
  
