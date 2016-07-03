@@ -134,7 +134,7 @@ How will you formulate the "ignore" pattern as a function? Easy! It should alway
 Akar ships with such a function, and it's called `!any`. Inspect its source in your REPL.
 
 ```clojure
-user=> (source !any)
+akar.try-out=> (source !any)
 (def !any
   (fn [_]
     []))
@@ -146,10 +146,10 @@ nil
 Test it out!
 
 ```clojure
-user=> (!any 2)
+akar.try-out=> (!any 2)
 []
 
-user=> (!any :banana)
+akar.try-out=> (!any :banana)
 []
 ```
 
@@ -162,16 +162,16 @@ Let's define another common pattern matching feature: **Binding**. In patterns, 
 This happens in two parts. First, we must define a function that emits its arguments as-is, indiscriminately. Akar defines such a function for you. It's called `!bind`.
  
 ```clojure
-user=> (source !bind)
+akar.try-out=> (source !bind)
 (def !bind
   (fn [arg]
     [arg]))
 nil
 
-user=> (!bind 2)
+akar.try-out=> (!bind 2)
 [2]
 
-user=> (!bind :banana)
+akar.try-out=> (!bind :banana)
 [:banana]
 ```
 
@@ -180,32 +180,32 @@ Thie second part is about consuming the emitted values. This is where the functi
 Let's see this in action.
 
 ```clojure
-user=> (def c (clause* !any (fn [] :hey)))
+akar.try-out=> (def c (clause* !any (fn [] :hey)))
 #'user/c
 
-user=> (c 2)
+akar.try-out=> (c 2)
 :hey
 
-user=> (c :banana)
+akar.try-out=> (c :banana)
 :hey
 
-user=> (def c2 (clause* !bind (fn [x] [:result x])))
+akar.try-out=> (def c2 (clause* !bind (fn [x] [:result x])))
 #'user/c2
 
-user=> (c2 2)
+akar.try-out=> (c2 2)
 [:result 2]
 
-user=> (c2 :banana)
+akar.try-out=> (c2 :banana)
 [:result :banana]
 ``` 
 
 If the number of values emitted by a pattern do not match the number of arguments accepted by the action, there will be an error.
 
 ```clojure
-user=> (def c3 (clause* !any (fn [x] [:result x])))
+akar.try-out=> (def c3 (clause* !any (fn [x] [:result x])))
 #'user/c3
 
-user=> (c3 2)
+akar.try-out=> (c3 2)
 ArityException Wrong number of args (0) passed to: user/fn--2607  clojure.lang.AFn.throwArity (AFn.java:429)
 ```
 
@@ -214,28 +214,28 @@ ArityException Wrong number of args (0) passed to: user/fn--2607  clojure.lang.A
 Moving on, let's define a pattern that matches specifically for value `1`.
  
 ```clojure
-user=> (def !one
-         (fn [arg] (if (= arg 1) [])))
+akar.try-out=> (def !one
+                 (fn [arg] (if (= arg 1) [])))
 #'user/!one
 
-user=> (!one 1)
+akar.try-out=> (!one 1)
 []
 
-user=> (!one 2)
+akar.try-out=> (!one 2)
 nil
 ```
 
 That works. But it would be maddening to have to define a new pattern for every new constant we want to test for. How could we generalize this further to work with any **constants**? Easy! Parametrize it.
  
 ```clojure
-user=> (defn !cst [x]
-         (fn [arg] (if (= arg x) [])))
+akar.try-out=> (defn !cst [x]
+                 (fn [arg] (if (= arg x) [])))
 #'user/!cst
 
-user=> ((!cst :woop) :woop)
+akar.try-out=> ((!cst :woop) :woop)
 []
 
-user=> ((!cst :woop) :not-so-woop)
+akar.try-out=> ((!cst :woop) :not-so-woop)
 nil
 ```
 
@@ -246,17 +246,17 @@ Akar already has this function, and it's called `!constant`.
 We could generalize this even further to accept any **predicate**, and not be restricted to just equality tests. Sure enough, Akar has this covered as well.
 
 ```clojure
-user=> (source !pred)
+akar.try-out=> (source !pred)
 (defn !pred [pred]
   (fn [x]
     (if (pred x)
       [])))
 nil
 
-user=> ((!pred odd?) 3)
+akar.try-out=> ((!pred odd?) 3)
 []
 
-user=> ((!pred odd?) 2)
+akar.try-out=> ((!pred odd?) 2)
 nil
 ```
  
@@ -275,20 +275,20 @@ The function `match*` allows you to match a value against a clause.
 Here is a complete example.
 
 ```clojure
-user=> (defn foo [n]
-         (match* n (clauses* (!constant 4) (fn [] :four)
-                             (!pred even?) (fn [] :even)
-                             !bind         (fn [x] x)
-                             !any          (fn [] :we-will-never-get-here))))
+akar.try-out=> (defn foo [n]
+                 (match* n (clauses* (!constant 4) (fn [] :four)
+                                     (!pred even?) (fn [] :even)
+                                     !bind         (fn [x] x)
+                                     !any          (fn [] :we-will-never-get-here))))
 #'user/foo
 
-user=> (foo 4)
+akar.try-out=> (foo 4)
 :four
 
-user=> (foo 2)
+akar.try-out=> (foo 2)
 :even
 
-user=> (foo 3)
+akar.try-out=> (foo 3)
 3
 ```
 
@@ -308,7 +308,7 @@ In the first clause, not only do we split up the list into its head and tail, bu
 Akar has a pattern `!cons` that splits the head and tail of a list.
 
 ```clojure
-user=> (!cons [2 3 4])
+akar.try-out=> (!cons [2 3 4])
 [2 (3 4)]
 ```
 
@@ -321,16 +321,16 @@ Enter `!further`!
 Let's see some examples.
 
 ```clojure
-user=> ((!further !cons [(!constant 2) !bind]) [2 3 4])
+akar.try-out=> ((!further !cons [(!constant 2) !bind]) [2 3 4])
 ((3 4))
 
-user=> ((!further !cons [(!constant 2) !bind]) [5 3 4])
+akar.try-out=> ((!further !cons [(!constant 2) !bind]) [5 3 4])
 nil
 
-user=> ((!further !cons [!bind !bind]) [5 3 4])
+akar.try-out=> ((!further !cons [!bind !bind]) [5 3 4])
 (5 (3 4))
 
-user=> ((!further !cons [!any !any]) [5 3 4])
+akar.try-out=> ((!further !cons [!any !any]) [5 3 4])
 ()
 ```
 
@@ -339,19 +339,19 @@ As you can see, all the bindings from the nested patterns are being correctly ac
 The Haskell example we saw previously can be written with Akar as follows:
 
 ```clojure
-user=> (defn foo [xs]
-         (match* xs (clauses* (!further !cons [(!constant 2) !any]) (fn [] "starts with 2")
-                              (!further !cons [!bind !any])         (fn [x] (str "starts with " x))
-                              !any                                  (fn [] "empty"))))
+akar.try-out=> (defn foo [xs]
+                 (match* xs (clauses* (!further !cons [(!constant 2) !any]) (fn [] "starts with 2")
+                                      (!further !cons [!bind !any])         (fn [x] (str "starts with " x))
+                                      !any                                  (fn [] "empty"))))
 #'user/foo
 
-user=> (foo [2 3 4])
+akar.try-out=> (foo [2 3 4])
 "starts with 2"
 
-user=> (foo [5 3 4])
+akar.try-out=> (foo [5 3 4])
 "starts with 5"
 
-user=> (foo [])
+akar.try-out=> (foo [])
 "empty"
 ```
 
@@ -362,39 +362,39 @@ You can manipulate and combine patterns in a number of ways.
 #### Negating a pattern
 
 ```clojure
-user=> ((!not (!constant 3)) 3)
+akar.try-out=> ((!not (!constant 3)) 3)
 nil
 
-user=> ((!not (!constant 4)) 3)
+akar.try-out=> ((!not (!constant 4)) 3)
 []
 ```
 
 #### Conjunction of multiple patterns
 
 ```clojure
-user=> ((!and (!key :name) (!key :age)) {:name "quentin" :age 25})
+akar.try-out=> ((!and (!key :name) (!key :age)) {:name "quentin" :age 25})
 ("quentin" 25)
 
-user=> ((!and (!key :name) (!key :age)) {:name "quentin"})
+akar.try-out=> ((!and (!key :name) (!key :age)) {:name "quentin"})
 nil
 ```
 
 #### Disjunction/alternation of multiple patterns
 
 ```clojure
-user=> ((!or (!constant 2) (!constant 3)) 2)
+akar.try-out=> ((!or (!constant 2) (!constant 3)) 2)
 []
 
-user=> ((!or (!constant 2) (!constant 3)) 3)
+akar.try-out=> ((!or (!constant 2) (!constant 3)) 3)
 []
 
-user=> ((!or (!constant 2) (!constant 3)) 4)
+akar.try-out=> ((!or (!constant 2) (!constant 3)) 4)
 nil
 
-user=> ((!or (!key :kr-number) (!key :tr-number)) {:kr-number "k 11" :tr-number "t 25"})
+akar.try-out=> ((!or (!key :kr-number) (!key :tr-number)) {:kr-number "k 11" :tr-number "t 25"})
 ["k 11"]
 
-user=> ((!or (!key :kr-number) (!key :tr-number)) {:tr-number "t 25"})
+akar.try-out=> ((!or (!key :kr-number) (!key :tr-number)) {:tr-number "t 25"})
 ["t 25"]
 
 ```
@@ -404,16 +404,16 @@ user=> ((!or (!key :kr-number) (!key :tr-number)) {:tr-number "t 25"})
 This involves applying a function to an argument, and then matching its result against a pattern. This is known in Haskell world as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns).
 
 ```clojure
-user=> (def five-ish (!view #(Math/abs %) (!constant 5)))
+akar.try-out=> (def five-ish (!view #(Math/abs %) (!constant 5)))
 #'user/five-ish
 
-user=> (five-ish 5)
+akar.try-out=> (five-ish 5)
 []
 
-user=> (five-ish -5)
+akar.try-out=> (five-ish -5)
 []
 
-user=> (five-ish 6)
+akar.try-out=> (five-ish 6)
 nil
 ```
 
@@ -422,10 +422,10 @@ nil
 Sometimes you may wish to guard existing patterns with additional predicates.
 
 ```
-user=> ((!guard !cons vector?) [2 3])
+akar.try-out=> ((!guard !cons vector?) [2 3])
 (2 (3))
 
-user=> ((!guard !cons vector?) '(2 3))
+akar.try-out=> ((!guard !cons vector?) '(2 3))
 nil
 ```
 
@@ -434,10 +434,10 @@ nil
 Apart from the emitted values, we may also want to bind the value being matched. These are especially useful when dealing with nested pattern matches.
  
 ```clojure
-user=> ((!at (!constant 3)) 3)
+akar.try-out=> ((!at (!constant 3)) 3)
 (3)
 
-user=> ((!at (!constant 3)) 4)
+akar.try-out=> ((!at (!constant 3)) 4)
 nil
 ```
 
@@ -455,49 +455,49 @@ Let's consider a bigger, more realistic example to motivate this section.
 ; put the entry in local cache. On `:child-removed` event, we must remove the 
 ; entry from local cache as well.
 
-user=> (def cache (java.util.concurrent.ConcurrentHashMap.))
+akar.try-out=> (def cache (java.util.concurrent.ConcurrentHashMap.))
 #'user/cache
 
-user=> (defn act-on-event [evt]
-         (match* evt (clauses* (!and (!further (!key :evt-type) [(!or (!constant :child-added)
+akar.try-out=> (defn act-on-event [evt]
+                 (match* evt (clauses* (!and (!further (!key :evt-type) [(!or (!constant :child-added)
                                                                       (!constant :child-updated))])
-                                     (!key :data)
-                                     (!key :path)) (fn [data path] (.put cache path data))
+                                             (!key :data)
+                                             (!key :path)) (fn [data path] (.put cache path data))
       
-                               (!and (!further (!key :evt-type) [(!constant :child-removed)])
-                                     (!key :path)) (fn [path] (.remove cache path))
+                                       (!and (!further (!key :evt-type) [(!constant :child-removed)])
+                                             (!key :path)) (fn [path] (.remove cache path))
       
-                               !any (fn [] nil))))
+                                       !any (fn [] nil))))
 #'user/act-on-event
 
-user=> (act-on-event {:evt-type :child-added :data "d" :path "p"})
+akar.try-out=> (act-on-event {:evt-type :child-added :data "d" :path "p"})
 nil
 
-user=> cache
+akar.try-out=> cache
 {"p" "d"}
 
-user=> (act-on-event {:evt-type :child-updated :data "e" :path "q"})
+akar.try-out=> (act-on-event {:evt-type :child-updated :data "e" :path "q"})
 nil
 
-user=> cache
+akar.try-out=> cache
 {"p" "d", "q" "e"}
 
-user=> (act-on-event {:evt-type :child-updated :data "e" :path "r"})
+akar.try-out=> (act-on-event {:evt-type :child-updated :data "e" :path "r"})
 nil
 
-user=> cache
+akar.try-out=> cache
 {"p" "d", "q" "e", "r" "e"}
 
-user=> (act-on-event {:evt-type :child-removed :path "r"})
+akar.try-out=> (act-on-event {:evt-type :child-removed :path "r"})
 "e"
 
-user=> cache
+akar.try-out=> cache
 {"p" "d", "q" "e"}
 
-user=> (act-on-event {:evt-type :child-transmogrified :path "r"})
+akar.try-out=> (act-on-event {:evt-type :child-transmogrified :path "r"})
 nil
 
-user=> cache
+akar.try-out=> cache
 {"p" "d", "q" "e"}
 ```
 
@@ -537,17 +537,17 @@ Syntactic patterns map to corresponding pattern functions, plus name bindings in
 ### `any'` syntatic patterns
   
 ```clojure
-user=> (syndoc any')
+akar.try-out=> (syndoc any')
   any' => :_ | :any
 nil
 
-user=> (parse-forms any' '(:_))
+akar.try-out=> (parse-forms any' '(:_))
 {:pattern akar.patterns/!any, :bindings []}
 
-user=> (parse-forms any' '(:any))
+akar.try-out=> (parse-forms any' '(:any))
 {:pattern akar.patterns/!any, :bindings []}
 
-user=> (parse-forms any' '(:wrong-keyword))
+akar.try-out=> (parse-forms any' '(:wrong-keyword))
 Bad value: :wrong-keyword
 Expected any of:
     :_
@@ -561,7 +561,7 @@ nil
 
   
 ```clojure
-user=> (parse-forms bind' '(x))
+akar.try-out=> (parse-forms bind' '(x))
 {:pattern akar.patterns/!bind, :bindings [x]}
 ```
 
@@ -570,15 +570,15 @@ As can be seen, the symbol is being introduced as a binding.
 To see how this gets consumed, let's write a full `match` expression.
 
 ```clojure
-user=> (match 3
-              x (inc x))
+akar.try-out=> (match 3
+                 x (inc x))
 4
 ```
 
 It's educational to see what this expands to:
 
 ```clojure
-user=> (pprint (macroexpand-1 '(match 3 x (inc x))))
+akar.try-out=> (pprint (macroexpand-1 '(match 3 x (inc x))))
 (akar.primitives/match* 3 (akar.primitives/or-else
                             (akar.primitives/clause* akar.patterns/!bind (clojure.core/fn [x] (inc x)))))
 nil
