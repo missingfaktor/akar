@@ -503,11 +503,11 @@ user=> cache
 
 Well... That escalated quickly!
 
-As we marvel at the functional elegance of this piece, we can't help but notice that this is the kind of syntax only a mother would love. We could define helper pattern functions, but for such a simple logic, it would be nice not to have to do that.
+As we marvel at the functional elegance of this piece, we can't help but feel that this is a kind of syntax only a mother would love. We could define helper pattern functions, but for such simple logic, it would be nice not to have to do that.
 
-The point I am trying to make is that [notation is a tool of thought](http://www.eecg.toronto.edu/~jzhu/csc326/readings/iverson.pdf), and therefore [syntax matters](http://tomasp.net/academic/papers/computation-zoo/talk-tfp.pdf).  
+As has been said before by many a great men, [syntax](http://www.eecg.toronto.edu/~jzhu/csc326/readings/iverson.pdf) [matters](http://tomasp.net/academic/papers/computation-zoo/talk-tfp.pdf).
 
-Akar acknowledges this, and features a syntactic layer that makes common use cases convenient, but at the same time stays true to the first-class spirit of the core model. 
+Akar acknowledges this, and features a syntactic layer that makes common use cases convenient, but at the same time, stays true to the first-class spirit of the core model. The translation rules are simple and easily tractable. The purpose of the syntactic layer is not to shield users from the underlying model. Users are expected to know the underlying functions in order to be able to use this library effectively.
 
 ### seqex
 
@@ -524,6 +524,8 @@ Run the following lines in your REPL, and marvel at the output. :smile:
 (syndoc pattern')
 ```
 
+(`syndoc` does not work with Windows consoles. This is [a known issue](https://github.com/jclaggett/seqex/issues/8).)
+
 `match` is a syntax/macro version of the function `match*`. We also have `clause`, `clauses`, and so on.
 
 ### akar.syntax
@@ -532,7 +534,7 @@ We will go over the important bits of syntax supported by Akar. We will use func
      
 Syntactic patterns map to corresponding pattern functions, plus name bindings introduced by that pattern. 
 
-Let's start with `any'` syntactic patterns.
+### `any'` syntatic patterns
   
 ```clojure
 user=> (syndoc any')
@@ -555,16 +557,17 @@ nil
 
 `any'` syntactic patterns map to `!any` function, and introduce no bindings.
 
-Next let's look at `binding'` syntactic patterns.
+### `bind'` syntactic patterns
+
   
 ```clojure
-user=> (parse-forms binding' '(x))
+user=> (parse-forms bind' '(x))
 {:pattern akar.patterns/!bind, :bindings [x]}
 ```
 
 As can be seen, the symbol is being introduced as a binding. 
 
-To see how this gets consumed, let's write a full `match` expressions.
+To see how this gets consumed, let's write a full `match` expression.
 
 ```clojure
 user=> (match 3
@@ -581,7 +584,7 @@ user=> (pprint (macroexpand-1 '(match 3 x (inc x))))
 nil
 ```
 
-
+### `literal'` syntactic patterns
 
 
 
@@ -594,9 +597,6 @@ As we go, we will introduce various features, both the function versions and syn
 
 << 
 
-The syntax is designed in a way that still stays true to the "first-class"/"value" spirit, at the same time making the common use cases convenient. The translation rules will be simple and easily tractable. 
-
-The syntax is not here to shield users from the underlying model. Users are expected to know the underlying functions in order to be able to use this library effectively.
 
 >>
 
