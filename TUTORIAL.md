@@ -282,9 +282,9 @@ akar.try-out=> ((!record BNode) (->BNode 3 4))
 [3 4]
 ```
 
-#### "Type" introspection patterns
+#### Type-casing patterns
 
-There are many ways of tagging data in Clojure. There are cases when it's necessary to type-case on data. The following patterns are supported out of the box.
+There are cases when it's necessary to type-case on data. There are many ways in Clojure of tagging data with a "type".  The following ways are supported out of the box.
 
 ```clojure
 akar.try-out=> (def data ^{:type :cid} {:value 9})
@@ -760,7 +760,7 @@ akar.try-out=> (match data
 1
 ```
 
-#### "Type"-introspection pattern, syntactically
+#### Type-casing pattern, syntactically
 
 ```clojure
 akar.try-out=> (defn attempt [f handler]

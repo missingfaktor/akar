@@ -93,7 +93,7 @@
           (sequential? out) (vec (rest out)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; "Type" introspection patterns
+;;; Type-casing patterns
 
 (defn !type [type']
   (!pred (fn [arg]

@@ -145,7 +145,7 @@
                       :bindings (vec (mapcat :bindings syntactic-patterns))})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; "Type" introspection patterns
+;;; Type-casing pattern
 
 (sy/defrule type-pattern'
             (recap (sy/list-form (sy/cat :type

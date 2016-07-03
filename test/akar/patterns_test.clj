@@ -162,7 +162,7 @@
           (is (= :no-match
                  (try-match* "F 11" block)))))))
 
-  (testing "type introspection patterns"
+  (testing "type-casing patterns"
 
     (testing "!class"
       (let [block (clauses*
