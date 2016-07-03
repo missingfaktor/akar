@@ -91,20 +91,20 @@
         (is (= :not-so-five-ish
                (match* -1 block)))))
 
-    ;(testing "or patterns"
-    ;  (let [!node (fn [[_ left right]] [left right])
-    ;        !zero (!pred (fn [n]
-    ;                       (and (number? n)
-    ;                            (zero? n))))
-    ;        block (clauses (:or 9 [!zero]) :good-number
-    ;                       (:or [!node 2 :_] [!node :_ 2]) :two-somewhere-there
-    ;                       :_ :no-match)]
-    ;    (are [x y] (= x y)
-    ;               :good-number (match* 9 block)
-    ;               :good-number (match* 0 block)
-    ;               :two-somewhere-there (match* [:node 2 3] block)
-    ;               :two-somewhere-there (match* [:node 6 2] block)
-    ;               :no-match (match* [:node 1 1] block))))
+    (testing "or patterns"
+      (let [!node (fn [[_ left right]] [left right])
+            !zero (!pred (fn [n]
+                           (and (number? n)
+                                (zero? n))))
+            block (clauses (:or 9 [!zero]) :good-number
+                           (:or [!node 2 :_] [!node :_ 2]) :two-somewhere-there
+                           :_ :no-match)]
+        (are [x y] (= x y)
+                   :good-number (match* 9 block)
+                   :good-number (match* 0 block)
+                   :two-somewhere-there (match* [:node 2 3] block)
+                   :two-somewhere-there (match* [:node 6 2] block)
+                   :no-match (match* [:node 1 1] block))))
 
     (testing "bad or patterns"
       (is (thrown? Exception
