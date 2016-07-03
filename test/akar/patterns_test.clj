@@ -164,17 +164,6 @@
 
   (testing "type-casing patterns"
 
-    (testing "!class"
-      (let [block (clauses*
-                    (!class String) (fn [] :string)
-                    (!class Keyword) (fn [] :keyword))]
-        (is (= :string
-               (try-match* "SomeString" block)))
-        (is (= :keyword
-               (try-match* :some-keyword block)))
-        (is (= clause-not-applied
-               (try-match* 4 block)))))
-
     (testing "!tag"
       (let [block (clauses*
                     (!tag :some-tag) (fn [] :yes))]
@@ -185,4 +174,15 @@
       (let [block (clauses*
                     (!and (!type :card) !bind) (fn [card] (:details card)))]
         (is (= "Details"
-               (try-match* (with-meta {:details "Details"} {:type :card}) block)))))))
+               (try-match* (with-meta {:details "Details"} {:type :card}) block)))))
+
+    (testing "!type - for class"
+      (let [block (clauses*
+                    (!type String) (fn [] :string)
+                    (!type Keyword) (fn [] :keyword))]
+        (is (= :string
+               (try-match* "SomeString" block)))
+        (is (= :keyword
+               (try-match* :some-keyword block)))
+        (is (= clause-not-applied
+               (try-match* 4 block)))))))

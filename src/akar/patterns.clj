@@ -102,7 +102,3 @@
 (defn !tag [tag]
   (!pred (fn [arg]
            (= (:tag arg) tag))))
-
-(defn !class [class']
-  (!pred (fn [arg]
-           (instance? class' arg))))
