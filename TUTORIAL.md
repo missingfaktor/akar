@@ -66,10 +66,9 @@ This is the same example as before, with a slightly different syntax.
 
 We refer to the structure or property we are matching against as **pattern**.
 
-On some successful pattern matches, we can extract parts of the structure, and bind them to fresh variables scoped under the clause the pattern is a part of. We refer to these as **extractions**. The term "extract" carries an implication that these values are constituents of the original structure, which is something we cannot guarantee when patterns are arbitrary functions. So we sometimes also use a more unassuming term **emissions** to refer to these values.
-
 Each case of pattern match, along with the code to be excuted on a successful match, is referred to as a **clause**.
 
+On some successful pattern matches, we can extract parts of the structure, and bind them to fresh variables scoped under the clause the pattern is a part of. We refer to these as **extractions**. The term "extract" carries an implication that these values are constituents of the original structure, which is something we cannot guarantee when patterns are arbitrary functions. So we sometimes also use a more unassuming term **emissions** to refer to these values.
 
 Let's now put on our "functional goggles" for a bit, and try to see these constructs as functions.
 
