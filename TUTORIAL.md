@@ -41,11 +41,18 @@ In their report ["Pattern Matching for an Object-oriented and Dynamically Typed 
 
 > In contrast to regular accessors and conditional statements, it can be argued that deep pattern matching allows concise, readable deconstruction of complex data structures. More specifically, multiple nested conditional expressions quickly become difficult to read, while nested patterns allow destructuring of nested data containers in a single expression.
 
-### Drawbacks of traditional implementations
+### Traditional implementations
 
-In his paper ["First Class Patterns"](www.cs.yale.edu/~tullsen/patterns.ps), Mark Tullsen points out that patterns as typically implemented tend to be very complex. They bring in a lot of other special features, and even a small semantic change requires a large change in the compiler.
+Traditionally, pattern matches are compiled to [highly efficient matching automata](http://pauillac.inria.fr/~maranget/papers/ml05e-maranget.pdf), typically decision trees, realized using low level  tests, jump tables, and so on. This efficiency however comes at a cost.
 
-Tullsen ascribes most of these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html). This hinders our ability to abstract over them, limiting expressivity greatly. More syntactic extensions, such as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns) and [pattern synonyms](https://ghc.haskell.org/trac/ghc/wiki/PatternSynonyms), are needed to support any abstraction. This complicates the implementation further. See section 1.2 of the paper for some examples.
+The first section of Mark Tullsen's ["First Class Patterns"](http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=7D0C1723046D2DCD47099E7B2557381C?doi=10.1.1.37.7006&rep=rep1&type=pdf) paper enumerates a number of drawbacks associated with traditional implementations. Here is a brief summary:
+
+0. **Patterns are too complex.** Pattern matching usually comes with dozens of special purpose features, each of which occupies a place of its own in compilers and language specifications. (Currently ten pages in the Haskell 98 Report are dediated to pattern mathing.) This makes them both harder to implement and use.
+0. **Patterns have inelegant semantics.** Patterns impose a left-to-right, top-to-bottom evaluation order. If we want a dierent evaluation order, we must either do without patterns or write far less elegant looking ode.
+0. **You cannot abstract over patterns.** Patterns being a syntactic construct makes it almost impossible to abstract over them. This limits expressivity greatly. Languages end up adding more syntactic extensions, such as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns) and [pattern synonyms](https://ghc.haskell.org/trac/ghc/wiki/PatternSynonyms) to support any abstraction, complicating the implementation and semantics even further.
+
+Tullsen ascribes most of these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html).
+
 
 ### First class patterns
 
