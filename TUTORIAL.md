@@ -357,9 +357,9 @@ user=> (foo [])
 
 ### Pattern combinators
 
-You can manipulate and combine patterns in a number of ways. 
+You can manipulate and combine patterns in a number of ways.
  
-- Negating a pattern.
+#### Negating a pattern
 
 ```clojure
 user=> ((!not (!constant 3)) 3)
@@ -369,7 +369,7 @@ user=> ((!not (!constant 4)) 3)
 []
 ```
 
-- Conjunction of multiple patterns.
+#### Conjunction of multiple patterns
 
 ```clojure
 user=> ((!and (!key :name) (!key :age)) {:name "quentin" :age 25})
@@ -379,7 +379,7 @@ user=> ((!and (!key :name) (!key :age)) {:name "quentin"})
 nil
 ```
 
-- Disjunction of multiple patterns. (Aka, alternation.)
+#### Disjunction/alternation of multiple patterns
 
 ```clojure
 user=> ((!or (!constant 2) (!constant 3)) 2)
@@ -399,7 +399,9 @@ user=> ((!or (!key :kr-number) (!key :tr-number)) {:tr-number "t 25"})
 
 ```
 
-- Applying a function to an argument, and then matching its result against a pattern. This is known in Haskell world as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns).
+#### View pattern
+
+This involves applying a function to an argument, and then matching its result against a pattern. This is known in Haskell world as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns).
 
 ```clojure
 user=> (def five-ish (!view #(Math/abs %) (!constant 5)))
@@ -415,7 +417,9 @@ user=> (five-ish 6)
 nil
 ```
 
-- Guard a pattern with an additional predicate.
+#### Pattern guards
+
+Sometimes you may wish to guard existing patterns with additional predicates.
 
 ```
 user=> ((!guard !cons vector?) [2 3])
@@ -425,7 +429,9 @@ user=> ((!guard !cons vector?) '(2 3))
 nil
 ```
 
-- Apart from the emitted values, also bind the value being matched. These are called at-patterns or as-patterns.
+#### At-patterns / As-patterns
+
+Apart from the emitted values, we may also want to bind the value being matched. These are especially useful when dealing with nested pattern matches.
  
 ```clojure
 user=> ((!at (!constant 3)) 3)
@@ -435,7 +441,7 @@ user=> ((!at (!constant 3)) 4)
 nil
 ```
 
-Look up the definitions of `!view`, `!guard`, and `!at` in your REPL. Look how simple they are!
+Look up the definitions of `!view`, `!guard`, and `!at` in your REPL. 
 
 ## Syntax
 
