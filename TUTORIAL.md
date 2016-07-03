@@ -225,7 +225,7 @@ user=> (!one 2)
 nil
 ```
 
-That works. But it would suck to be maddening to have to define a new pattern for every new constant we want to test for. How could we generalize this further to work with any **constants**? Easy! Parametrize it.
+That works. But it would be maddening to have to define a new pattern for every new constant we want to test for. How could we generalize this further to work with any **constants**? Easy! Parametrize it.
  
 ```clojure
 user=> (defn !cst [x]
@@ -270,9 +270,9 @@ Now that we have seen a bunch of pattern functions, let's try and put it all tog
 
 You can compose clauses with a function named `or-else`. There's a utility function named `clauses*` which allows you define a group of clauses with slightly less noise. 
 
-The function `match*` allows you to match a value against a bunch of clauses. 
+The function `match*` allows you to match a value against a clause. 
     
-Here is a full example.
+Here is a complete example.
 
 ```clojure
 user=> (defn foo [n]
@@ -303,7 +303,7 @@ foo xs = case xs of
               _   -> "empty"
 ```
 
-In the first clause, not only do we split up the list into its head and tail, but also further match that the head is equal to `2`. In the second clause, we bind the head to a value, but discard the tail. This is nested pattern matching. 
+In the first clause, not only do we split up the list into its head and tail, but also further require that the head is equal to `2`. In the second clause, we bind the head to a value, but discard the tail. This is nested pattern matching. 
  
 Akar has a pattern `!cons` that splits the head and tail of a list.
 
