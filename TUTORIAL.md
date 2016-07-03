@@ -48,36 +48,61 @@ Traditionally, pattern matches are compiled to [highly efficient matching automa
 The first section of Mark Tullsen's ["First Class Patterns"](http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=7D0C1723046D2DCD47099E7B2557381C?doi=10.1.1.37.7006&rep=rep1&type=pdf) paper enumerates a number of drawbacks associated with traditional implementations. Here is a brief summary:
 
 0. **Patterns are too complex.** Pattern matching usually comes with dozens of special purpose features, each of which occupies a place of its own in compilers and language specifications. (Currently ten pages in the Haskell 98 Report are dediated to pattern mathing.) This makes them both harder to implement and use.
-0. **Patterns have inelegant semantics.** Patterns impose a left-to-right, top-to-bottom evaluation order. If we want a dierent evaluation order, we must either do without patterns or write far less elegant looking ode.
+0. **Patterns have inelegant semantics.** Patterns impose a left-to-right, top-to-bottom evaluation order. If we want a different evaluation order, we must either do without patterns or write far less elegant looking ode.
 0. **You cannot abstract over patterns.** Patterns being a syntactic construct makes it almost impossible to abstract over them. This limits expressivity greatly. Languages end up adding more syntactic extensions, such as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns) and [pattern synonyms](https://ghc.haskell.org/trac/ghc/wiki/PatternSynonyms) to support any abstraction, complicating the implementation and semantics even further.
 
 Tullsen ascribes most of these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html).
 
+Akar patterns are first class values, and alleviate all of the problems described here. This also means that we do not compile down to efficient decision trees, as is the case with traditional implementations. As stated earlier, Akar focuses on simplicity and abstraction, and as such, trades off some performance for it. [TANSTAAFL](https://en.wikipedia.org/wiki/There_ain%27t_no_such_thing_as_a_free_lunch)! You can read more about performance in the FAQs.
+
 
 ### First class patterns
 
-Let's put on our "functional goggles" for a bit, and try to see patterns as functions.
+We will start with some terminology. Look at the diagram below:
 
-A pattern is something that **matches** the data against some structure or properties, and can potentially **extract** some values in case of a match. The following signature captures this contract precisely:
+![terminology](graphics/terminology.jpg)
+
+This is the same example as before, with a slightly different syntax.
+
+We refer to the structure or property we are matching against as **pattern**.
+
+On some successful pattern matches, we can extract parts of the structure, and bind them to fresh variables scoped under the clause the pattern is a part of. We refer to these as **extractions**. The term "extract" carries an implication that these values are constituents of the original structure, which is something we cannot guarantee when patterns are arbitrary functions. So we sometimes also use a more unassuming term **emissions** to refer to these values.
+
+Each case of pattern match, along with the code to be excuted on a successful match, is referred to as a **clause**.
+
+
+Let's now put on our "functional goggles" for a bit, and try to see these constructs as functions.
+
+![functionalgoggles](graphics/functional.goggles.png)
+
+A **pattern** is something that **matches** the data against some structure or properties, and can potentially **emit** some values in case of a match. The following signature captures this contract precisely:
  
 ```
-data -> (extracts | nil)
+data -> (emissions | nil)
 ```
 
-`extracts` is a sequence of extracted values. `nil` would mean that the match failed.
+`emissions` is a sequence of emitted values. 
 
-This is the formulation of patterns used by Akar. There's literally nothing more to it!
+`nil` would mean that the match failed.
+
+A **clause** is a function that combines a **pattern** and a **function** to be invoked on a successful match.
+
+```
+((data -> emissions | nil), (emissions -> result)) -> (data -> result | nil)
+```
+
+These is the formulations used by Akar. There's literally nothing more to it! Amazed yet?
 
 Treating patterns as regular functions opens up new possibilities. You can abstract over and compose them, like you do with any other functions. It's much simpler do build new features. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation, are implemented in Akar. That should serve as a testament to the simplicity and power of this model.
 
 This is not a novel idea, and there is quite a bit of "prior art" out there:
 
-0. [first-class-patterns](http://hackage.haskell.org/package/first-class-patterns), a Haskell library by Brent Yorgey. (Akar is largely based on this library.) 
+0. [first-class-patterns](http://hackage.haskell.org/package/first-class-patterns), a Haskell library by Brent Yorgey. (Akar borrows many ideas from this library.) 
 0. [Newspeak](http://gbracha.blogspot.de/2010/06/patterns-as-objects-in-newspeak.html) [patterns](https://publishup.uni-potsdam.de/files/4204/tbhpi36.pdf).
 0. John De Goes' [presentation](http://www.slideshare.net/jdegoes/firstclass-patterns), where he also links to a Javascript fiddle illustrating the ideas.
 0. ["First Class Patterns"](www.cs.yale.edu/~tullsen/patterns.ps), a paper by Mark Tullsen. (Previously referred in this article.)
 0. [Active patterns](http://fsharpforfunandprofit.com/posts/convenience-active-patterns/) in F#.
-0. Scala [extractors](http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf). (Kind of, but not quite).
+0. Scala [extractors](http://lampwww.epfl.ch/~emir/written/MatchingObjectsWithPatterns-TR.pdf). (Sort of, but not quite).
 
 *(This tutorial borrows many explanations and examples from the above mentioned resources.)*
 
