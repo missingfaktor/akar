@@ -117,9 +117,11 @@ This tutorial is structured in a bottom up fashion. We introduce you to the unde
 
 ### Pattern functions
 
+#### 'Ignore' patterns
+
 Let's start defining some patterns.
 
-All pattern matching implementations feature a way to **ignore** an emitted value. The typical syntax is `_`. Consider the following Haskell example:
+All pattern matching implementations feature a way to **ignore** the value being matched. The typical syntax is `_`. Consider the following Haskell example:
  
 ```haskell
 case n of
@@ -127,7 +129,9 @@ case n of
      _ -> False      -- Otherwise give False
 ```
 
-How will you formulate the "ignore" pattern as a function? Easy! It should always return an empty sequence (i.e. no extracts) regardless of its input. Akar ships with such a function, and it's called `!any`. Look up its source in your REPL.
+How will you formulate the "ignore" pattern as a function? Easy! It should always return an empty sequence (i.e. no emissions) regardless of its input. 
+
+Akar ships with such a function, and it's called `!any`. Inspect its source in your REPL.
 
 ```clojure
 user=> (source !any)
@@ -137,7 +141,7 @@ user=> (source !any)
 nil
 ```
 
-*(If you are going "WTF! What are those bangs?" at this point, please read [this](stuff).)*
+(If you are going "Hmm, what are those bangs?" at this point, the FAQs might help you out.)
 
 Test it out!
 
@@ -150,6 +154,8 @@ user=> (!any :banana)
 ```
 
 Sweet!
+
+#### Bindings
 
 Let's try and define another common pattern matching feature: **Binding**. In pattern matching, you can bind values to names, that will be made available in a certain scope. 
 
