@@ -157,9 +157,9 @@ Sweet!
 
 #### Bindings
 
-Let's try and define another common pattern matching feature: **Binding**. In pattern matching, you can bind values to names, that will be made available in a certain scope. 
+Let's define another common pattern matching feature: **Binding**. In patterns, you can bind the values being matched to fresh variables, which will be available in scope of the clause they are a part of.
 
-This happens in two parts. First, you must define a function that emits its arguments as-is, indiscriminately. Akar defines such a function for you. It's called `!bind`.
+This happens in two parts. First, we must define a function that emits its arguments as-is, indiscriminately. Akar defines such a function for you. It's called `!bind`.
  
 ```clojure
 user=> (source !bind)
@@ -175,9 +175,7 @@ user=> (!bind :banana)
 [:banana]
 ```
 
-The other part allows us to consume the emitted values. At this point, we must learn about another Akar concept: **clauses**.
-
-A clause is essentially a function that accepts a pattern and another function. If the former matches, the latter is invoked with the emitted values. `clause*` is a function we use to create a clause.
+Thie second part is about consuming the emitted values. This is where the function `clause*` comes in picture.
 
 Let's see this in action.
 
@@ -211,6 +209,8 @@ user=> (c3 2)
 ArityException Wrong number of args (0) passed to: user/fn--2607  clojure.lang.AFn.throwArity (AFn.java:429)
 ```
 
+#### Constant patterns
+
 Moving on, let's define a pattern that matches specifically for value `1`.
  
 ```clojure
@@ -225,7 +225,7 @@ user=> (!one 2)
 nil
 ```
 
-That works. But it would suck to have to define a new pattern for every new constant we want to test for. How could we generalize this further to work with any **constants**? Easy! Parametrize it.
+That works. But it would suck to be maddening to have to define a new pattern for every new constant we want to test for. How could we generalize this further to work with any **constants**? Easy! Parametrize it.
  
 ```clojure
 user=> (defn !cst [x]
@@ -241,8 +241,9 @@ nil
 
 Akar already has this function, and it's called `!constant`.
 
+#### Predicate patterns
 
-We could generalize this even further to accept any **predicate**, and not be restricted to just equality tests. Sure enough, Akar has this as well.
+We could generalize this even further to accept any **predicate**, and not be restricted to just equality tests. Sure enough, Akar has this covered as well.
 
 ```clojure
 user=> (source !pred)
