@@ -680,7 +680,8 @@ akar.try-out=> (match 11
 akar.try-out=> (pprint (macroexpand-1 '(match 11 (:guard x odd?) x)))
 (akar.primitives/match* 11 (akar.primitives/or-else 
                              (akar.primitives/clause* (akar.combinators/!guard akar.patterns/!bind odd?) (clojure.core/fn [x] x))))
-nil```
+nil
+```
 
 #### `view-pattern'` syntactic patterns
 
