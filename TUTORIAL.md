@@ -399,7 +399,7 @@ akar.try-out=> ((!or (!key :kr-number) (!key :tr-number)) {:tr-number "t 25"})
 
 ```
 
-#### View pattern
+#### View patterns
 
 This involves applying a function to an argument, and then matching its result against a pattern. This is known in Haskell world as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns).
 
@@ -645,13 +645,3 @@ Mention why !or special features and !not cannot make it to syntax.
 
 ???
 
-### FAQs
-Comparison with core.match
-Interesting frontiers. Prisms? OTOH, Bondi.
-
-is relevant in clojure? hickey. slingshot. and so on.
-
-Trade offs 
-what did we trade? exh. runs against grain.
-
-bangvar
