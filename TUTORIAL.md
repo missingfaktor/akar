@@ -215,7 +215,7 @@ Moving on, let's define a pattern that matches specifically for value `1`.
  
 ```clojure
 user=> (def !one
-  #_=>   (fn [arg] (if (= arg 1) [])))
+         (fn [arg] (if (= arg 1) [])))
 #'user/!one
 
 user=> (!one 1)
@@ -229,7 +229,7 @@ That works. But it would be maddening to have to define a new pattern for every 
  
 ```clojure
 user=> (defn !cst [x]
-  #_=>   (fn [arg] (if (= arg x) [])))
+         (fn [arg] (if (= arg x) [])))
 #'user/!cst
 
 user=> ((!cst :woop) :woop)
@@ -276,10 +276,10 @@ Here is a complete example.
 
 ```clojure
 user=> (defn foo [n]
-  #_=>   (match* n (clauses* (!constant 4) (fn [] :four)
-  #_=>                       (!pred even?) (fn [] :even)
-  #_=>                       !bind         (fn [x] x)
-  #_=>                       !any          (fn [] :we-will-never-get-here))))
+         (match* n (clauses* (!constant 4) (fn [] :four)
+                             (!pred even?) (fn [] :even)
+                             !bind         (fn [x] x)
+                             !any          (fn [] :we-will-never-get-here))))
 #'user/foo
 
 user=> (foo 4)
@@ -340,9 +340,9 @@ The Haskell example we saw previously can be written with Akar as follows:
 
 ```clojure
 user=> (defn foo [xs]
-  #_=>   (match* xs (clauses* (!further !cons [(!constant 2) !any]) (fn [] "starts with 2")
-  #_=>                        (!further !cons [!bind !any])         (fn [x] (str "starts with " x))
-  #_=>                        !any                                  (fn [] "empty"))))
+         (match* xs (clauses* (!further !cons [(!constant 2) !any]) (fn [] "starts with 2")
+                              (!further !cons [!bind !any])         (fn [x] (str "starts with " x))
+                              !any                                  (fn [] "empty"))))
 #'user/foo
 
 user=> (foo [2 3 4])
@@ -459,15 +459,15 @@ user=> (def cache (java.util.concurrent.ConcurrentHashMap.))
 #'user/cache
 
 user=> (defn act-on-event [evt]
-  #_=>   (match* evt (clauses* (!and (!further (!key :evt-type) [(!or (!constant :child-added)
-  #_=>                                                                (!constant :child-updated))])
-  #_=>                               (!key :data)
-  #_=>                               (!key :path)) (fn [data path] (.put cache path data))
-  #_=>
-  #_=>                         (!and (!further (!key :evt-type) [(!constant :child-removed)])
-  #_=>                               (!key :path)) (fn [path] (.remove cache path))
-  #_=>
-  #_=>                         !any (fn [] nil))))
+         (match* evt (clauses* (!and (!further (!key :evt-type) [(!or (!constant :child-added)
+                                                                      (!constant :child-updated))])
+                                     (!key :data)
+                                     (!key :path)) (fn [data path] (.put cache path data))
+      
+                               (!and (!further (!key :evt-type) [(!constant :child-removed)])
+                                     (!key :path)) (fn [path] (.remove cache path))
+      
+                               !any (fn [] nil))))
 #'user/act-on-event
 
 user=> (act-on-event {:evt-type :child-added :data "d" :path "p"})
@@ -568,7 +568,7 @@ To see how this gets consumed, let's write a full `match` expressions.
 
 ```clojure
 user=> (match 3
-  #_=>        x (inc x))
+              x (inc x))
 4
 ```
 
