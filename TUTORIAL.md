@@ -259,8 +259,54 @@ akar.try-out=> ((!pred odd?) 3)
 akar.try-out=> ((!pred odd?) 2)
 nil
 ```
+
+#### Data-type patterns
+
+Jeanine Adkisson gave a talk at ClojureConj about [variants in Clojure](https://www.youtube.com/watch?v=ZQkIWWTygio). This is a very simple representation wherein you use a vector whose first argument is a tag or a label, and the rest are fields. The pattern `!variant` allows you to pattern match on such structures.
+
+```clojure
+akar.try-out=> ((!variant :b-node) [:b-node 3 4])
+[3 4]
+
+akar.try-out=> ((!variant :b-node) [:z-node 3 4])
+nil
+```
+
+There is a record counterpart of this pattern, named `!record`.
+
+```clojure
+akar.try-out=> (defrecord BNode [lvalue rvalue])
+akar.try_out.BNode
+
+akar.try-out=> ((!record BNode) (->BNode 3 4))
+[3 4]
+```
+
+#### "Type" introspection patterns
+
+There are many ways of tagging data in Clojure. There are cases when it's necessary to type-case on data. The following patterns are supported out of the box.
+
+```clojure
+akar.try-out=> (def data ^{:type :cid} {:value 9})
+#'akar.try-out/data
+
+akar.try-out=> ((!type :cid) data)
+[]
+
+akar.try-out=> (def data {:tag :cid :value 9})
+#'akar.try-out/data
+
+akar.try-out=> ((!tag :cid) data)
+[]
+
+akar.try-out=> (def data (java.util.Date.))
+#'akar.try-out/data
+
+akar.try-out=> ((!class java.util.Date) data)
+[]
+```
  
-I hope this gives you an idea of how pattern functions work. I suggest you skim through [patterns.clj](src/akar/patterns.clj) before continuing further.
+I hope this gives you an idea of how pattern functions work. There are a few more stock patterns. I suggest you skim through [patterns.clj](src/akar/patterns.clj) before continuing further.
 
 ...
 
@@ -353,6 +399,23 @@ akar.try-out=> (foo [5 3 4])
 
 akar.try-out=> (foo [])
 "empty"
+```
+
+There is a variation of `!further` named `!further-many` that allows a variadic list of arguments to be further matched by other patterns. This is needed to work with patterns like `!seq` and `!regex`. 
+
+Due to variadicity, `!further-many` comes with a support for what's known as rest patterns, i.e. an ability to capture "all the remaining values" and match them further.
+
+Some examples:
+
+```clojure
+akar.try-out=> ((!further-many !seq [!bind !bind]) [3 4])
+(3 4)
+
+akar.try-out=> ((!further-many !seq [!bind !bind]) [3 4 5 6])
+nil
+
+akar.try-out=> ((!further-many !seq [!bind !bind] !bind) [3 4 5 6])
+(3 4 [5 6])
 ```
 
 ### Pattern combinators
