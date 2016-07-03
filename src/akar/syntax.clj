@@ -63,12 +63,22 @@
                      {:pattern  `(!view ~view-fn ~(:pattern syntactic-pattern))
                       :bindings (:bindings syntactic-pattern)})))
 
+(defn ^:private ensure-no-bindings-for-or [syntactic-patterns]
+  (let [bindings (vec (mapcat :bindings syntactic-patterns))]
+    (if (not-empty bindings)
+      (throw (RuntimeException.
+               (str "Bindings encountered: " bindings \newline
+                    ":or syntactic patterns do not support bindings." \newline
+                    "Please ignore the bindings using :_"))))))
+
 (sy/defrule or-pattern'
             (recap (sy/list-form (sy/cat :or
                                          (sy/rep+ (delay pattern'))))
                    (fn [& syntactic-patterns]
                      {:pattern  `(!or ~@(map :pattern syntactic-patterns))
-                      :bindings []})))
+                      :bindings (do
+                                  (ensure-no-bindings-for-or syntactic-patterns)
+                                  [])})))
 
 (sy/defrule and-pattern'
             (recap (sy/list-form (sy/cat :and
