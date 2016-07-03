@@ -594,10 +594,12 @@ Run the following lines in your REPL, and marvel at the output. :smile:
 ### akar.syntax
 
 We will go over the important bits of syntax supported by Akar. We will use functions `syndoc`, `parse-forms` (also from seqex) and `macroexpand-1` to study these. You have already seen `syndoc`. The latter two will help us see how various syntactic patterns translate to corresponding functions. 
-     
+
 Syntactic patterns map to corresponding pattern functions, plus name bindings introduced by that pattern. 
 
-### `any'` syntatic patterns
+(Note that you will never need to touch the individual syntactic pattern rules directly. This is only for educational purposes.)
+
+#### `any'` syntatic patterns
   
 ```clojure
 akar.try-out=> (syndoc any')
@@ -620,7 +622,7 @@ nil
 
 `any'` syntactic patterns map to `!any` function, and introduce no bindings.
 
-### `bind'` syntactic patterns
+#### `bind'` syntactic patterns
 
   
 ```clojure
@@ -647,64 +649,178 @@ akar.try-out=> (pprint (macroexpand-1 '(match 3 x (inc x))))
 nil
 ```
 
-### `literal'` syntactic patterns
+#### `literal'` syntactic patterns
 
+The literals are translated to `!constant` patterns. 
 
+```clojure
+akar.try-out=> (parse-forms literal' '(9))
+{:pattern (akar.patterns/!constant 9), :bindings []}
 
+akar.try-out=> (match 9
+                      9 :nine)
+:nine
 
+akar.try-out=> (pprint (macroexpand-1 `(match 9 9 :nine)))
+(akar.primitives/match* 9 (akar.primitives/or-else
+                            (akar.primitives/clause* (akar.patterns/!constant 9) (clojure.core/fn [] :nine))))
+nil
 
+```
 
+You can of course use `!constant` pattern for non-literals, but in that case, it needs to be invoked differently. See the section on arbitrary syntactic patterns for more.
 
+#### `guard-pattern'` syntactic patterns
 
-As we go, we will introduce various features, both the function versions and syntax versions. Some features only exist in functions land and have no syntactic equivalents.
+```clojure
+akar.try-out=> (match 11
+                      (:guard x odd?) x)
+11
 
-<< 
+akar.try-out=> (pprint (macroexpand-1 '(match 11 (:guard x odd?) x)))
+(akar.primitives/match* 11 (akar.primitives/or-else 
+                             (akar.primitives/clause* (akar.combinators/!guard akar.patterns/!bind odd?) (clojure.core/fn [x] x))))
+nil```
 
+#### `view-pattern'` syntactic patterns
 
->>
+```clojure
+akar.try-out=> (match {:name "gazo"}
+                      (:view :name "gazo") :yay)
+:yay
 
-## clause
+akar.try-out=> (pprint (macroexpand-1
+                 '(match {:name "gazo"}
+                         (:view :name "gazo") :yay)))
+(akar.primitives/match* {:name "gazo"} (akar.primitives/or-else
+                                         (akar.primitives/clause* (akar.combinators/!view :name (akar.patterns/!constant "gazo")) (clojure.core/fn [] :yay))))
+nil
+```
 
-#### Simple patterns
+#### Pattern combinators, syntactically
 
-!any 
+You can use `:and` and `:or` to combine multiple patterns. (We will stop including macro expansions from this point onwards in this tutorial. You are still encouraged to keep exploring them at your REPL.)
 
-Keep invoking `parse-forms`, and `source`.
+```clojure
+akar.try-out=> (match 45
+                      (:and x (:or 45 55)) x)
+45
+```
 
-!bind 
+You may notice here that `:and` when used in conjunction with binding patterns allows you to bind the value being matched. This subsumes the functionality of `!at`, and thus we do not need a separate syntax support for as-patterns/at-patterns.
 
-!constant
+Let's play some more.
 
-!some
+```clojure
+akar.try-out=> (match 45
+                      (:or x 45) x)
 
-#### "Arbitrary" patterns
+RuntimeException Bindings encountered: [x]
+:or syntactic patterns do not support bindings.
+Please ignore the bindings using :_  akar.syntax/ensure-no-bindings-for-or (syntax.clj:70)
 
-!empty
-!cons
+```
 
-Detour: !further 
+Whoops. The pattern fails with an error. Luckily the error message is self-explanatory.
 
-!further
+The reason `:or` does not support bindings is that it's impossible to tell at the time of syntax parsing which names are actually being bound. Underlying `!or` combinator does not suffer from this limitation due to positional nature of emissions.
 
-Explain that with syntactic patterns, some patterns with special syntaxes do it automatically. Arbitrary patterns do them in some cases.
+For similar reasons, the `!not` combinators has no syntactic counterpart either.
 
-#### Collection patterns
+#### Collection patterns, syntactically
 
-!seq
+Sequences and maps are the most important data structures in Clojure, and as such, have a dedicated syntax support in Akar. Some examples below:
 
-!further-many
+```clojure
+akar.try-out=> (match data
+                      {:tag :i :contents (:seq [prim & secs])} {:primary prim
+                                                                :secondaries secs})
+{:primary "w", :secondaries ["s" "d" "j"]}
+```
 
-#### Data type patterns
+#### Data type patterns, syntactically
 
-#### "Type" introspection patterns
+```clojure
+akar.try-out=> (def data [:node 1 2])
+#'akar.try-out/data
 
-#### Combinators / special operators
+akar.try-out=> (match data
+                      (:variant :node [1 n]) n)
+2
 
-!view !and !or !at !guard !not 
+akar.try-out=> (defrecord Node [lvalue rvalue])
+akar.try_out.Node
 
-Mention why !or special features and !not cannot make it to syntax.
+akar.try-out=> (def data (->Node 1 2))
+#'akar.try-out/data
 
-## A full loaded example
+akar.try-out=> (match data
+                      (:record Node [m 2]) m)
+1
+```
 
-???
+#### "Type"-introspection pattern, syntactically
 
+```clojure
+akar.try-out=> (defn attempt [f handler]
+                 (try (f)
+                      (catch Exception e (handler e))))
+          
+#'akar.try-out/attempt
+
+akar.try-out=> (attempt (fn [] (/ 3 0))
+                        (fn [e] (match e
+                                       (:type ArithmeticException :_) :nan)))
+:nan
+```
+
+You will notice that `:type` by default introduces a binding for the value being matched. By doing so, we break consistency with other syntactic patterns. This decision was made out of a practical consideration for the most common use cases of this pattern.
+
+#### Arbitary patterns, syntactically
+
+Finally, we need a way to use arbitrary pattern functions in the syntactic layer. A special vector syntax is reserved for this purpose. The first element of vector is the pattern function, and the rest are emissions that can be further matched using syntactic patterns.
+
+The following example should make it clear how this is to be used.
+
+```clojure
+akar.try-out=> (defn find [list pred]
+                          (match list
+                                 [!cons (:guard x pred) :_] x
+                                 [!cons :_              xs] (find xs pred)
+                                 [!empty]                   nil))
+#'akar.try-out/find
+
+akar.try-out=> (find [3 4 5] even?)
+4
+
+akar.try-out=> (find [3 4 5] odd?)
+3
+
+akar.try-out=> (find [3 4 5] zero?)
+nil
+```
+
+The first element does not have to be a symbol. It can be any form as long as it results into a pattern function at runtime. The following example should illustrate this:
+
+```clojure
+akar.try-out=> (defn parse-alien-language [sentence]
+                 (match sentence
+                        [(!regex #"(.*) is (.*)") a b] {:tag :definition
+                                                        :obj b
+                                                        :meaning a}
+                        :_                              :syntax-error))
+#'akar.try-out/parse-alien-language
+
+akar.try-out=> (parse-alien-language "teyfir is money")
+{:tag :definition, :obj "money", :meaning "teyfir"}
+```
+
+The ability to use arbitrary pattern functions thusly gives Akar virtually unlimited flexibility. 
+
+## End
+
+Congratulations. You have reached the end of Akar tutorial. If you have any questions, please get in touch at our [gitter channel](https://gitter.im/missingfaktor/akar).
+
+We hope you have great fun using Akar.
+
+Thank you!
