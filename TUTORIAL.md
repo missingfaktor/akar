@@ -90,7 +90,7 @@ A **clause** is a function that combines a **pattern** and a **function** to be 
 ((data -> emissions | nil), (emissions -> result)) -> (data -> result | nil)
 ```
 
-These is the formulations used by Akar. There's literally nothing more to it! Amazed yet?
+These are the formulations used by Akar. There's literally nothing more to it! Amazed yet?
 
 Treating patterns as regular functions opens up new possibilities. You can abstract over and compose them, like you do with any other functions. It's much simpler do build new features. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation, are implemented in Akar. That should serve as a testament to the simplicity and power of this model.
 
@@ -105,28 +105,21 @@ This is not a novel idea, and there is quite a bit of "prior art" out there:
 
 *(This tutorial borrows many explanations and examples from the above mentioned resources.)*
 
-## Akar
+## Diving in
 
-Without further ado, let's jump right in! 
+Without further ado, let's dive right in! 
 
 Start a Clojure REPL with Akar on path. The easiest way to do so might be to clone this project, and firing `lein repl` from inside the directory. Alternatively, you could use [`lein-try`](https://github.com/rkneufeld/lein-try). 
 
-We will be needing following `use`s:
+You should find yourself in the `akar.try-out` namespace by default. If not, switch to it manually. This namespace brings in all the modules that we will be needing for this tutorial.
 
-```clojure
-(use 'clojure.repl :reload-all)
-(use 'akar.primitives :reload-all)
-(use 'akar.patterns :reload-all)
-(use 'akar.combinators :reload-all)
-(use 'akar.syntax :reload-all)
-(use 'n01se.syntax :reload-all)
-```
+This tutorial is structured in a bottom up fashion. We introduce you to the underlying primitives, pattern functions, and combinators first. The discussion on syntax is deferred for later.
 
 ### Pattern functions
 
 Let's start defining some patterns.
 
-All pattern matching implementations feature a way to **ignore** an argument being matched. The typical syntax is `_`. Consider the following Haskell example:
+All pattern matching implementations feature a way to **ignore** an emitted value. The typical syntax is `_`. Consider the following Haskell example:
  
 ```haskell
 case n of
