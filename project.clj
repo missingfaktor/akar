@@ -1,4 +1,4 @@
-(defproject akar "0.1.0-SNAPSHOT"
+(defproject akar "0.1.0"
   :description "First-class patterns for Clojure"
   :license {:name         "The MIT License"
             :url          "http://opensource.org/licenses/mit-license.php"
