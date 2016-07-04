@@ -28,7 +28,7 @@ Akar solves a more specific (or, less general) problem, and is much, much simple
 
 That said, we might explore porting lenses to Clojure in future.
 
-**Q. How relevant is pattern matching in Clojure?**
+### Q. How relevant is pattern matching in Clojure?
 
 As relevant as in any other language. :smile:
 
@@ -45,7 +45,8 @@ akar.try-out=> (defn zipmap' [keys vals]
 #'akar.try-out/zipmap'
 
 akar.try-out=> (zipmap' [2 3 9] [:zwei :drei :nein :eins])
-{9 :nein, 3 :drei, 2 :zwei}```
+{9 :nein, 3 :drei, 2 :zwei}
+```
 
 This example was taken from Sean Johnson's ["Pattern Matching in Clojure"](https://www.youtube.com/watch?v=n7aE6k8o_BU) talk. The talk presents many more examples where pattern matching makes code simpler to write, understand, and modify.
 
