@@ -51,9 +51,9 @@ The first section of Mark Tullsen's ["First Class Patterns"](http://citeseerx.is
 0. **Patterns have inelegant semantics.** Patterns impose a left-to-right, top-to-bottom evaluation order. If we want a different evaluation order, we must either do without patterns or write far less elegant looking ode.
 0. **You cannot abstract over patterns.** Patterns being a syntactic construct makes it almost impossible to abstract over them. This limits expressivity greatly. Languages end up adding more syntactic extensions, such as [view patterns](https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns) and [pattern synonyms](https://ghc.haskell.org/trac/ghc/wiki/PatternSynonyms) to support any abstraction, complicating the implementation and semantics even further.
 
-Tullsen ascribes most of these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html).
+Tullsen ascribes these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html).
 
-Akar patterns are first class values, and alleviate all of the problems described here. This also means that we do not compile down to efficient decision trees, as is the case with traditional implementations. As stated earlier, Akar focuses on simplicity and abstraction, and as such, trades off some performance for it. [TANSTAAFL](https://en.wikipedia.org/wiki/There_ain%27t_no_such_thing_as_a_free_lunch)! You can read more about performance in the [FAQs](FAQs.md).
+Akar patterns are first class values, and alleviate the problems described here. This also means that we do not compile down to efficient decision trees, as is the case with traditional implementations. As stated earlier, Akar focuses on simplicity and abstraction, and as such, trades off some performance for it. [TANSTAAFL](https://en.wikipedia.org/wiki/There_ain%27t_no_such_thing_as_a_free_lunch)! You can read more about performance in the [FAQs](FAQs.md).
 
 
 ### First class patterns
@@ -68,13 +68,13 @@ We refer to the structure or property we are matching against as **pattern**.
 
 Each case of pattern match, along with the code to be excuted on a successful match, is referred to as a **clause**.
 
-On some successful pattern matches, we can extract parts of the structure, and bind them to fresh variables scoped under the clause the pattern is a part of. We refer to these as **extractions**. The term "extract" carries an implication that these values are constituents of the original structure, which is something we cannot guarantee when patterns are arbitrary functions. So we sometimes also use a more unassuming term **emissions** to refer to these values.
+On some successful pattern matches, we can extract parts of the structure, and bind them to fresh variables scoped under the clause that the pattern is a part of. We refer to these as **extractions**. The term "extract" carries an implication that these values are constituents of the original structure, which is something we cannot guarantee when patterns are arbitrary functions. So we sometimes also use a more unassuming term **emissions** to refer to these values.
 
-Let's now put on our "functional goggles" for a bit, and try to see these constructs as functions.
+Let's now put on our "functional goggles", and try to see these constructs as functions.
 
 ![functionalgoggles](graphics/functional.goggles.jpg)
 
-A **pattern** is something that **matches** the data against some structure or properties, and can potentially **emit** some values in case of a match. The following signature captures this contract precisely:
+A **pattern** is something that **matches** the given data against some structure or properties, and can potentially **emit** some values in case of a match. The following signature captures this contract precisely:
  
 ```
 data -> (emissions | nil)
@@ -92,7 +92,7 @@ A **clause** is a function that combines a **pattern** and a **function** to be 
 
 These are the formulations used by Akar. There's literally nothing more to it! Amazed yet?
 
-Treating patterns as regular functions opens up new possibilities. You can abstract over and compose them, like you do with any other functions. It's much simpler do build new features. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation, are implemented in Akar. That should serve as a testament to the simplicity and power of this model.
+Treating patterns as regular functions opens up new possibilities. You can abstract over them and compose them, like you do with any other functions. It's much simpler to build new features too. In fact, this is exactly how various pattern operations, such as guards, at-patterns, alternation etc are implemented in Akar. That should serve as a testament to the simplicity and power of this model.
 
 This is not a novel idea, and there is quite a bit of "prior art" out there:
 
@@ -109,7 +109,7 @@ This is not a novel idea, and there is quite a bit of "prior art" out there:
 
 Without further ado, let's dive right in! 
 
-Start a Clojure REPL with Akar on path. The easiest way to do so might be to clone this project, and firing `lein repl` from inside the directory. Alternatively, you could use [`lein-try`](https://github.com/rkneufeld/lein-try). 
+Start a Clojure REPL with Akar on path. The easiest way to do so might be cloning this project, and firing `lein repl` from inside the directory. Alternatively, you could use [`lein-try`](https://github.com/rkneufeld/lein-try).
 
 You should find yourself in the `akar.try-out` namespace by default. If not, switch to it manually. This namespace brings in all the modules that we will be needing for this tutorial.
 
