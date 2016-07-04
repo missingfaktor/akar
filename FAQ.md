@@ -14,22 +14,19 @@ We could have alternatively prefixed all our pattern functions with `pat-`, but 
 
 `core.match` might eventually evolve into a [predicate dispatch](https://github.com/clojure/core.match/wiki/Crazy-Ideas) library. Akar has no such plans. It is a far less ambitious project from that perspective.
 
+**Q. Why did you not use `core.spec` to implement the syntactic layer?**
+
+This library was pretty much written in November 2015. `core.spec` was not available at the time.
+
+Migration to `core.spec` is on our radar.
 
 **Q. Why did you not implement Akar using optics?**
 
-TODO
-Haskell world
-Optics
-Simplicity
-Bondi
+Optics, as implemented in the [Haskell lens library](https://hackage.haskell.org/package/lens), are incredibly general, and can indeed subsume pattern matching. But they are also incredibly complex. Besides, the type-class/constraint based encodings used in the lens library does not translate well to Clojure. Porting the lens library will be significantly more work.
 
-**Q. What are Akar's performance characteristics like?**
+Akar solves a more specific (or, less general) problem, and is much, much simpler.
 
-TODO
-Decision trees
-HOFs
-Profile
-Write custom functions
+That said, we might explore porting lenses to Clojure in future.
 
 **Q. How relevant is pattern matching in Clojure?**
 
@@ -38,7 +35,70 @@ Hickey's talk: Complecting, positionality
 Slingshot, Pulsar
 `if`, `cond` heavy code
 
-**Q. Why did you not use `core.spec` to implement the syntactic layer?**
+**Q. What are Akar's performance characteristics like?**
 
-TODO
-November
+Traditionally, pattern matches are compiled to [highly efficient matching automata](http://pauillac.inria.fr/~maranget/papers/ml05e-maranget.pdf), typically decision trees, realized using low level tests, jump tables, and so on.
+
+Akar does not do any of that. With Akar, it's functional composition all the way down. If you are programming in a higher-order functional style pervasively, Akar is unlikely to create any noticeable additional overhead. Also, this is unlikely to be a performance bottleneck for the use cases Clojure is normally employed for.
+
+As always, you should profile your application and find out if this is indeed causing performance issues.
+
+If some patterns are too expensive, you can write a custom pattern function that does it in a more efficient manner. Here is an example.
+
+```clojure
+akar.try-out=> (def valid-header #"HDR (.*)")
+#'akar.try-out/valid-header
+
+akar.try-out=> (defn extract-header [rec]
+                 (match rec
+                        {:tag :record :header [(!regex valid-header) header]} header))
+#'akar.try-out/extract-header
+
+akar.try-out=> (extract-header {:tag :record :header "HDR X11"})
+"X11"
+
+akar.try-out=> (extract-header {:tag :record :header "HD--X11"})
+RuntimeException Pattern match failed. None of the clauses applicable to the value: {:header "HD--X11", :tag :record}.  akar.primitives/match* (primitives.clj:56)
+
+; Let's see how the compiled pattern match looks like.
+
+akar.try-out=> (pprint (macroexpand-1 '(match rec {:tag :record
+                                                   :header [(!regex valid-header) header]} header)))
+(akar.primitives/match*
+ rec
+ (akar.primitives/or-else
+  (akar.primitives/clause*
+   (akar.combinators/!and
+    (akar.patterns/!pred clojure.core/map?)
+    (akar.combinators/!further
+     (akar.patterns/!key :tag)
+     [(akar.patterns/!constant :record)])
+    (akar.combinators/!further
+     (akar.patterns/!key :header)
+     [(akar.combinators/!further
+       (!regex valid-header)
+       [akar.patterns/!bind])]))
+   (clojure.core/fn [header] header))))
+nil
+
+; Okay, that's quite a bit!
+; Assume that you use this pattern a lot, and found that optimizing this away will give you a tangible speedup. You can
+; write a custom pattern in such a case like so:
+
+akar.try-out=> (defn !header [rec]
+                 (if (= (:tag rec) :record)
+                     (if-let [header (:header rec)]
+                       (some->> header (re-seq valid-header) first rest))))
+#'akar.try-out/!header
+
+akar.try-out=> (defn extract-header [rec]
+                 (match rec
+                        [!header header] header))
+#'akar.try-out/extract-header
+
+akar.try-out=> (extract-header {:tag :record :header "HDR X11"})
+"X11"
+
+akar.try-out=> (extract-header {:tag :record :header "HDR--11"})
+RuntimeException Pattern match failed. None of the clauses applicable to the value: {:header "HDR--11", :tag :record}.  akar.primitives/match* (primitives.clj:56)
+```
