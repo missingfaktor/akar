@@ -2,6 +2,7 @@
 
 [![Join the chat at https://gitter.im/missingfaktor/akar](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/missingfaktor/akar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 [![Build Status](https://travis-ci.org/missingfaktor/akar.svg)](https://travis-ci.org/missingfaktor/akar)
+[![Clojars Project](https://img.shields.io/clojars/v/akar.svg)](https://clojars.org/akar)
 
 <img src="graphics/logo.png" width="300">
 
@@ -38,7 +39,9 @@ To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.MD).
  
 ## Releases and Dependency Information
 
-The first release will soon be available on Clojars. Star/Watch for updates.
+```clojure
+[akar "0.1.0"]
+```
  
 ## Example
 
