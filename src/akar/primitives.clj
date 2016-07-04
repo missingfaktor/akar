@@ -1,5 +1,5 @@
 (ns akar.primitives
-  (:require [akar.internal.utilities :refer [variadic-reductive-function]]))
+  (:require [akar.internal.utilities :refer [variadic-reductive-function fail-with]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Pattern matching primitives
@@ -52,5 +52,4 @@
   (let [result (try-match* value clause')]
     (if (clause-applied? result)
       result
-      (throw (RuntimeException.
-               (str "Pattern match failed. None of the clauses applicable to the value: " value "."))))))
+      (fail-with (str "Pattern match failed. None of the clauses applicable to the value: " value ".")))))

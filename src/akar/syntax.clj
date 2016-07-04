@@ -66,10 +66,9 @@
 (defn ^:private ensure-no-bindings-for-or [syntactic-patterns]
   (let [bindings (vec (mapcat :bindings syntactic-patterns))]
     (if (not-empty bindings)
-      (throw (RuntimeException.
-               (str "Bindings encountered: " bindings \newline
-                    ":or syntactic patterns do not support bindings." \newline
-                    "Please ignore the bindings using :_"))))))
+      (fail-with (str "Bindings encountered: " bindings \newline
+                      ":or syntactic patterns do not support bindings." \newline
+                      "Please ignore the bindings using :_")))))
 
 (sy/defrule or-pattern'
             (recap (sy/list-form (sy/cat :or

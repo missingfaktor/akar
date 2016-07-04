@@ -21,12 +21,14 @@
 (defn same-size? [xs ys]
   (= (count xs) (count ys)))
 
+(defn fail-with [msg]
+  (throw (RuntimeException. ^String msg)))
+
 (defn single [coll]
   (let [[x xs] [(first coll) (next coll)]]
     (if (and x (not xs))
       x
-      (throw (RuntimeException.
-               (str "Collection does not contain a single element. The size is " (count coll) "."))))))
+      (fail-with (str "Collection does not contain a single element. The size is " (count coll) ".")))))
 
 (defmacro define-alias [alias original]
   `(def ~(vary-meta alias assoc :alias-for original) ~original))
