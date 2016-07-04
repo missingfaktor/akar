@@ -743,6 +743,16 @@ akar.try-out=> (match data
 {:primary "w", :secondaries ["s" "d" "j"]}
 ```
 
+The Zookeeper example from earlier can now be written in a much neater way:
+
+```clojure
+(defn act-on-event [evt]
+  (match evt
+         {:evt-type (:or :child-added :child-updated) :data data :path path} (.put cache path data)
+         {:evt-type :child-removed                               :path path} (.remove cache data)
+         :_                                                                   nil))
+```
+
 #### Data type patterns, syntactically
 
 ```clojure
