@@ -53,7 +53,7 @@ The first section of Mark Tullsen's ["First Class Patterns"](http://citeseerx.is
 
 Tullsen ascribes most of these deficiencies to patterns not being first class values. In Gilad Bracha's words, they are a [shadow language](http://gbracha.blogspot.de/2014/09/a-domain-of-shadows.html).
 
-Akar patterns are first class values, and alleviate all of the problems described here. This also means that we do not compile down to efficient decision trees, as is the case with traditional implementations. As stated earlier, Akar focuses on simplicity and abstraction, and as such, trades off some performance for it. [TANSTAAFL](https://en.wikipedia.org/wiki/There_ain%27t_no_such_thing_as_a_free_lunch)! You can read more about performance in the FAQs.
+Akar patterns are first class values, and alleviate all of the problems described here. This also means that we do not compile down to efficient decision trees, as is the case with traditional implementations. As stated earlier, Akar focuses on simplicity and abstraction, and as such, trades off some performance for it. [TANSTAAFL](https://en.wikipedia.org/wiki/There_ain%27t_no_such_thing_as_a_free_lunch)! You can read more about performance in the [FAQs](FAQs.md).
 
 
 ### First class patterns
@@ -141,7 +141,7 @@ akar.try-out=> (source !any)
 nil
 ```
 
-(If you are going "Hmm, what are those bangs?" at this point, the FAQs might help you out.)
+(If you are going "Hmm, what are those bangs?" at this point, the [FAQs](FAQs.md) might help you out.)
 
 Test it out!
 
