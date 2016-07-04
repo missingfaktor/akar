@@ -484,7 +484,7 @@ nil
 
 Sometimes you may wish to guard existing patterns with additional predicates.
 
-```
+```clojure
 akar.try-out=> ((!guard !cons vector?) [2 3])
 (2 (3))
 
@@ -523,7 +523,7 @@ akar.try-out=> (def cache (java.util.concurrent.ConcurrentHashMap.))
 
 akar.try-out=> (defn act-on-event [evt]
                  (match* evt (clauses* (!and (!further (!key :evt-type) [(!or (!constant :child-added)
-                                                                      (!constant :child-updated))])
+                                                                              (!constant :child-updated))])
                                              (!key :data)
                                              (!key :path)) (fn [data path] (.put cache path data))
       
@@ -584,8 +584,9 @@ Run the following lines in your REPL, and marvel at the output. :smile:
   
 ```clojure
 (syndoc match)
-(syndoc pattern')
 ```
+
+![syndoc](graphics/syndoc.png)
 
 (`syndoc` does not work with Windows consoles. This is [a known issue](https://github.com/jclaggett/seqex/issues/8).)
 
@@ -636,7 +637,7 @@ To see how this gets consumed, let's write a full `match` expression.
 
 ```clojure
 akar.try-out=> (match 3
-                 x (inc x))
+                      x (inc x))
 4
 ```
 
@@ -700,7 +701,7 @@ nil
 
 #### Pattern combinators, syntactically
 
-You can use `:and` and `:or` to combine multiple patterns. (We will stop including macro expansions from this point onwards in this tutorial. You are still encouraged to keep exploring them at your REPL.)
+You can use `:and` and `:or` to combine multiple patterns. (We will stop including macro expansions from this point onwards in this tutorial. You are still encouraged to keep exploring them in your REPL.)
 
 ```clojure
 akar.try-out=> (match 45
@@ -726,13 +727,16 @@ Whoops. The pattern fails with an error. Luckily the error message is self-expla
 
 The reason `:or` does not support bindings is that it's impossible to tell at the time of syntax parsing which names are actually being bound. Underlying `!or` combinator does not suffer from this limitation due to positional nature of emissions.
 
-For similar reasons, the `!not` combinators has no syntactic counterpart either.
+For similar reasons, the `!not` combinator has no syntactic counterpart either.
 
 #### Collection patterns, syntactically
 
 Sequences and maps are the most important data structures in Clojure, and as such, have a dedicated syntax support in Akar. Some examples below:
 
 ```clojure
+akar.try-out=> (def data {:tag :i :contents ["w" "s" "d" "j"]})
+#'akar.try-out/data
+
 akar.try-out=> (match data
                       {:tag :i :contents (:seq [prim & secs])} {:primary prim
                                                                 :secondaries secs})
