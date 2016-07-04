@@ -7,6 +7,21 @@
             [akar.patterns :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Validation functions
+
+(defn ^:private ensuring-well-formed-bindings [bindings]
+  (if (or (empty? bindings) (apply distinct? bindings))
+    (vec bindings)
+    (fail-with (str "Duplicate bindings encountered: " (vec bindings)))))
+
+(defn ^:private ensuring-no-bindings-for-or [bindings]
+  (if (empty? bindings)
+    []
+    (fail-with (str "Bindings encountered: " (vec bindings) \newline
+                    ":or syntactic patterns do not support bindings." \newline
+                    "Please ignore the bindings using :_"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Basic patterns
 
 (sy/defrule any'
@@ -52,7 +67,9 @@
                                          (cap sy/form)))
                    (fn [inner-syntactic-pattern [cond]]
                      {:pattern  `(!guard ~(:pattern inner-syntactic-pattern) ~cond)
-                      :bindings (:bindings inner-syntactic-pattern)})))
+                      :bindings (->> inner-syntactic-pattern
+                                     :bindings
+                                     ensuring-well-formed-bindings)})))
 
 ; https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns
 (sy/defrule view-pattern'
@@ -61,30 +78,27 @@
                                          (delay pattern')))
                    (fn [[view-fn] syntactic-pattern]
                      {:pattern  `(!view ~view-fn ~(:pattern syntactic-pattern))
-                      :bindings (:bindings syntactic-pattern)})))
-
-(defn ^:private ensure-no-bindings-for-or [syntactic-patterns]
-  (let [bindings (vec (mapcat :bindings syntactic-patterns))]
-    (if (not-empty bindings)
-      (fail-with (str "Bindings encountered: " bindings \newline
-                      ":or syntactic patterns do not support bindings." \newline
-                      "Please ignore the bindings using :_")))))
+                      :bindings (->> syntactic-pattern
+                                     :bindings
+                                     ensuring-well-formed-bindings)})))
 
 (sy/defrule or-pattern'
             (recap (sy/list-form (sy/cat :or
                                          (sy/rep+ (delay pattern'))))
                    (fn [& syntactic-patterns]
                      {:pattern  `(!or ~@(map :pattern syntactic-patterns))
-                      :bindings (do
-                                  (ensure-no-bindings-for-or syntactic-patterns)
-                                  [])})))
+                      :bindings (->> syntactic-patterns
+                                     (mapcat :bindings)
+                                     ensuring-no-bindings-for-or)})))
 
 (sy/defrule and-pattern'
             (recap (sy/list-form (sy/cat :and
                                          (sy/rep+ (delay pattern'))))
                    (fn [& syntactic-patterns]
                      {:pattern  `(!and ~@(map :pattern syntactic-patterns))
-                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
+                      :bindings (->> syntactic-patterns
+                                     (mapcat :bindings)
+                                     ensuring-well-formed-bindings)})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Data type patterns
@@ -104,9 +118,11 @@
                        {:pattern  (if (nil? rest)
                                     `(!further-many !seq [~@(map :pattern patterns)])
                                     `(!further-many !seq [~@(map :pattern patterns)] ~(:pattern rest)))
-                        :bindings (if (nil? rest)
-                                    (vec (mapcat :bindings patterns))
-                                    (vec (mapcat :bindings (append patterns rest))))}))))
+                        :bindings (->> (if (nil? rest)
+                                         patterns
+                                         (append patterns rest))
+                                       (mapcat :bindings)
+                                       ensuring-well-formed-bindings)}))))
 
 (sy/defterminal map-key' keyword?)
 
@@ -115,14 +131,18 @@
                                 (delay pattern'))
                    (fn [[k] syntactic-pattern]
                      {:pattern  `(!further (!key ~k) [~(:pattern syntactic-pattern)])
-                      :bindings (:bindings syntactic-pattern)})))
+                      :bindings (->> syntactic-pattern
+                                     :bindings
+                                     ensuring-well-formed-bindings)})))
 
 (sy/defrule map-pattern'
             (recap (sy/map-form (sy/rep* map-entry'))
                    (fn [& syntactic-patterns]
                      {:pattern  `(!and (!pred map?)
                                        ~@(map :pattern syntactic-patterns))
-                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
+                      :bindings (->> syntactic-patterns
+                                     (mapcat :bindings)
+                                     ensuring-well-formed-bindings)})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Data type patterns
@@ -133,7 +153,9 @@
                                          (sy/vec-form (sy/rep* (delay pattern')))))
                    (fn [[tag] & syntactic-patterns]
                      {:pattern  `(!further (!variant ~tag) [~@(map :pattern syntactic-patterns)])
-                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
+                      :bindings (->> syntactic-patterns
+                                     (mapcat :bindings)
+                                     ensuring-well-formed-bindings)})))
 
 (sy/defrule record-pattern'
             (recap (sy/list-form (sy/cat :record
@@ -141,7 +163,9 @@
                                          (sy/vec-form (sy/rep* (delay pattern')))))
                    (fn [[cls] & syntactic-patterns]
                      {:pattern  `(!further (!record ~cls) [~@(map :pattern syntactic-patterns)])
-                      :bindings (vec (mapcat :bindings syntactic-patterns))})))
+                      :bindings (->> syntactic-patterns
+                                     (mapcat :bindings)
+                                     ensuring-well-formed-bindings)})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Type-casing pattern
@@ -152,7 +176,9 @@
                                          (delay pattern')))
                    (fn [[cls] syntactic-pattern]
                      {:pattern  `(!and (!type ~cls) ~(:pattern syntactic-pattern))
-                      :bindings (:bindings syntactic-pattern)})))
+                      :bindings (->> syntactic-pattern
+                                     :bindings
+                                     ensuring-well-formed-bindings)})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arbitrary patterns
@@ -164,7 +190,9 @@
                      {:pattern  (if (empty? further-syntactic-patterns)
                                   syntactic-pattern
                                   `(!further ~syntactic-pattern [~@(map :pattern further-syntactic-patterns)]))
-                      :bindings (vec (mapcat :bindings further-syntactic-patterns))})))
+                      :bindings (->> further-syntactic-patterns
+                                     (mapcat :bindings)
+                                     ensuring-well-formed-bindings)})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Putting it all together
