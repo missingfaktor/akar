@@ -47,8 +47,7 @@ To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
 
 ```clojure
 (ns your.app
-  (:require [akar.patterns :refer :all]
-            [akar.syntax :refer :all]
+  (:require [akar.syntax :refer [match]]
             [clojure.data.xml :as xml]))
 
 ; Example borrowed from https://wiki.scala-lang.org/display/SYGN/Xml-pattern-matching
