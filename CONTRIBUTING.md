@@ -13,7 +13,7 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 0. Add `core.typed` annotations. These should ideally come as a separate artifact.
 0. Release for ClojureScript.
 0. Improve error messages.
-0. Migrate to `core.spec`. (Once it's stable.)
+0. Migrate to `clojure.spec`. (Once it's stable.)
 0. General code improvements.
 
 ## Guidelines
