@@ -35,7 +35,7 @@ The library also features a syntactic layer that makes common use cases convenie
 
 Akar (IPA: \[ɑkɑɾ], Devanagari: आकार) is a Sanskrit/Marathi word for shape. The logo is a [Saraswati](https://en.wikipedia.org/wiki/Saraswati) [Kolam](https://en.wikipedia.org/wiki/Kolam), a diagrammatic representation of Hindu goddess of wisdom.
  
-To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.MD).
+To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
  
 ## Releases and Dependency Information
 
