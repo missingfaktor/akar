@@ -38,14 +38,14 @@ There is quite a bit of conditional-heavy Clojure code in the wild, that could b
 akar.try-out=> (defn zipmap' [keys vals]
                  (letfn [(aux [map keys vals]
                            (match [keys vals]
-                                  (:seq [[!empty] :_]) map
-                                  (:seq [:_ [!empty]]) map
+                                  (:seq [[!empty]     :_])           map
+                                  (:seq [:_           [!empty]])     map
                                   (:seq [[!cons k ks] [!cons v vs]]) (aux (assoc map k v) ks vs)))]
                    (aux {} keys vals)))
 #'akar.try-out/zipmap'
 
-akar.try-out=> (zipmap' [2 3 9] [:zwei :drei :nein :eins])
-{9 :nein, 3 :drei, 2 :zwei}
+akar.try-out=> (zipmap' [2 3 9] [:zwei :drei :neun :eins])
+{9 :neun, 3 :drei, 2 :zwei}
 ```
 
 This example was taken from Sean Johnson's ["Pattern Matching in Clojure"](https://www.youtube.com/watch?v=n7aE6k8o_BU) talk. The talk presents many more examples where pattern matching makes code simpler to write, understand, and modify.
