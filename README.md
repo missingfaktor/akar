@@ -29,7 +29,7 @@
 
 Akar is a [pattern matching](https://en.wikibooks.org/wiki/Haskell/Pattern_matching) library for Clojure, with focus on simplicity and abstraction. 
 
-Akar patterns are first class values (just functions, actually), that can be manipulated, composed, abstracted over, like any other values. In fact, this is exactly how various pattern operations, such as guards, alternation, and views are implemented in Akar.
+Akar patterns are first-class values (just functions, actually), that can be manipulated, composed, abstracted over, like any other values. In fact, this is exactly how various pattern operations, such as guards, alternation, and views are implemented in Akar.
 
 The library also features a syntactic layer that makes common use cases convenient, but at the same time stays true to the first-class spirit of the core model. 
 

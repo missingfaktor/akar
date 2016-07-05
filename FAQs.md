@@ -10,7 +10,7 @@ Alternatively, we could have prefixed all our pattern functions with `pat-`, but
 
 [`core.match`](https://github.com/clojure/core.match), like most traditional implementations, is focused on performance. This is reflected in its tagline "**optimized** pattern matching library". The pattern matcher can be extended using some [extension protocols](https://github.com/clojure/core.match/wiki/Extending-match-for-new-Patterns), but the extensibility is arguably still quite limited.
 
- Akar was written with different focuses on mind: simplicity and abstraction. It trades off some performance in order to achieve these goals. Akar patterns being first class values can be manipulated and abstracted over more easily and in more ways. This gives us virtually unlimited extensibility.
+ Akar was written with different focuses on mind: simplicity and abstraction. It trades off some performance in order to achieve these goals. Akar patterns being first-class values can be manipulated and abstracted over more easily and in more ways. This gives us virtually unlimited extensibility.
 
 `core.match` might eventually evolve into a [predicate dispatch](https://github.com/clojure/core.match/wiki/Crazy-Ideas) library. Akar has no such plans. It is a far less ambitious project from that perspective.
 
