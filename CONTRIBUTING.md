@@ -11,7 +11,7 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 0. Define new generally useful patterns.
 0. Set up a multi-artifact Leiningen project. We have plans to write a few satellite libraries in future, and it would be nice if they could all be housed under the same repository.
 0. Add `core.typed` annotations. These should ideally come as a separate artifact.
-0. Release for ClojureScript. (#9, WIP.)
+0. Release for ClojureScript. ([#9](https://github.com/missingfaktor/akar/issues/9), WIP.)
 0. Improve error messages.
 0. Migrate to `clojure.spec`. (Once it's stable.)
 0. General code improvements.
