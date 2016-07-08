@@ -18,3 +18,7 @@
 - Sadhana Goma Phulore created a beautiful logo for this project.
 
 - [Aleksander Sumowski](https://github.com/aleksandersumowski) added some literary flair to the README by contributing a fitting excerpt from "Alice in Wonderland".
+
+- [The cute dog with goggles](https://goo.gl/QucO4j) picture is by [Alice Volkmar](https://www.flickr.com/photos/vyxle/) (released under [Creative Commons](https://creativecommons.org/licenses/by-nc/2.0/)).
+
+- [The Cursive Clojure IDE](https://cursive-ide.com/). The best IDE for Clojure!
