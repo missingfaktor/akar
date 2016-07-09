@@ -238,12 +238,19 @@
 
 (sy/defrule if-match'
             (recap (sy/cat (sy/vec-form (sy/cat pattern' (cap sy/form)))
-                           (cap sy/form))
-                   (fn [{:keys [pattern bindings]} [value] [action]]
-                     `(match* ~value
-                              (clauses* ~pattern (fn [~@bindings]
-                                                   ~action)
-                                        !any (fn [] nil))))))
+                           (cap sy/form)
+                           (sy/opt (cap sy/form)))
+                   (fn
+                     ([{:keys [pattern bindings]} [value] [then-action]]
+                      `(match* ~value
+                               (clauses* ~pattern (fn [~@bindings]
+                                                    ~then-action)
+                                         !any (fn [] nil))))
+                     ([{:keys [pattern bindings]} [value] [then-action] [else-action]]
+                      `(match* ~value
+                               (clauses* ~pattern (fn [~@bindings]
+                                                    ~then-action)
+                                         !any (fn [] ~else-action)))))))
 
 (sy/defsyntax clause clause')
 (sy/defsyntax clauses clauses')

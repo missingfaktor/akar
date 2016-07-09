@@ -41,7 +41,13 @@
                       (clauses* !bind (fn [y] y)
                                 !any (fn [] nil)))
              (macroexpand-1 `(if-match [y [2 3]]
-                                       y))))))
+                                       y))))
+      (is (= `(match* [2 3]
+                      (clauses* !bind (fn [y] y)
+                                !any (fn [] :otherwise)))
+             (macroexpand-1 `(if-match [y [2 3]]
+                                       y
+                                       :otherwise))))))
 
   (testing "Translation of patterns:"
 
