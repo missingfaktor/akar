@@ -236,7 +236,17 @@
                    (fn [[arg] clss]
                      `(try-match* ~arg ~clss))))
 
+(sy/defrule if-match'
+            (recap (sy/cat (sy/vec-form (sy/cat pattern' (cap sy/form)))
+                           (cap sy/form))
+                   (fn [{:keys [pattern bindings]} [value] [action]]
+                     `(match* ~value
+                              (clauses* ~pattern (fn [~@bindings]
+                                                   ~action)
+                                        !any (fn [] nil))))))
+
 (sy/defsyntax clause clause')
 (sy/defsyntax clauses clauses')
 (sy/defsyntax match match')
 (sy/defsyntax try-match try-match')
+(sy/defsyntax if-match if-match')

@@ -34,7 +34,14 @@
                                      (clause* !any (fn [] :val))))
              (macroexpand-1 `(try-match 3
                                         1 :one
-                                        :_ :val))))))
+                                        :_ :val)))))
+
+    (testing "if-match"
+      (is (= `(match* [2 3]
+                      (clauses* !bind (fn [y] y)
+                                !any (fn [] nil)))
+             (macroexpand-1 `(if-match [y [2 3]]
+                                       y))))))
 
   (testing "Translation of patterns:"
 
