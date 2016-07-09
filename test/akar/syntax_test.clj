@@ -47,7 +47,17 @@
                                 !any (fn [] :otherwise)))
              (macroexpand-1 `(if-match [y [2 3]]
                                        y
-                                       :otherwise))))))
+                                       :otherwise)))))
+
+    (testing "when-match"
+      (is (= `(match* 2
+                      (clauses* !bind (fn [x] (do
+                                                :statement
+                                                :another-statement))
+                                !any (fn [] nil)))
+             (macroexpand-1 `(when-match [x 2]
+                                         :statement
+                                         :another-statement))))))
 
   (testing "Translation of patterns:"
 

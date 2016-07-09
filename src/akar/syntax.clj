@@ -252,8 +252,19 @@
                                                     ~then-action)
                                          !any (fn [] ~else-action)))))))
 
+(sy/defrule when-match'
+            (recap (sy/cat (sy/vec-form (sy/cat pattern' (cap sy/form)))
+                           (cap (sy/rep* sy/form)))
+                   (fn [{:keys [pattern bindings]} [value] & [actions]]
+                     `(match* ~value
+                              (clauses* ~pattern (fn [~@bindings]
+                                                   (do
+                                                     ~@actions))
+                                        !any (fn [] nil))))))
+
 (sy/defsyntax clause clause')
 (sy/defsyntax clauses clauses')
 (sy/defsyntax match match')
 (sy/defsyntax try-match try-match')
 (sy/defsyntax if-match if-match')
+(sy/defsyntax when-match when-match')
