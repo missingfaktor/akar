@@ -6,7 +6,7 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 
 ## Tasks 
 
-0. Migrate tests to a better testing library (potentially [Midje](https://github.com/marick/Midje)).
+0. Migrate tests to a better testing library (potentially [Midje](https://github.com/marick/Midje)). ([#10](https://github.com/missingfaktor/akar/issues/10))
 0. Rewrite some tests to achieve better consistency.
 0. Define new generally useful patterns.
 0. Set up a multi-artifact Leiningen project. We have plans to write a few satellite libraries in future, and it would be nice if they could all be housed under the same repository.
