@@ -50,6 +50,12 @@
                                 (and (symbol? sym)
                                      (not= sym '&))))
 
+(sy/defrule constant'
+            (recap (sy/list-form (sy/cat :constant (cap valid-symbol')))
+                   (fn [[sym]]
+                     {:pattern  `(!constant ~sym)
+                      :bindings []})))
+
 (sy/defrule bind'
             (cap valid-symbol'
                  (fn [[sym]]
@@ -200,6 +206,7 @@
 (sy/defrule pattern'
             (sy/alt any'
                     literal'
+                    constant'
                     bind'
                     guard-pattern'
                     view-pattern'

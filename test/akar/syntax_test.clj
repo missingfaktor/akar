@@ -96,6 +96,15 @@
       (is (thrown? Exception
                    (macroexpand-1 `(clause & &)))))
 
+    (testing "non-literal constants"
+      (let [a 12
+            block (clauses (:constant a) :matched
+                           :_ :didnt-really)]
+        (is (= :matched
+               (match* 12 block)))
+        (is (= :didnt-really
+               (match* 11 block)))))
+
     (testing "guard patterns"
       (let [block (clauses (:guard a odd?) a
                            (:guard :_ even?) :nope)]
