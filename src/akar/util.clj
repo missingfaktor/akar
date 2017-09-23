@@ -24,11 +24,13 @@
    The macro replaces all the occurrences of trampolined-recur in function
    body with calls to anonymous function.
 
-   The generated function uses trampoline for recursion.
+   The generated function uses trampolining to achieve recursion. In other
+   words, we swap stack for heap for recursive calls.
+   https://clojuredocs.org/clojure.core/trampoline
 
    If the given function body does not have any trampoline-recur occurrences,
    the generated function body will be exactly same as passed except
-   for it being wrapped in an anonymous function and called with trampoline."
+   it will be wrapped in an anonymous function and called with trampoline."
   [fn-name args & body]
   (let [tail-rec-fn-name (symbol (str fn-name "*"))
         fn-body# (postwalk-fn-replace (fn [expr]
