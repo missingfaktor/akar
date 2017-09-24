@@ -22,7 +22,7 @@
              :_ (trampolined-recur (dec x) (+ running-total x))))
     (is (= (tail-recursive-sum 10 100)
            155))
-    ;; these values are simple values which would give stackoverflow error if called without TCO
+    ;; these values are simple values which would give stackoverflow error if called without defn-trampolimed
     (is (= (tail-recursive-sum 123038 10)
            7569236251)))
 
@@ -60,7 +60,7 @@
              25))
       (is (= 5 @some-global-state))))
 
-  (testing "should not fail when non recursive function given used with defn-trampolined"
+  (testing "should not fail for function with no trampoline-recur occurance"
     (defn-trampolined non-tail-recursive-fn [x y]
       (match x
              0  y
