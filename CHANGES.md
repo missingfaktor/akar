@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
        
 See [here](http://keepachangelog.com/) for the change log format.
 
-## [Unreleased](https://github.com/missingfaktor/akar/compare/v0.1.0...HEAD)
+## [Unreleased](https://github.com/missingfaktor/akar/compare/v0.2.0...HEAD)
 
 # v0.2.0 / 2017.11.06
 
