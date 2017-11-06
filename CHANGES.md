@@ -11,6 +11,6 @@ See [here](http://keepachangelog.com/) for the change log format.
 - Syntactic support for non-literal constant patterns
 - `defn-trampolined` - a utility to define trampolined recursive functions (by [@rahulkavale](https://github.com/rahulkavale)) 
 
-# v0.1.0 / 2015.07.05
+# v0.1.0 / 2016.07.05
 
 * Initial release
