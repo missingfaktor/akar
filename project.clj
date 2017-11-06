@@ -1,5 +1,6 @@
 (defproject akar "0.2.0"
   :description "First-class patterns for Clojure"
+  :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"
             :url          "http://www.apache.org/licenses/LICENSE-2.0"
             :distribution :repo}
