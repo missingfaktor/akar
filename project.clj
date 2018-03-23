@@ -1,4 +1,4 @@
-(defproject akar "0.2.0"
+(defproject akar "1.0.0"
   :description "First-class patterns for Clojure"
   :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"

@@ -40,7 +40,7 @@ To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
 ## Releases and Dependency Information
 
 ```clojure
-[akar "0.2.0"]
+[akar "1.0.0"]
 ```
  
 ## Example

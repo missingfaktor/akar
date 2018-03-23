@@ -4,7 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
        
 See [here](http://keepachangelog.com/) for the change log format.
 
-## [Unreleased](https://github.com/missingfaktor/akar/compare/v0.2.0...HEAD)
+## [Unreleased](https://github.com/missingfaktor/akar/compare/v1.0.0...HEAD)
+
+# v1.0.0 / 2018.03.23
+
+### Changed
+- Clojure version upgraded to 1.9.0
 
 # v0.2.0 / 2017.11.06
 
