@@ -2,8 +2,10 @@
 
 [![Join the chat at https://gitter.im/missingfaktor/akar](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/missingfaktor/akar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 [![Build Status](https://travis-ci.org/missingfaktor/akar.svg)](https://travis-ci.org/missingfaktor/akar)
+
 [![Clojars Project](https://img.shields.io/clojars/v/akar.svg)](https://clojars.org/akar)
 [![Clojars Project](https://img.shields.io/clojars/v/akar/akar-core.svg)](https://clojars.org/akar/akar-core)
+
 <img src="graphics/logo.png" width="300">
 
 > \[Speech] <br/>
