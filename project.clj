@@ -9,4 +9,5 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [akar/akar-core "1.0.0"]]
   :plugins [[lein-sub "0.3.0"]]
-  :sub ["akar-core"])
+  :sub ["akar-core"
+        "akar-exceptions"])

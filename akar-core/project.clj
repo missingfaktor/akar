@@ -4,7 +4,7 @@
   :license {:name         "Apache License 2.0"
             :url          "http://www.apache.org/licenses/LICENSE-2.0"
             :distribution :repo}
-  :repositories [["clojars" {:url           "https://clojars.org/akar-core"
+  :repositories [["clojars" {:url           "https://clojars.org/akar/akar-core"
                              :sign-releases false}]]
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [n01se/seqex "2.0.1"]]
