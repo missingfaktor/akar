@@ -1,5 +1,5 @@
-(defproject akar "1.0.0"
-  :description "First-class patterns for Clojure"
+(defproject akar/akar-core "1.0.0"
+  :description "First-class patterns for Clojure – Core framework"
   :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"
             :url          "http://www.apache.org/licenses/LICENSE-2.0"
@@ -7,6 +7,7 @@
   :repositories [["clojars" {:url           "https://clojars.org/repo"
                              :sign-releases false}]]
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [akar/akar-core "1.0.0"]]
-  :plugins [[lein-sub "0.3.0"]]
-  :sub ["akar-core"])
+                 [n01se/seqex "2.0.1"]]
+  :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]]}}
+  :aliases {"et" ["do" ["eastwood"] ["test"]]}
+  :main akar.try-out)
