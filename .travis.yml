@@ -1,1 +1,3 @@
 language: clojure
+
+script: lein sub test
