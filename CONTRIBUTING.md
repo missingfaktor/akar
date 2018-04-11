@@ -6,16 +6,17 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 
 ## Tasks 
 
+0. Get rid of warnings `cat already refers to: #'clojure.core/cat in namespace: n01se.seqex, being replaced by: #'n01se.seqex/cat`.
+0. Stop binding a variable in `!type` pattern.
 0. Migrate tests to a better testing library (potentially [Midje](https://github.com/marick/Midje)). ([#10](https://github.com/missingfaktor/akar/issues/10))
 0. Rewrite some tests to achieve better consistency.
 0. Define new generally useful patterns.
-0. Set up a multi-artifact Leiningen project. We have plans to write a few satellite libraries in future, and it would be nice if they could all be housed under the same repository.
 0. Write satellite libraries providing pattern support for popular libraries in the Clojure ecosystem.
 0. Add `core.typed` annotations. These should ideally come as a separate artifact.
 0. Release for ClojureScript. ([#9](https://github.com/missingfaktor/akar/issues/9))
 0. Improve error messages.
 0. Enable bindings in `:or` syntactic patterns.
-0. Migrate to `clojure.spec`. (Once it's stable.)
+0. Migrate `akar.syntax` to `clojure.spec`. (Once it's stable.)
 0. General code improvements.
 
 ## Guidelines
