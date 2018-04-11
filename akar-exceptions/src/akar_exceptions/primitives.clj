@@ -1,6 +1,7 @@
 (ns akar-exceptions.primitives
   (:require [clojure.spec.alpha :as sp]
-            [akar.syntax :refer [match]]
+            [akar.primitives :refer [clause-applied?]]
+            [akar.syntax :refer [match try-match]]
             [akar-exceptions.internal.syntax-utilities :refer :all])
   (:import [clojure.lang ExceptionInfo]))
 
@@ -21,9 +22,15 @@
                                                                      :ultimately-block sp/form)))}
 
                :codegen (fn [{:keys [block error-handler ultimately-part]}]
-                          `(attempt* (fn [] ~block)
-                                     (fn [ex#] (match ex# ~@error-handler))
-                                     (fn [] (:ultimately-block ~ultimately-part)))))
+                          `(attempt* (fn []
+                                       ~block)
+                                     (fn [ex#]
+                                       (let [result# (try-match ex# ~@error-handler)]
+                                         (if (clause-applied? result#)
+                                           result#
+                                           (throw ex#))))
+                                     (fn []
+                                       ~(:ultimately-block ultimately-part)))))
 
 (defn raise [exception-like]
   (match exception-like
