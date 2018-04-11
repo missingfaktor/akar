@@ -178,13 +178,10 @@
 
 (sy/defrule type-pattern'
             (recap (sy/list-form (sy/cat :type
-                                         (cap sy/form)
-                                         (delay pattern')))
-                   (fn [[cls] syntactic-pattern]
-                     {:pattern  `(!and (!type ~cls) ~(:pattern syntactic-pattern))
-                      :bindings (->> syntactic-pattern
-                                     :bindings
-                                     ensuring-well-formed-bindings)})))
+                                         (cap sy/form)))
+                   (fn [[cls]]
+                     {:pattern  `(!type ~cls)
+                      :bindings []})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arbitrary patterns

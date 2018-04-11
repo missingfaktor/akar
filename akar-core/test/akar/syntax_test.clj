@@ -214,8 +214,8 @@
                (match* (->Add 3 6) block)))))
 
     (testing "type patterns"
-      (let [block (clauses (:type RuntimeException ex) (.getMessage ex)
-                           (:type String s) (.length s))]
+      (let [block (clauses (:and (:type RuntimeException) ex) (.getMessage ex)
+                           (:and (:type String) s) (.length s))]
         (is (= "fatt gaya"
                (match* (RuntimeException. "fatt gaya") block)))
         (is (= 5

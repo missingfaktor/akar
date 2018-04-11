@@ -7,7 +7,6 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 ## Tasks 
 
 0. Get rid of warnings `cat already refers to: #'clojure.core/cat in namespace: n01se.seqex, being replaced by: #'n01se.seqex/cat`.
-0. Stop binding a variable in `!type` pattern.
 0. Migrate tests to a better testing library (potentially [Midje](https://github.com/marick/Midje)). ([#10](https://github.com/missingfaktor/akar/issues/10))
 0. Rewrite some tests to achieve better consistency.
 0. Define new generally useful patterns.
