@@ -203,6 +203,20 @@
         (is (= :malformed-request
                (match* {} block)))))
 
+    (testing "look-in pattern"
+      (let [registry {:windows :deprecated
+                      :linux :supported
+                      :bsd :not-supported}
+            block (clauses (:look-in registry :supported) :we-good
+                           (:look-in registry status) {:status status}
+                           :_ :unknown-platform)]
+        (is (= :we-good
+               (match* :linux block)))
+        (is (= {:status :not-supported}
+               (match* :bsd block)))
+        (is (= :unknown-platform
+               (match* :be-os block)))))
+
     (testing "variant patterns"
       (let [block (clauses (:variant :i [content]) content
                            (:variant :node [:_ child]) child)]

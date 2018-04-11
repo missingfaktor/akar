@@ -150,6 +150,14 @@
                                      (mapcat :bindings)
                                      ensuring-well-formed-bindings)})))
 
+(sy/defrule look-in-pattern'
+            (recap (sy/list-form (sy/cat :look-in (cap sy/form) (delay pattern')))
+                   (fn [[map] syntactic-pattern]
+                     {:pattern  `(!further (!look-in ~map) [~(:pattern syntactic-pattern)])
+                      :bindings (->> syntactic-pattern
+                                     :bindings
+                                     ensuring-well-formed-bindings)})))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Data type patterns
 
@@ -211,6 +219,7 @@
                     and-pattern'
                     seq-pattern'
                     map-pattern'
+                    look-in-pattern'
                     variant-pattern'
                     record-pattern'
                     type-pattern'
