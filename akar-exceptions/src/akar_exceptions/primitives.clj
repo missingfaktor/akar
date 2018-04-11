@@ -25,9 +25,10 @@
 
 (defn raise [exception-like]
   (match exception-like
-         (:guard :_ #(instance? Throwable %))    (throw exception-like)
-         (:and {:message (:type String message)}
-               the-whole-map)                    (throw (ex-info message the-whole-map))
-         {}                                      (throw (ex-info "An error was raised." exception-like))
-         not-even-a-map                          (throw (ex-info "An error was raised." {:object not-even-a-map}))))
+         (:type Throwable)                    (throw exception-like)
+         (:and {:message (:and (:type String)
+                               message)}
+               the-whole-map)                 (throw (ex-info message the-whole-map))
+         {}                                   (throw (ex-info "An error was raised." exception-like))
+         not-even-a-map                       (throw (ex-info "An error was raised." {:object not-even-a-map}))))
 
