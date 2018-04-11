@@ -7,7 +7,8 @@
   (try (block)
        (catch Throwable throwable
          (on-error throwable))
-       (finally (ultimately))))
+       (finally
+         (ultimately))))
 
 (define-syntax attempt
                :parser {:name ::attempt
