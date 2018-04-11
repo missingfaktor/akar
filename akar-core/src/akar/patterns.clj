@@ -95,9 +95,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Type-casing patterns
 
-(defn !type [type']
+(defn !type [type-being-matched-against]
   (!pred (fn [arg]
-           (= (type arg) type'))))
+           (let [type-of-arg (type arg)]
+             (if (and (instance? Class type-of-arg)
+                      (instance? Class type-being-matched-against))
+               (.isAssignableFrom type-being-matched-against type-of-arg)
+               (= type-of-arg type-being-matched-against))))))
 
 (defn !tag [tag]
   (!pred (fn [arg]

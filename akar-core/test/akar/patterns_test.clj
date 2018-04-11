@@ -179,10 +179,13 @@
     (testing "!type - for class"
       (let [block (clauses*
                     (!type String) (fn [] :string)
-                    (!type Keyword) (fn [] :keyword))]
+                    (!type Keyword) (fn [] :keyword)
+                    (!type Exception) (fn [] :exception))]
         (is (= :string
                (try-match* "SomeString" block)))
         (is (= :keyword
                (try-match* :some-keyword block)))
+        (is (= :exception
+               (try-match* (RuntimeException.) block)))
         (is (= clause-not-applied
                (try-match* 4 block)))))))
