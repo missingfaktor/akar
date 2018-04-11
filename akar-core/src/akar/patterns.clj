@@ -65,6 +65,11 @@
     (if (map? arg)
       [(get arg key)])))
 
+(defn !look-in [map]
+  (fn [arg]
+    (if-some [value (get map arg)]
+      [value])))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Data type patterns
 

@@ -101,6 +101,16 @@
         (is (= nil
                (match* (->Node nil nil) block)))))
 
+    (let [some-map {"XBD" 112}
+          block (clauses*
+                  (!look-in some-map) (fn [v] v)
+                  !any (fn [] :not-registered))]
+      (testing "!look-in"
+        (is (= 112
+               (match* "XBD" block)))
+        (is (= :not-registered
+               (match* "XKD" block)))))
+
     (let [block (clauses*
                   (!further (!variant :add) [(!constant 0) !bind]) (fn [y] [:num y])
                   (!further (!variant :sub) [!bind (!constant 0)]) (fn [x] [:num x])
