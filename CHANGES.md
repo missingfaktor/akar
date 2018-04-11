@@ -4,7 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
        
 See [here](http://keepachangelog.com/) for the change log format.
 
-## [Unreleased](https://github.com/missingfaktor/akar/compare/v1.0.0...HEAD)
+## [Unreleased](https://github.com/missingfaktor/akar/compare/v2.0.0...HEAD)
+
+# v2.0.0 / 2018.04.11
+
+### Changed
+- `:constant` syntactic pattern is now more general. Earlier you could only match a symbol in a scope. Now it accepts any form whatsoever.
+- `:type` no longer binds the value being matched. **This is a breaking change.** Replace all occurrences of `(:type SomeType some-symbol)` in your code with `(:and (:type SomeType) some-symbol)`.
+
+### Added
+- `!look-in` pattern function, and a corresponding `:look-in` syntactic pattern.
 
 # v1.0.0 / 2018.03.23
 
