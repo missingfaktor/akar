@@ -1,6 +1,6 @@
 (ns akar-exceptions.primitives
   (:require [clojure.spec.alpha :as sp]
-            [akar.syntax :refer :all]
+            [akar.syntax :refer [match]]
             [akar-exceptions.internal.syntax-utilities :refer :all]))
 
 (defn attempt* [block on-error ultimately]
@@ -21,4 +21,13 @@
                :codegen (fn [{:keys [block error-handler ultimately-part]}]
                           `(attempt* (fn [] ~block)
                                      (fn [ex#] (match ex# ~@error-handler))
-                                     (fn [] ((:ultimately-block ~ultimately-part))))))
+                                     (fn [] (:ultimately-block ~ultimately-part)))))
+
+(defn raise [exception-like]
+  (match exception-like
+         (:guard :_ #(instance? Throwable %))    (throw exception-like)
+         (:and {:message (:type String message)}
+               the-whole-map)                    (throw (ex-info message the-whole-map))
+         {}                                      (throw (ex-info "An error was raised." exception-like))
+         not-even-a-map                          (throw (ex-info "An error was raised." {:object not-even-a-map}))))
+
