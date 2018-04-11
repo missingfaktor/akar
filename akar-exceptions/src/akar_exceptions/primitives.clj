@@ -1,7 +1,8 @@
 (ns akar-exceptions.primitives
   (:require [clojure.spec.alpha :as sp]
             [akar.syntax :refer [match]]
-            [akar-exceptions.internal.syntax-utilities :refer :all]))
+            [akar-exceptions.internal.syntax-utilities :refer :all])
+  (:import [clojure.lang ExceptionInfo]))
 
 (defn attempt* [block on-error ultimately]
   (try (block)
@@ -33,3 +34,14 @@
          {}                                   (throw (ex-info "An error was raised." exception-like))
          not-even-a-map                       (throw (ex-info "An error was raised." {:object not-even-a-map}))))
 
+
+(defn !ex-info []
+  (fn [arg]
+    (if (instance? ExceptionInfo arg)
+      [(.data arg)])))
+
+(defn !exception [cls]
+  (fn [arg]
+    (if (and (instance? Exception arg)
+             (instance? cls arg))
+      [arg])))
