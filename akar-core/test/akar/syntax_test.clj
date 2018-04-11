@@ -98,12 +98,15 @@
 
     (testing "non-literal constants"
       (let [a 12
-            block (clauses (:constant a) :matched
+            block (clauses (:constant a) :matched-plain-value
+                           (:constant (dec a)) :matched-not-so-plain-value
                            :_ :didnt-really)]
-        (is (= :matched
+        (is (= :matched-plain-value
                (match* 12 block)))
+        (is (= :matched-not-so-plain-value
+               (match* 11 block)))
         (is (= :didnt-really
-               (match* 11 block)))))
+               (match* 10 block)))))
 
     (testing "guard patterns"
       (let [block (clauses (:guard a odd?) a

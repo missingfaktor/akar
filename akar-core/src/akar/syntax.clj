@@ -51,9 +51,9 @@
                                      (not= sym '&))))
 
 (sy/defrule constant'
-            (recap (sy/list-form (sy/cat :constant (cap valid-symbol')))
-                   (fn [[sym]]
-                     {:pattern  `(!constant ~sym)
+            (recap (sy/list-form (sy/cat :constant (cap sy/form)))
+                   (fn [[expression]]
+                     {:pattern  `(!constant ~expression)
                       :bindings []})))
 
 (sy/defrule bind'
