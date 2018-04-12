@@ -1,4 +1,4 @@
-(ns akar-exceptions
+(ns akar-exceptions.core-test
   (:require [clojure.test :refer :all]
             [akar-exceptions.core :refer :all]))
 
@@ -58,6 +58,14 @@
                                     (:type NumberFormatException) :number-format
                                     (:type Exception) :wut)))))
 
+      (testing "bubbles up throwable if a suitable handler is not found"
+        (is (thrown? UnsupportedOperationException
+                     (attempt (do
+                                (count (count 1))
+                                :ok)
+                              :on-error ((:type ArithmeticException) :arith
+                                          (:type NumberFormatException) :number-format)))))
+
       (testing "runs finally on failed execution"
         (let [finally-invoked (atom false)
               _               (attempt (do
@@ -65,4 +73,7 @@
                                        :on-error (:_ :ko)
                                        :ultimately (reset! finally-invoked true))]
           (is (= true
-                 @finally-invoked)))))))
+                 @finally-invoked))))
+
+      (testing "is okay with empty handler list"
+        (is (attempt (/ 0 2) :on-error ()))))))

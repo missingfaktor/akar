@@ -34,10 +34,10 @@
                                                                    result#
                                                                    (throw ex#)))))]
                             `(attempt* (fn []
-                                           ~block)
-                                         ~transformed-error-handler
-                                         (fn []
-                                           ~(:ultimately-block ultimately-part))))))
+                                         ~block)
+                                       ~transformed-error-handler
+                                       (fn []
+                                         ~(:ultimately-block ultimately-part))))))
 
 (defn raise [exception-like]
   (match exception-like
