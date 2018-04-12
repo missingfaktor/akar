@@ -6,11 +6,15 @@
   (:import [clojure.lang ExceptionInfo]))
 
 (defn attempt* [block on-error ultimately]
-  (try (block)
-       (catch Throwable throwable
-         (on-error throwable))
-       (finally
-         (ultimately))))
+  (if on-error
+    (try (block)
+         (catch Throwable throwable
+           (on-error throwable))
+         (finally
+           (ultimately)))
+    (try (block)
+         (finally
+           (ultimately)))))
 
 (define-syntax attempt
                :parser {:name ::attempt
