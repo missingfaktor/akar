@@ -92,6 +92,7 @@
     (testing "throws map with no specific message as ex-info"
       (is (thrown? ExceptionInfo
                    (raise {:some-key :some-value}))))
+    
     (testing "throws random values"
       (is (thrown? ExceptionInfo
                    (raise :not-a-throwable-or-a-map)))))
