@@ -2,7 +2,7 @@
   (:require [clojure.spec.alpha :as sp]
             [akar.primitives :refer [clause-applied?]]
             [akar.syntax :refer [match try-match]]
-            [akar-exceptions.internal.syntax-utilities :refer :all])
+            [akar-commons.syntax-utilities :refer :all])
   (:import [clojure.lang ExceptionInfo]))
 
 (defn attempt* [block on-error ultimately]
