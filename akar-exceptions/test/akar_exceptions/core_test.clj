@@ -1,6 +1,7 @@
 (ns akar-exceptions.core-test
   (:require [clojure.test :refer :all]
-            [akar-exceptions.core :refer :all]))
+            [akar-exceptions.core :refer :all])
+  (:import [clojure.lang ExceptionInfo]))
 
 (deftest akar-exceptions-core-test
 
@@ -76,4 +77,21 @@
                  @finally-invoked))))
 
       (testing "is okay with empty handler list"
-        (is (attempt (/ 0 2) :on-error ()))))))
+        (is (attempt (/ 0 2) :on-error ())))))
+
+  (testing "raise"
+
+    (testing "throws regular throwables"
+      (is (thrown? NumberFormatException
+                   (raise (NumberFormatException.)))))
+
+    (testing "throws map with the given message as ex-info"
+      (is (thrown-with-msg? ExceptionInfo #"^hello$"
+                            (raise {:message "hello"}))))
+
+    (testing "throws map with no specific message as ex-info"
+      (is (thrown? ExceptionInfo
+                   (raise {:some-key :some-value}))))
+    (testing "throws random values"
+      (is (thrown? ExceptionInfo
+                   (raise :not-a-throwable-or-a-map))))))
