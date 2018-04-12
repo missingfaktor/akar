@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [akar.patterns :refer :all]
             [akar.combinators :refer :all]
-            [akar.primitives :refer :all]))
+            [akar.primitives :refer :all]
+            [akar-commons.miscellaneous :refer :all]))
 
 (deftest combinators-test
 

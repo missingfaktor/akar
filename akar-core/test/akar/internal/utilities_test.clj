@@ -4,25 +4,6 @@
 
 (deftest internal-utilities-test
 
-  (testing "variadic-reducive-function"
-    (let [f (variadic-reductive-function :zero 0
-                                         :combine (fn [x y] (+ x y)))]
-      (testing "zero"
-        (is (= (f)
-               0)))
-
-      (testing "one"
-        (is (= (f 3)
-               3)))
-
-      (testing "two"
-        (is (= (f 3 6)
-               9)))
-
-      (testing "many"
-        (is (= (f 3 6 9 0)
-               18)))))
-
   (testing "append"
 
     (testing "for list"
@@ -47,13 +28,4 @@
     (is (= true
            (same-size? [] [])))
     (is (= false
-           (same-size? [1] [2 3]))))
-
-  (testing "single"
-
-    (is (= 3
-           (single [3])))
-    (is (thrown? RuntimeException
-                 (single [1 4])))
-    (is (thrown? RuntimeException
-                 (single [])))))
+           (same-size? [1] [2 3])))))

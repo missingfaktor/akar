@@ -1,18 +1,7 @@
-(ns akar.util-test
-  (:require [akar.util :refer :all]
+(ns akar.akar-trampolined-test
+  (:require [akar-commons.trampoline :refer :all]
             [clojure.test :refer :all]
             [akar.syntax :refer :all]))
-
-(deftest postwalk-fn-replace-test
-  (testing "should replace the expression with result of replacing fn"
-    (let [postwalk-fn-replace #'akar.util/postwalk-fn-replace]
-      (is (= (postwalk-fn-replace (fn [expr]
-                                       (= :a expr))
-                                     (fn [expr]
-                                       :b)
-                                     '(:a :b :c :d))
-             '(:b :b :c :d))))))
-
 
 (deftest defn-trampolined-test
   (testing "should replace single trampolined-recur call with trampolined function giving correct result"

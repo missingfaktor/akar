@@ -1,6 +1,7 @@
 (ns akar.combinators
   (:require [akar.patterns :refer [!fail !bind !pred !any]]
-            [akar.internal.utilities :refer :all]))
+            [akar.internal.utilities :refer :all]
+            [akar-commons.miscellaneous :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinators to compose a number of patterns into one

@@ -1,5 +1,5 @@
 (ns akar.primitives
-  (:require [akar.internal.utilities :refer [variadic-reductive-function fail-with]]))
+  (:require [akar-commons.miscellaneous :refer [variadic-reductive-function fail-with]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Pattern matching primitives

@@ -4,5 +4,4 @@
   (:require [akar.patterns :refer :all])
   (:require [akar.combinators :refer :all])
   (:require [akar.syntax :refer :all])
-  (:require [akar.util :refer :all])
   (:require [n01se.syntax :refer [parse-forms syndoc]]))
