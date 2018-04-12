@@ -39,13 +39,13 @@
                                        (fn []
                                          ~(:ultimately-block ultimately-part))))))
 
-(defn raise [exception-like]
-  (match exception-like
-         (:type Throwable)                    (throw exception-like)
+(defn raise [throwable-like]
+  (match throwable-like
+         (:type Throwable)                    (throw throwable-like)
          (:and {:message (:and (:type String)
                                message)}
                the-whole-map)                 (throw (ex-info message the-whole-map))
-         {}                                   (throw (ex-info "An error was raised." exception-like))
+         {}                                   (throw (ex-info "An error was raised." throwable-like))
          not-even-a-map                       (throw (ex-info "An error was raised." {:object not-even-a-map}))))
 
 
