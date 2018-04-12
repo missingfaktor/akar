@@ -7,7 +7,7 @@
             :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                               :sign-releases false}]]
             :dependencies [[org.clojure/clojure "1.9.0"]
-                           [n01se/seqex "2.0.1"]]
+                           [n01se/seqex "2.0.2"]]
             :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]]}}
             :aliases {"et" ["do" ["eastwood"] ["test"]]}
             :main akar.try-out)
