@@ -22,6 +22,7 @@
       (testing "many"
         (is (= (f 3 6 9 0)
                18)))))
+
   (testing "single"
 
     (is (= 3

@@ -52,7 +52,7 @@
   (fn [arg]
     (if-some [root-emissions (!root arg)]
       (let [root-emissions' (modify-root-emissions root-emissions)
-            !nexts' (modify-nexts !nexts)]
+            !nexts'         (modify-nexts !nexts)]
         (if (same-size? root-emissions' !nexts')
           (let [pairings (map vector root-emissions' !nexts')]
             (reduce
