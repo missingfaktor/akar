@@ -1,4 +1,4 @@
-(ns akar-exceptions.primitives
+(ns akar-exceptions.core
   (:require [clojure.spec.alpha :as sp]
             [akar.primitives :refer [clause-applied?]]
             [akar.syntax :refer [match try-match]]
