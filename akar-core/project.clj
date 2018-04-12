@@ -1,4 +1,4 @@
-(defproject akar/akar-core "2.0.0"
+(defproject akar/akar-core "2.0.1"
             :description "First-class patterns for Clojure – Core framework"
             :url "www.github.com/missingfaktor/akar"
             :license {:name         "Apache License 2.0"
