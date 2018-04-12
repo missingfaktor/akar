@@ -8,6 +8,5 @@
                                               :sign-releases false}]]
             :dependencies [[org.clojure/clojure "1.9.0"]
                            [n01se/seqex "2.0.2"]]
-            :profiles {:dev {:plugins [[jonase/eastwood "0.2.3"]]}}
-            :aliases {"et" ["do" ["eastwood"] ["test"]]}
+            :pedantic? :abort
             :main akar.try-out)
