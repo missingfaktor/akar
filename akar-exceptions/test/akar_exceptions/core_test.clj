@@ -94,4 +94,19 @@
                    (raise {:some-key :some-value}))))
     (testing "throws random values"
       (is (thrown? ExceptionInfo
-                   (raise :not-a-throwable-or-a-map))))))
+                   (raise :not-a-throwable-or-a-map)))))
+
+  (testing "pattern functions"
+    (let [exec (fn [block]
+                 (attempt (block)
+                          :on-error ([!ex-info {:occurrences n}] n
+                                      [!ex-info :_]              :ex-info-still
+                                      [(!ex RuntimeException) e] (.getMessage e))))]
+      (is (= 2
+             (exec (fn [] (raise {:occurrences 2})))))
+      (is (= :ex-info-still
+             (exec (fn [] (raise 11)))))
+      (is (= "Oops"
+             (exec (fn [] (raise (RuntimeException. "Oops"))))))
+      (is (thrown? Exception
+                   (exec (fn [] (raise (Exception.)))))))))

@@ -49,12 +49,12 @@
          not-even-a-map                       (throw (ex-info "An error was raised." {:object not-even-a-map}))))
 
 
-(defn !ex-info []
+(def !ex-info
   (fn [arg]
     (if (instance? ExceptionInfo arg)
       [(.data arg)])))
 
-(defn !exception [cls]
+(defn !ex [cls]
   (fn [arg]
     (if (and (instance? Exception arg)
              (instance? cls arg))
