@@ -26,15 +26,18 @@
                                                                      :ultimately-block sp/form)))}
 
                :codegen (fn [{:keys [block error-handler ultimately-part]}]
-                          `(attempt* (fn []
-                                       ~block)
-                                     (fn [ex#]
-                                       (let [result# (try-match ex# ~@error-handler)]
-                                         (if (clause-applied? result#)
-                                           result#
-                                           (throw ex#))))
-                                     (fn []
-                                       ~(:ultimately-block ultimately-part)))))
+                          (let [transformed-error-handler (if (empty? error-handler)
+                                                            `nil
+                                                            `(fn [ex#]
+                                                               (let [result# (try-match ex# ~@error-handler)]
+                                                                 (if (clause-applied? result#)
+                                                                   result#
+                                                                   (throw ex#)))))]
+                            `(attempt* (fn []
+                                           ~block)
+                                         ~transformed-error-handler
+                                         (fn []
+                                           ~(:ultimately-block ultimately-part))))))
 
 (defn raise [exception-like]
   (match exception-like
