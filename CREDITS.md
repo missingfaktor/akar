@@ -13,8 +13,6 @@
     - [Amar Potghan](https://github.com/amarpotghan/)
     - [Aleksander Sumowski](https://github.com/aleksandersumowski)
 
-- [Vivek Patil](https://github.com/Vivek-Patil) helped set up Travis CI.
-
 - Sadhana Goma Phulore created a beautiful logo for this project.
 
 - [Aleksander Sumowski](https://github.com/aleksandersumowski) added some literary flair to the README by contributing a fitting excerpt from "Alice in Wonderland".
