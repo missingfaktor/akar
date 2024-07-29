@@ -88,6 +88,6 @@ Do you wish to contribute to Akar? Splendid! Get started [here](CONTRIBUTING.md)
  
 ## License
 
-Copyright © 2024 Rahul Goma Phulore, Rahul Kavale
+Copyright © 2024 Rahul Goma Phulore
 
 Distributed under Apache License 2.0.
