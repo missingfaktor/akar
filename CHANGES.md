@@ -8,6 +8,18 @@ See [here](http://keepachangelog.com/) for the change log format.
 
 Everything since what's listed below.
 
+# akar v3.0.0 / 2024.07.29
+- Upgraded to Clojure 1.11.3.
+
+# akar-exceptions v3.0.0 / 2024.07.29
+- Upgraded to Clojure 1.11.3.
+
+# akar-core v3.0.0 / 2024.07.29
+- Upgraded to Clojure 1.11.3.
+
+# akar-commons v3.0.0 / 2024.07.28
+- Upgraded to Clojure 1.11.3.
+
 # akar v2.0.0 / 2018.04.13
 - Umbrella project with the latest releases of satellite projects mentioned below.
 
