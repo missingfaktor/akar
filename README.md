@@ -5,6 +5,8 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/akar.svg)](https://clojars.org/akar)
 [![Clojars Project](https://img.shields.io/clojars/v/akar/akar-core.svg)](https://clojars.org/akar/akar-core)
+[![Clojars Project](https://img.shields.io/clojars/v/akar/akar-exceptions.svg)](https://clojars.org/akar/akar-exceptions)
+[![Clojars Project](https://img.shields.io/clojars/v/akar/akar-commons.svg)](https://clojars.org/akar/akar-commons)
 
 <img src="graphics/logo.png" width="300">
 
@@ -43,10 +45,10 @@ To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
 
 ```clojure
 # Specific Akar projects
-[akar/akar-core "1.0.0"]
+[akar/akar-core "3.0.0"]
 
 # All Akar projects
-[akar "1.0.0"]
+[akar "3.0.0"]
 ```
  
 ## Example
@@ -89,6 +91,6 @@ Do you wish to contribute to Akar? Splendid! Get started [here](CONTRIBUTING.md)
  
 ## License
 
-Copyright © 2018 Rahul Goma Phulore, Rahul Kavale
+Copyright © 2024 Rahul Goma Phulore, Rahul Kavale
 
 Distributed under Apache License 2.0.
