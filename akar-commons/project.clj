@@ -5,4 +5,4 @@
             :url          "http://www.apache.org/licenses/LICENSE-2.0"
             :distribution :repo}
   :deploy-repositories [["clojars" :clojars]]
-  :dependencies [[org.clojure/clojure "1.11.3"]])
+  :dependencies [[org.clojure/clojure "1.12.0"]])
