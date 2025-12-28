@@ -1,0 +1,4 @@
+{:lint-as {akar-commons.miscellaneous/define-alias clojure.core/def
+           n01se.syntax/defsyntax clojure.core/def
+           n01se.syntax/defrule clojure.core/def
+           n01se.syntax/defterminal clojure.core/def}}

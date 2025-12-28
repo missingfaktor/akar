@@ -17,7 +17,7 @@
 
 (defn !pred [pred]
   (fn [x]
-    (if (pred x)
+    (when (pred x)
       [])))
 
 (defn !constant [value]
@@ -46,28 +46,28 @@
 
 (def !cons
   (fn [arg]
-    (if (and (sequential? arg) (not-empty arg))
+    (when (and (sequential? arg) (not-empty arg))
       [(first arg) (rest arg)])))
 
 (def !seq
   (fn [arg]
-    (if (sequential? arg)
+    (when (sequential? arg)
       [(vec arg)])))
 
 (defn !key [key]
   (fn [arg]
-    (if (map? arg)
-      (if-some [value (get arg key)]
+    (when (map? arg)
+      (when-some [value (get arg key)]
         [value]))))
 
 (defn !optional-key [key]
   (fn [arg]
-    (if (map? arg)
+    (when (map? arg)
       [(get arg key)])))
 
 (defn !look-in [map]
   (fn [arg]
-    (if-some [value (get map arg)]
+    (when-some [value (get map arg)]
       [value])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,12 +76,12 @@
 ; Variants, as described by Jeanine Adkisson here - https://www.youtube.com/watch?v=ZQkIWWTygio
 (defn !variant [tag]
   (fn [arg]
-    (if (and (vector? arg) (= (first arg) tag))
+    (when (and (vector? arg) (= (first arg) tag))
       (vec (rest arg)))))
 
 (defn !record [cls]
   (fn [arg]
-    (if (and (record? arg) (instance? cls arg))
+    (when (and (record? arg) (instance? cls arg))
       (vec (vals arg)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -89,8 +89,8 @@
 
 (defn !regex [rgx]
   (fn [arg]
-    (if (string? arg)
-      (if-some [out (some->> arg
+    (when (string? arg)
+      (when-some [out (some->> arg
                              (re-seq rgx)
                              first)]
         (cond

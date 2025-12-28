@@ -1,7 +1,7 @@
 (ns akar.combinators
   (:require [akar.patterns :refer [!fail !bind !pred !any]]
-            [akar.internal.utilities :refer :all]
-            [akar-commons.miscellaneous :refer :all]))
+            [akar.internal.utilities :refer [append clump-after same-size?]]
+            [akar-commons.miscellaneous :refer [define-alias single variadic-reductive-function]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinators to compose a number of patterns into one
@@ -11,8 +11,8 @@
     :zero !any
     :combine (fn [!p1 !p2]
                (fn [arg]
-                 (if-some [matches1 (!p1 arg)]
-                   (if-some [matches2 (!p2 arg)]
+                 (when-some [matches1 (!p1 arg)]
+                   (when-some [matches2 (!p2 arg)]
                      (concat matches1 matches2)))))))
 
 (def !or
@@ -50,19 +50,19 @@
 
 (defn ^:private fan-out [& {:keys [!root !nexts modify-root-emissions modify-nexts]}]
   (fn [arg]
-    (if-some [root-emissions (!root arg)]
+    (when-some [root-emissions (!root arg)]
       (let [root-emissions' (modify-root-emissions root-emissions)
             !nexts'         (modify-nexts !nexts)]
-        (if (same-size? root-emissions' !nexts')
+        (when (same-size? root-emissions' !nexts')
           (let [pairings (map vector root-emissions' !nexts')]
             (reduce
-              (fn [emissions [in pattern]]
-                (let [new-emissions (pattern in)]
-                  (if (nil? new-emissions)
-                    (reduced nil)
-                    (concat emissions new-emissions))))
-              []
-              pairings)))))))
+             (fn [emissions [in pattern]]
+               (let [new-emissions (pattern in)]
+                 (if (nil? new-emissions)
+                   (reduced nil)
+                   (concat emissions new-emissions))))
+             []
+             pairings)))))))
 
 (defn !further [!root !nexts]
   (fan-out :!root !root

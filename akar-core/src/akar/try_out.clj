@@ -1,3 +1,5 @@
+#_{:clj-kondo/ignore [:refer-all]}
+
 (ns akar.try-out
   (:require [clojure.repl :refer :all])
   (:require [akar.primitives :refer :all])
