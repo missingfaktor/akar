@@ -40,22 +40,23 @@
                                          ~(:ultimately-block ultimately-part))))))
 
 (defn raise [throwable-like]
+  #_{:clj-kondo/ignore [:unresolved-symbol]}
   (match throwable-like
-         (:type Throwable)                    (throw throwable-like)
-         (:and {:message (:and (:type String)
-                               message)}
-               the-whole-map)                 (throw (ex-info message the-whole-map))
-         {}                                   (throw (ex-info "An error was raised." throwable-like))
-         not-even-a-map                       (throw (ex-info "An error was raised." {:object not-even-a-map}))))
+    (:type Throwable)                    (throw throwable-like)
+    (:and {:message (:and (:type String)
+                          message)}
+          the-whole-map)                 (throw (ex-info message the-whole-map))
+    {}                                   (throw (ex-info "An error was raised." throwable-like))
+    not-even-a-map                       (throw (ex-info "An error was raised." {:object not-even-a-map}))))
 
 
 (def !ex-info
   (fn [arg]
-    (if (instance? ExceptionInfo arg)
+    (when (instance? ExceptionInfo arg)
       [(.data arg)])))
 
 (defn !ex [cls]
   (fn [arg]
-    (if (and (instance? Exception arg)
-             (instance? cls arg))
+    (when (and (instance? Exception arg)
+               (instance? cls arg))
       [arg])))
