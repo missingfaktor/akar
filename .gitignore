@@ -13,3 +13,5 @@ pom.xml.asc
 .idea/
 *.iml
 .nrepl-port
+.clj-kondo/
+.lsp/
