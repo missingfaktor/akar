@@ -2,6 +2,14 @@
 
 Thank you for your interest in contributing to this library.
 
+## Setup
+
+To set up the development environment:
+
+1. Install [SDKMan](https://sdkman.io/) if you haven't already.
+2. In the project root, run `sdk env` to install and use the required Java version (currently Java 25.0.1-open).
+3. Install [Leiningen](https://leiningen.org/) for building and testing.
+
 If you wish to help out with things on our [tasks](#tasks) list, or wish to contribute a new feature to the library, or wish to fix a bug, please create a Github issue, and start a discussion. If/once assigned, you can work on the issue independently, and submit a PR once you have made sure that the [contribution guidelines](#guidelines) for this project are met.
 
 ## Tasks 

@@ -8,4 +8,9 @@
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [n01se/seqex "2.0.2"]
                  [akar/akar-core "4.0.0"]
-                 [akar/akar-commons "4.0.0"]])
+                 [akar/akar-commons "4.0.0"]]
+  :java-version "25"
+  :properties {"maven.compiler.source" "25"
+               "maven.compiler.target" "25"
+               "java.version" "25"}
+  :pom-plugins [[org.apache.maven.plugins/maven-compiler-plugin "3.13.0" {:configuration {:source "23" :target "23"}}]])
