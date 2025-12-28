@@ -10,4 +10,5 @@
                  [akar/akar-exceptions "4.0.0"]
                  [akar/akar-commons "4.0.0"]]
   :plugins [[lein-sub "0.3.0"]]
-  :sub ["akar-core"])
+  :sub ["akar-core" "akar-commons" "akar-exceptions"]
+  :aliases {"test" ["sub" "test"]})
