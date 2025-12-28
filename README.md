@@ -42,10 +42,10 @@ To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
 
 ```clojure
 # Specific Akar projects
-[akar/akar-core "3.0.0"]
+[akar/akar-core "4.0.0"]
 
 # All Akar projects
-[akar "3.0.0"]
+[akar "4.0.0"]
 ```
  
 ## Example

@@ -1,4 +1,4 @@
-(defproject akar "3.0.0"
+(defproject akar "4.0.0"
   :description "First-class patterns for Clojure"
   :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"
@@ -6,8 +6,8 @@
             :distribution :repo}
   :deploy-repositories [["clojars" :clojars]]
   :dependencies [[org.clojure/clojure "1.12.0"]
-                 [akar/akar-core "3.0.0"]
-                 [akar/akar-exceptions "3.0.0"]
-                 [akar/akar-commons "3.0.0"]]
+                 [akar/akar-core "4.0.0"]
+                 [akar/akar-exceptions "4.0.0"]
+                 [akar/akar-commons "4.0.0"]]
   :plugins [[lein-sub "0.3.0"]]
   :sub ["akar-core"])

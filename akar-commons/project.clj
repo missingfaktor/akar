@@ -1,4 +1,4 @@
-(defproject akar/akar-commons "3.0.0"
+(defproject akar/akar-commons "4.0.0"
   :description "A bag of common utility functions used by Akar projects"
   :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"
