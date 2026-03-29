@@ -1,40 +1,138 @@
 # AGENTS.md
 
-This file provides guidelines for AI agents assisting with development on the Akar project, a Clojure library for pattern matching and syntax utilities. Follow these rules to ensure contributions align with the project's functional programming ethos and community standards.
+Guidance for AI coding agents working in the Akar repository.
 
-## Guidelines
+## Mission
 
-- Never construct Git commits on my behalf.
-- Never push changes to remote repositories.
-- Use `--no-pager` when running Git commands to avoid getting stuck in pagers.
-- Aspire for the code to be self-documenting to the extent possible.
-- Only add comments after exhausting all avenues for self-documenting code. Comments should typically address "why" aspects.
-- Follow the [Clojure Style Guide](https://github.com/bbatsov/clojure-style-guide) for naming, formatting, and structure.
-- Prioritize functional programming: avoid mutable state, use pure functions, and leverage Clojure's immutability.
-- Ensure code is idiomatic Clojure; prefer core functions over custom implementations.
-- Update relevant documentation (e.g., `README.md`, `TUTORIAL.md`, or `CHANGES.md`) for user-facing changes, such as new patterns or API modifications.
-- Ensure examples in documentation remain accurate and demonstrate best practices.
+Akar is a Clojure pattern matching library built around a small core idea:
+
+- A pattern is an ordinary function from a value to either a sequence of emissions or `nil`.
+- Clauses and syntax are layered on top of that runtime model.
+- Simplicity, composability, and first-class abstractions matter more here than clever machinery.
+
+When making changes, preserve that spirit. Prefer small, explicit, orthogonal building blocks over special cases.
+
+## Repository Map
+
+- `akar-core`: runtime pattern primitives, combinators, syntax macros, and tests.
+- `akar-commons`: shared helpers, including variadic combinator helpers and trampoline support.
+- `akar-exceptions`: exception-oriented helpers built in the same style as the core syntax layer.
+- `README.md`, `TUTORIAL.md`, `FAQs.md`, `GOTCHAS.md`, `CHANGES.md`: user-facing documentation.
+
+Read the relevant subproject before editing it. `akar.syntax` depends heavily on `n01se.syntax` and `n01se.seqex`, so do not treat it like ordinary macro code without understanding the grammar layer it uses.
+
+## Ground Rules
+
+- Never create Git commits unless the human explicitly asks.
+- Never push to remotes.
+- Use `git --no-pager ...` for Git reads.
+- Prefer `rg` for searching.
+- Keep code self-documenting. Add comments only when they explain intent or a non-obvious constraint.
+- Follow idiomatic Clojure style and prefer core functions over custom machinery.
+- Avoid introducing mutable state unless there is a compelling, project-consistent reason.
+
+## Design Expectations
+
+### First-class patterns
+
+In `akar-core`, preserve the distinction between:
+
+- runtime patterns in `patterns.clj` and `combinators.clj`
+- clause execution in `primitives.clj`
+- syntax compilation in `syntax.clj`
+
+Do not solve syntax-level problems by complicating the runtime model unless that tradeoff is clearly worth it.
+
+### Emissions and failure
+
+The core runtime convention is important and should remain consistent:
+
+- `nil` means match failure
+- a sequence means match success
+- an empty sequence means success with no emissions
+
+New patterns and combinators should fit that contract cleanly.
+
+### Syntax layer
+
+`akar.syntax` is a seqex-powered grammar, not an ad hoc macro parser.
+
+- Keep new syntax rules declarative.
+- Prefer extending existing grammar patterns over hand-parsing forms.
+- Preserve binding validation behavior such as duplicate-binding checks and `:or` binding restrictions.
+- Keep macroexpansions aligned with the runtime primitives rather than reimplementing semantics in macro code.
+
+### Functional style
+
+Favor composition over branching-heavy implementations. For this codebase, a good solution is usually one that makes the model easier to reason about, not one that hides complexity behind magic.
+
+## Subproject Notes
+
+### `akar-core`
+
+- `patterns.clj` should contain simple, reusable pattern functions.
+- `combinators.clj` should compose patterns without changing the core contract.
+- `syntax.clj` should translate user-facing forms into the same runtime pieces used directly by hand.
+- Be careful with nested matching, emitted value ordering, and arity expectations between patterns and clause actions.
+
+### `akar-commons`
+
+- Keep helpers general-purpose.
+- `trampoline.clj` supports `defn-trampolined`; changes here should be conservative and well-tested because they affect recursion semantics.
+
+### `akar-exceptions`
+
+- Keep it stylistically aligned with the rest of Akar: syntax should compile into ordinary runtime functions with clear data flow.
+
+## Documentation
+
+Update docs when behavior changes in a user-visible way.
+
+Common places to update:
+
+- `README.md` for public-facing overview or examples
+- `TUTORIAL.md` for conceptual or teaching changes
+- `FAQs.md` or `GOTCHAS.md` for semantics, tradeoffs, and caveats
+- `CHANGES.md` for release-facing notes
+
+If you change syntax, examples, or semantics, verify that the examples in docs still reflect reality.
 
 ## Testing
 
-- Always run the full test suite (using `lein test`) after making changes to verify functionality.
-- Add or update tests for new features, bug fixes, or pattern changes. Use clojure.test or consider Midje for better readability.
-- Include tests for edge cases in pattern matching, such as trampolining for recursion in akar-core.
+After code changes, run the full test suite from the repo root:
 
-## Collaboration
+```sh
+lein test
+```
 
-- Ask for clarification from human maintainers if a task is ambiguous or involves significant changes.
-- Explain the reasoning behind suggestions, especially for complex pattern logic or syntax modifications.
-- Reference GitHub issues (e.g., from `CONTRIBUTING.md`) for context and propose changes via pull requests rather than direct edits.
+Also add or update focused tests in the affected subproject. Prefer tests that protect semantics, especially around:
 
-## Security
+- emission ordering
+- nested patterns via `!further` and `!further-many`
+- rest patterns in sequence syntax
+- macroexpansion shape in `syntax_test.clj`
+- trampoline behavior and large recursive inputs
+- exception matching behavior in `akar-exceptions`
 
-- Never expose sensitive information, API keys, or credentials in code or suggestions.
-- Avoid suggesting changes that could introduce vulnerabilities, such as insecure pattern matching in user inputs.
+## Change Discipline
 
-## Project-Specific Rules
+Before making a potentially breaking change, stop and verify the intent with a human if any of the following are true:
 
-- When working on `akar-core` or `akar-syntax`, ensure patterns are composable, efficient, and follow the library's trampoline-based recursion model.
-- For `akar-commons`, maintain utility functions as general-purpose and well-tested.
-- Avoid breaking changes to public APIs without discussion; reference existing issues (e.g., #9 for ClojureScript support).
-- Use Leiningen for builds and ensure compatibility across Clojure versions.
+- it changes a public macro or pattern contract
+- it changes emission order or binding count
+- it changes failure behavior from `nil` to success or vice versa
+- it introduces a new special case into the syntax layer
+
+Small, principled extensions are welcome. Silent semantic drift is not.
+
+## Practical Workflow
+
+1. Read the relevant namespace and its tests first.
+2. Trace how the feature is represented at runtime, in syntax, and in docs.
+3. Make the smallest coherent change.
+4. Update docs if the change is user-facing.
+5. Run `lein test`.
+
+## If Unsure
+
+State what you know, what you are inferring, and what you have verified. This project values clarity and honesty over bluffing.
