@@ -31,6 +31,18 @@ Read the relevant subproject before editing it. `akar.syntax` depends heavily on
 - Follow idiomatic Clojure style and prefer core functions over custom machinery.
 - Avoid introducing mutable state unless there is a compelling, project-consistent reason.
 
+## MCP and REPL Workflow
+
+This repository is configured to use `clojure-mcp` with Codex.
+
+- Prefer `clojure-mcp` tools for Clojure project inspection, REPL-oriented validation, and Clojure-aware editing when those tools are available in the current Codex session.
+- At the start of substantive Clojure work, inspect the project with `clojure-mcp` before making assumptions about namespaces, vars, or REPL state.
+- When changing behavior, prefer validating the change in the REPL in addition to running the test suite.
+- Treat `clojure-mcp` as complementary to shell tools, not a total replacement. Use ordinary shell commands for fast file discovery and repo-wide search.
+- The project-local `.clojure-mcp/config.edn` disables the MCP bash tool on purpose. Use Codex shell tools for bash commands and `clojure-mcp` for Clojure-aware operations.
+
+If the current Codex session does not expose `clojure-mcp` tools, fall back gracefully to shell commands and Leiningen, but continue to follow a REPL-driven workflow where practical.
+
 ## Design Expectations
 
 ### First-class patterns
@@ -128,10 +140,12 @@ Small, principled extensions are welcome. Silent semantic drift is not.
 ## Practical Workflow
 
 1. Read the relevant namespace and its tests first.
-2. Trace how the feature is represented at runtime, in syntax, and in docs.
-3. Make the smallest coherent change.
-4. Update docs if the change is user-facing.
-5. Run `lein test`.
+2. If `clojure-mcp` is available, inspect the project and relevant namespaces with it before editing.
+3. Trace how the feature is represented at runtime, in syntax, and in docs.
+4. Make the smallest coherent change.
+5. Validate in the REPL when practical, especially for macroexpansion, emitted values, and syntax behavior.
+6. Update docs if the change is user-facing.
+7. Run `lein test`.
 
 ## If Unsure
 
