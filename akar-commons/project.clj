@@ -1,4 +1,4 @@
-(defproject london.rahul/akar-commons "5.0.0"
+(defproject london.rahul/akar-commons "6.0.0"
   :description "A bag of common utility functions used by Akar projects"
   :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"

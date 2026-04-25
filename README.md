@@ -5,7 +5,7 @@
 [![Clojars Project](https://img.shields.io/clojars/v/london.rahul/akar-exceptions.svg)](https://clojars.org/london.rahul/akar-exceptions)
 [![Clojars Project](https://img.shields.io/clojars/v/london.rahul/akar-commons.svg)](https://clojars.org/london.rahul/akar-commons)
 
-<img src="graphics/logo.png" width="300">
+<img src="assets/logo.png" width="300">
 
 > \[Speech] <br/>
 > Queen: Hmm... <br/>

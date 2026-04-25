@@ -26,97 +26,97 @@
 ;;; Basic pattern rules
 
 (define-rule any'
-  :grammar #{:_ :any})
+  #{:_ :any})
 
 (define-rule literal'
-  :grammar (s/or :number  number?
-                 :string  string?
-                 :boolean boolean?
-                 :keyword keyword?
-                 :nil     nil?))
+  (s/or :number  number?
+        :string  string?
+        :boolean boolean?
+        :keyword keyword?
+        :nil     nil?))
 
 (define-rule bind'
-  :grammar (s/and symbol? #(not= % '&)))
+  (s/and symbol? #(not= % '&)))
 
 (define-rule constant'
-  :grammar (s/and list? (s/spec (s/cat :_tag #{:constant} :expr any?))))
+  (s/and list? (s/spec (s/cat :_tag #{:constant} :expr any?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinator / composite pattern rules
 ;;; These reference ::pattern' which is registered below; spec resolves lazily.
 
 (define-rule guard-pattern'
-  :grammar (s/and list? (s/spec (s/cat :_tag  #{:guard}
-                                       :inner ::pattern'
-                                       :cond  any?))))
+  (s/and list? (s/spec (s/cat :_tag  #{:guard}
+                              :inner ::pattern'
+                              :cond  any?))))
 
 (define-rule view-pattern'
-  :grammar (s/and list? (s/spec (s/cat :_tag    #{:view}
-                                       :view-fn any?
-                                       :inner   ::pattern'))))
+  (s/and list? (s/spec (s/cat :_tag    #{:view}
+                              :view-fn any?
+                              :inner   ::pattern'))))
 
 (define-rule or-pattern'
-  :grammar (s/and list? (s/spec (s/cat :_tag     #{:or}
-                                       :patterns (s/+ ::pattern')))))
+  (s/and list? (s/spec (s/cat :_tag     #{:or}
+                              :patterns (s/+ ::pattern')))))
 
 (define-rule and-pattern'
-  :grammar (s/and list? (s/spec (s/cat :_tag     #{:and}
-                                       :patterns (s/+ ::pattern')))))
+  (s/and list? (s/spec (s/cat :_tag     #{:and}
+                              :patterns (s/+ ::pattern')))))
 
 (define-rule seq-pattern'
-  :grammar (s/and list?
-                  (s/spec (s/cat :_tag    #{:seq}
-                                 :content (s/and vector?
-                                               (s/spec (s/cat :elements (s/* ::pattern')
-                                                              :rest     (s/? (s/cat :amp          #{'&}
-                                                                                   :rest-pattern ::pattern')))))))))
+  (s/and list?
+         (s/spec (s/cat :_tag    #{:seq}
+                        :content (s/and vector?
+                                        (s/spec (s/cat :elements (s/* ::pattern')
+                                                       :rest     (s/? (s/cat :amp          #{'&}
+                                                                            :rest-pattern ::pattern')))))))))
 
 (define-rule map-pattern'
-  :grammar (s/and map? (s/map-of keyword? ::pattern')))
+  (s/and map? (s/map-of keyword? ::pattern')))
 
 (define-rule look-in-pattern'
-  :grammar (s/and list? (s/spec (s/cat :_tag     #{:look-in}
-                                       :map-form any?
-                                       :inner    ::pattern'))))
+  (s/and list? (s/spec (s/cat :_tag     #{:look-in}
+                              :map-form any?
+                              :inner    ::pattern'))))
 
 (define-rule variant-pattern'
-  :grammar (s/and list?
-                  (s/spec (s/cat :_tag   #{:variant}
-                                 :tag    any?
-                                 :fields (s/and vector? (s/spec (s/* ::pattern')))))))
+  (s/and list?
+         (s/spec (s/cat :_tag   #{:variant}
+                        :tag    any?
+                        :fields (s/and vector? (s/spec (s/* ::pattern')))))))
 
 (define-rule record-pattern'
-  :grammar (s/and list?
-                  (s/spec (s/cat :_tag   #{:record}
-                                 :cls    any?
-                                 :fields (s/and vector? (s/spec (s/* ::pattern')))))))
+  (s/and list?
+         (s/spec (s/cat :_tag   #{:record}
+                        :cls    any?
+                        :fields (s/and vector? (s/spec (s/* ::pattern')))))))
 
 (define-rule type-pattern'
-  :grammar (s/and list? (s/spec (s/cat :_tag #{:type} :cls any?))))
+  (s/and list? (s/spec (s/cat :_tag #{:type} :cls any?))))
 
 (define-rule arbitrary-pattern'
-  :grammar (s/and vector? (s/spec (s/cat :combinator any?
-                                         :patterns   (s/* ::pattern')))))
+  (s/and vector? (s/spec (s/cat :combinator any?
+                                :patterns   (s/* ::pattern')))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Main pattern rule
 
 (define-rule pattern'
-  :grammar (s/or :any       ::any'
-                 :literal   ::literal'
-                 :constant  ::constant'
-                 :bind      ::bind'
-                 :guard     ::guard-pattern'
-                 :view      ::view-pattern'
-                 :or        ::or-pattern'
-                 :and       ::and-pattern'
-                 :seq       ::seq-pattern'
-                 :map       ::map-pattern'
-                 :look-in   ::look-in-pattern'
-                 :variant   ::variant-pattern'
-                 :record    ::record-pattern'
-                 :type      ::type-pattern'
-                 :arbitrary ::arbitrary-pattern'))
+  (s/or :any       ::any'
+        :literal   ::literal'
+        :constant  ::constant'
+        :bind      ::bind'
+        :guard     ::guard-pattern'
+        :view      ::view-pattern'
+        :or        ::or-pattern'
+        :and       ::and-pattern'
+        :seq       ::seq-pattern'
+        :map       ::map-pattern'
+        :look-in   ::look-in-pattern'
+        :variant   ::variant-pattern'
+        :record    ::record-pattern'
+        :type      ::type-pattern'
+        :arbitrary ::arbitrary-pattern'))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Pattern compilation
@@ -229,7 +229,7 @@
 ;;; Clause rule and helper
 
 (define-rule clause'
-  :grammar (s/cat :pattern ::pattern' :action any?))
+  (s/cat :pattern ::pattern' :action any?))
 
 (defn ^:private compile-clause [{conformed-pattern :pattern action :action}]
   (let [{:keys [pattern bindings]} (compile-pattern conformed-pattern)]

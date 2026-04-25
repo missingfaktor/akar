@@ -252,5 +252,5 @@
   (testing "Sensible pretty-grammar"
 
     (testing "No terminal should be marked as a rule"
-      (is (let [doc (panini/pretty-grammar #'match)]
+      (is (let [doc (with-out-str (panini/pretty-grammar #'match))]
             (not (.contains doc "#<")))))))

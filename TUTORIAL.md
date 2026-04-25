@@ -60,7 +60,7 @@ Akar patterns are first-class values, and alleviate the problems described here.
 
 We will start with some terminology. Look at the diagram below:
 
-![terminology](graphics/terminology.jpg)
+![terminology](assets/terminology.jpg)
 
 This is the same example as before, with a slightly different syntax.
 
@@ -72,7 +72,7 @@ On some successful pattern matches, we can extract parts of the structure, and b
 
 Let's now put on our "functional goggles", and try to see these constructs as functions.
 
-![functionalgoggles](graphics/functional.goggles.jpg)
+![functionalgoggles](assets/functional-goggles.jpg)
 
 A **pattern** is something that **matches** the given data against some structure or properties, and can potentially **emit** some values in case of a match. The following signature captures this contract precisely:
  
@@ -111,7 +111,14 @@ Without further ado, let's dive right in!
 
 Start a Clojure REPL with Akar on path. The easiest way to do so might be cloning this project, and firing `lein repl` from inside the directory. Alternatively, you could use [`lein-try`](https://github.com/rkneufeld/lein-try).
 
-You should find yourself in the `akar.try-out` namespace by default. If not, switch to it manually. This namespace brings in all the modules that we will be needing for this tutorial.
+You should find yourself in the `akar.try-out` namespace by default. If not, switch to it manually:
+
+```clojure
+(require 'akar.try-out)
+(in-ns 'akar.try-out)
+```
+
+This namespace brings in all the modules that we will be needing for this tutorial.
 
 This tutorial is structured in a bottom up fashion. We introduce you to the underlying primitives, pattern functions, and combinators first. The discussion on syntax is deferred for later.
 
@@ -582,7 +589,7 @@ Run the following lines in your REPL, and marvel at the output. :smile:
 (panini/pretty-grammar #'match)
 ```
 
-![syntax grammar](graphics/syndoc.png)
+![syntax grammar](assets/pretty-grammar.png)
 
 `match` is a syntax/macro version of the function `match*`. We also have `clause`, `clauses`, and so on.
 
@@ -831,7 +838,7 @@ The ability to use arbitrary pattern functions thusly gives Akar virtually unlim
 
 ## End
 
-Congratulations. You have reached the end of Akar tutorial. If you have any questions, please get in touch at our [gitter channel](https://gitter.im/missingfaktor/akar).
+Congratulations. You have reached the end of Akar tutorial. If you have any questions, please get in touch using GitHub issues.
 
 We hope you have great fun using Akar.
 

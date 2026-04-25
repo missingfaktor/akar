@@ -1,8 +1,8 @@
 (ns akar-exceptions.core
-  (:require [clojure.spec.alpha :as sp]
+  (:require [clojure.spec.alpha :as s]
             [akar.primitives :refer [clause-applied?]]
             [akar.syntax :refer [match try-match]]
-            [akar-commons.syntax-utilities :refer :all])
+            [panini.core :refer [define-syntax]])
   (:import [clojure.lang ExceptionInfo]))
 
 (defn attempt* [block on-error ultimately]
@@ -17,27 +17,24 @@
            (ultimately)))))
 
 (define-syntax attempt
-               :parser {:name ::attempt
-                        :spec (sp/cat :name '#{attempt}
-                                      :block sp/form
-                                      :on-error-token '#{:on-error}
-                                      :error-handler sp/form
-                                      :ultimately-part (sp/? (sp/cat :ultimately-token '#{:ultimately}
-                                                                     :ultimately-block sp/form)))}
-
-               :codegen (fn [{:keys [block error-handler ultimately-part]}]
-                          (let [transformed-error-handler (if (empty? error-handler)
-                                                            `nil
-                                                            `(fn [ex#]
-                                                               (let [result# (try-match ex# ~@error-handler)]
-                                                                 (if (clause-applied? result#)
-                                                                   result#
-                                                                   (throw ex#)))))]
-                            `(attempt* (fn []
-                                         ~block)
-                                       ~transformed-error-handler
-                                       (fn []
-                                         ~(:ultimately-block ultimately-part))))))
+  :grammar (s/cat :block any?
+                  :on-error-token #{:on-error}
+                  :error-handler any?
+                  :ultimately-part (s/? (s/cat :ultimately-token #{:ultimately}
+                                               :ultimately-block any?)))
+  :target (fn [{:keys [block error-handler ultimately-part]}]
+            (let [transformed-error-handler (if (empty? error-handler)
+                                              `nil
+                                              `(fn [ex#]
+                                                 (let [result# (try-match ex# ~@error-handler)]
+                                                   (if (clause-applied? result#)
+                                                     result#
+                                                     (throw ex#)))))]
+              `(attempt* (fn []
+                           ~block)
+                         ~transformed-error-handler
+                         (fn []
+                           ~(:ultimately-block ultimately-part))))))
 
 (defn raise [throwable-like]
   #_{:clj-kondo/ignore [:unresolved-symbol]}
