@@ -37,17 +37,7 @@ The library also features a syntactic layer that makes common use cases convenie
 Akar (IPA: \[ɑkɑɾ], Devanagari: आकार) is a Sanskrit/Marathi word for shape. The logo is a [Saraswati](https://en.wikipedia.org/wiki/Saraswati) [Kolam](https://en.wikipedia.org/wiki/Kolam), a diagrammatic representation of Hindu goddess of wisdom.
  
 To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
- 
-## Releases and Dependency Information
 
-```clojure
-# Specific Akar projects
-[london.rahul/akar-core "5.0.0"]
-
-# All Akar projects
-[london.rahul/akar "5.0.0"]
-```
- 
 ## Example
 
 ```clojure
@@ -88,6 +78,6 @@ Do you wish to contribute to Akar? Splendid! Get started [here](CONTRIBUTING.md)
  
 ## License
 
-Copyright © 2017-2025 Rahul Goma Phulore
+Copyright © 2017-2026 Rahul Goma Phulore
 
 Distributed under Apache License 2.0.
