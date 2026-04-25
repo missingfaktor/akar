@@ -8,6 +8,8 @@ See [here](http://keepachangelog.com/) for the change log format.
 
 Everything since what's listed below.
 - Migrated `akar.syntax` from `n01se/seqex` to Panini (`clojure.spec`-backed syntax definitions).
+- Changed published Maven coordinates from the `akar` group to `london.rahul`.
+- Bumped project versions to 5.0.0 for the next release.
 
 # akar v4.0.0 / 2025.12.28
 - Upgraded to Clojure 1.12.0.

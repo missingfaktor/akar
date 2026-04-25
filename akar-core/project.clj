@@ -1,4 +1,4 @@
-(defproject akar/akar-core "4.0.0"
+(defproject london.rahul/akar-core "5.0.0"
   :description "First-class patterns for Clojure – Core framework"
   :url "www.github.com/missingfaktor/akar"
   :license {:name         "Apache License 2.0"
@@ -7,7 +7,7 @@
   :deploy-repositories [["clojars" :clojars]]
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [london.rahul/panini "0.3.0" :exclusions [org.clojure/clojure]]
-                 [akar/akar-commons "4.0.0"]]
+                 [london.rahul/akar-commons "5.0.0"]]
   :java-version "25"
   :properties {"maven.compiler.source" "25"
                "maven.compiler.target" "25"

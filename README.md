@@ -1,9 +1,9 @@
 # Akar
 
-[![Clojars Project](https://img.shields.io/clojars/v/akar.svg)](https://clojars.org/akar)
-[![Clojars Project](https://img.shields.io/clojars/v/akar/akar-core.svg)](https://clojars.org/akar/akar-core)
-[![Clojars Project](https://img.shields.io/clojars/v/akar/akar-exceptions.svg)](https://clojars.org/akar/akar-exceptions)
-[![Clojars Project](https://img.shields.io/clojars/v/akar/akar-commons.svg)](https://clojars.org/akar/akar-commons)
+[![Clojars Project](https://img.shields.io/clojars/v/london.rahul/akar.svg)](https://clojars.org/london.rahul/akar)
+[![Clojars Project](https://img.shields.io/clojars/v/london.rahul/akar-core.svg)](https://clojars.org/london.rahul/akar-core)
+[![Clojars Project](https://img.shields.io/clojars/v/london.rahul/akar-exceptions.svg)](https://clojars.org/london.rahul/akar-exceptions)
+[![Clojars Project](https://img.shields.io/clojars/v/london.rahul/akar-commons.svg)](https://clojars.org/london.rahul/akar-commons)
 
 <img src="graphics/logo.png" width="300">
 
@@ -42,10 +42,10 @@ To learn more, read the [Akar tutorial](TUTORIAL.md) and [FAQs](FAQs.md).
 
 ```clojure
 # Specific Akar projects
-[akar/akar-core "4.0.0"]
+[london.rahul/akar-core "5.0.0"]
 
 # All Akar projects
-[akar "4.0.0"]
+[london.rahul/akar "5.0.0"]
 ```
  
 ## Example
