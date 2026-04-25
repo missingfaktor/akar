@@ -6,7 +6,7 @@
             :distribution :repo}
   :deploy-repositories [["clojars" :clojars]]
   :dependencies [[org.clojure/clojure "1.12.0"]
-                 [n01se/seqex "2.0.2"]
+                 [london.rahul/panini "0.3.0" :exclusions [org.clojure/clojure]]
                  [akar/akar-commons "4.0.0"]]
   :java-version "25"
   :properties {"maven.compiler.source" "25"

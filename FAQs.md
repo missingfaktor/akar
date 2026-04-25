@@ -14,11 +14,9 @@ Alternatively, we could have prefixed all our pattern functions with `pat-`, but
 
 `core.match` might eventually evolve into a [predicate dispatch](https://github.com/clojure/core.match/wiki/Crazy-Ideas) library. Akar has no such plans. It is a far less ambitious project from that perspective.
 
-### Q. Why did you not use `clojure.spec` to implement the syntactic layer?
+### Q. Do you use `clojure.spec` to implement the syntactic layer?
 
-A major chunk of this library was written in November 2015. `clojure.spec` was not available at the time.
-
-Migration to `clojure.spec` is on our radar.
+Yes. Akar's syntactic layer is defined with Panini, a small syntax-definition library built on top of `clojure.spec`.
 
 ### Q. Why did you not implement Akar using optics?
 

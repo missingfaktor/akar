@@ -19,7 +19,7 @@ When making changes, preserve that spirit. Prefer small, explicit, orthogonal bu
 - `akar-exceptions`: exception-oriented helpers built in the same style as the core syntax layer.
 - `README.md`, `TUTORIAL.md`, `FAQs.md`, `GOTCHAS.md`, `CHANGES.md`: user-facing documentation.
 
-Read the relevant subproject before editing it. `akar.syntax` depends heavily on `n01se.syntax` and `n01se.seqex`, so do not treat it like ordinary macro code without understanding the grammar layer it uses.
+Read the relevant subproject before editing it. `akar.syntax` depends heavily on Panini and `clojure.spec`, so do not treat it like ordinary macro code without understanding the grammar layer it uses.
 
 ## Ground Rules
 
@@ -67,7 +67,7 @@ New patterns and combinators should fit that contract cleanly.
 
 ### Syntax layer
 
-`akar.syntax` is a seqex-powered grammar, not an ad hoc macro parser.
+`akar.syntax` is a Panini-powered grammar, not an ad hoc macro parser.
 
 - Keep new syntax rules declarative.
 - Prefer extending existing grammar patterns over hand-parsing forms.

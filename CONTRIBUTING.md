@@ -22,7 +22,6 @@ If you wish to help out with things on our [tasks](#tasks) list, or wish to cont
 0. Release for ClojureScript. ([#9](https://github.com/missingfaktor/akar/issues/9))
 0. Improve error messages.
 0. Enable bindings in `:or` syntactic patterns.
-0. Migrate `akar.syntax` to `clojure.spec`. (Once it's stable.)
 0. General code improvements.
 
 ## Guidelines

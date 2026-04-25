@@ -572,29 +572,23 @@ As has been said before by many a great men, [syntax](http://www.eecg.toronto.ed
 
 Akar acknowledges this, and features a syntactic layer that makes common use cases convenient, but at the same time, stays true to the first-class spirit of the core model. The translation rules are simple and easily tractable. The purpose of the syntactic layer is not to shield users from the underlying model. Users are expected to know the underlying functions in order to be able to use this library effectively.
 
-### seqex
+### Panini
 
-In ClojureConj 2013, [Jonathan Claggett](https://github.com/jclaggett) and [Chris Houser](https://github.com/Chouser) had a talk called ["Illuminated Projects"](https://www.youtube.com/watch?v=o75g9ZRoLaw), where they presented [seqex](https://github.com/jclaggett/seqex), a project they had been working on. (If you write Clojure (or, are simply enthusiastic about it), I cannot recommend you this talk enough. Queue it up!)  
- 
-seqex is pure brilliance. It allows you to define new syntax as a set of grammar rules. This makes it much simpler to create new syntax, gives you auto-generated documentation, and produces better error messages (by Clojure standards).
-   
-The syntax module in Akar was built using seqex.  
+The syntax module in Akar is built using [Panini](https://github.com/missingfaktor/panini), a small syntax-definition layer on top of `clojure.spec`. It lets Akar define macro syntax as named grammar rules, while keeping expansion logic close to the ordinary runtime pieces described earlier.
 
 Run the following lines in your REPL, and marvel at the output. :smile: 
   
 ```clojure
-(syndoc match)
+(panini/pretty-grammar #'match)
 ```
 
-![syndoc](graphics/syndoc.png)
-
-(`syndoc` does not work with Windows consoles. This is [a known issue](https://github.com/jclaggett/seqex/issues/8).)
+![syntax grammar](graphics/syndoc.png)
 
 `match` is a syntax/macro version of the function `match*`. We also have `clause`, `clauses`, and so on.
 
 ### akar.syntax
 
-We will go over the important bits of syntax supported by Akar. We will use functions `syndoc`, `parse-forms` (also from seqex) and `macroexpand-1` to study these. You have already seen `syndoc`. The latter two will help us see how various syntactic patterns translate to corresponding functions. 
+We will go over the important bits of syntax supported by Akar. We will use Panini's `pretty-grammar` and `parse` helpers, plus `macroexpand-1`, to study these. The latter two will help us see how various syntactic patterns translate to corresponding functions. 
 
 Syntactic patterns map to corresponding pattern functions, plus name bindings introduced by that pattern. 
 
@@ -603,22 +597,21 @@ Syntactic patterns map to corresponding pattern functions, plus name bindings in
 #### `any'` syntatic patterns
   
 ```clojure
-akar.try-out=> (syndoc any')
+akar.try-out=> (panini/pretty-grammar #'any')
   any' => :_ | :any
-nil
 
-akar.try-out=> (parse-forms any' '(:_))
-{:pattern akar.patterns/!any, :bindings []}
+akar.try-out=> (panini/parse '(clause :_ nil))
+{:node :akar.syntax/clause,
+ :pattern [:any :_],
+ :action nil}
 
-akar.try-out=> (parse-forms any' '(:any))
-{:pattern akar.patterns/!any, :bindings []}
+akar.try-out=> (panini/parse '(clause :any nil))
+{:node :akar.syntax/clause,
+ :pattern [:any :any],
+ :action nil}
 
-akar.try-out=> (parse-forms any' '(:wrong-keyword))
-Bad value: :wrong-keyword
-Expected any of:
-    :_
-    :any
-nil
+akar.try-out=> (panini/parse '(clause & nil))
+:panini.core/invalid
 ```
 
 `any'` syntactic patterns map to `!any` function, and introduce no bindings.
@@ -627,8 +620,10 @@ nil
 
   
 ```clojure
-akar.try-out=> (parse-forms bind' '(x))
-{:pattern akar.patterns/!bind, :bindings [x]}
+akar.try-out=> (panini/parse '(clause x x))
+{:node :akar.syntax/clause,
+ :pattern [:bind x],
+ :action x}
 ```
 
 As can be seen, the symbol is being introduced as a binding. 
@@ -655,8 +650,10 @@ nil
 The literals are translated to `!constant` patterns. 
 
 ```clojure
-akar.try-out=> (parse-forms literal' '(9))
-{:pattern (akar.patterns/!constant 9), :bindings []}
+akar.try-out=> (panini/parse '(clause 9 :nine))
+{:node :akar.syntax/clause,
+ :pattern [:literal [:number 9]],
+ :action :nine}
 
 akar.try-out=> (match 9
                       9 :nine)

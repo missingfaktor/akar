@@ -7,6 +7,7 @@ See [here](http://keepachangelog.com/) for the change log format.
 ## [Unreleased]
 
 Everything since what's listed below.
+- Migrated `akar.syntax` from `n01se/seqex` to Panini (`clojure.spec`-backed syntax definitions).
 
 # akar v4.0.0 / 2025.12.28
 - Upgraded to Clojure 1.12.0.

@@ -1,6 +1,6 @@
 (ns akar.syntax
-  (:require [n01se.syntax :as sy]
-            [n01se.seqex :refer [cap recap]]
+  (:require [clojure.spec.alpha :as s]
+            [panini.core :refer [define-rule define-syntax]]
             [akar.primitives :refer [clause* clauses* match* or-else try-match*]]
             [akar.combinators :refer [!and !further !further-many !guard !or !view]]
             [akar.internal.utilities :refer [append]]
@@ -23,273 +23,269 @@
                     "Please ignore the bindings using :_"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Basic patterns
+;;; Basic pattern rules
 
-(sy/defrule any'
-  (cap (sy/alt :_ :any)
-       (fn [_]
-         {:pattern  `!any
-          :bindings []})))
+(define-rule any'
+  :grammar #{:_ :any})
 
-(sy/defterminal number-literal' number?)
-(sy/defterminal string-literal' string?)
-(sy/defterminal boolean-literal' (partial instance? Boolean))
-(sy/defterminal keyword-literal' keyword?)
-(sy/defterminal nil-literal' nil?)
+(define-rule literal'
+  :grammar (s/or :number  number?
+                 :string  string?
+                 :boolean boolean?
+                 :keyword keyword?
+                 :nil     nil?))
 
-(sy/defrule literal'
-  (cap (sy/alt number-literal'
-               string-literal'
-               boolean-literal'
-               keyword-literal'
-               nil-literal')
-       (fn [[lit]]
-         {:pattern  `(!constant ~lit)
-          :bindings []})))
+(define-rule bind'
+  :grammar (s/and symbol? #(not= % '&)))
 
-(sy/defterminal valid-symbol' (fn [sym]
-                                (and (symbol? sym)
-                                     (not= sym '&))))
-
-(sy/defrule constant'
-  (recap (sy/list-form (sy/cat :constant (cap sy/form)))
-         (fn [[expression]]
-           {:pattern  `(!constant ~expression)
-            :bindings []})))
-
-(sy/defrule bind'
-  (cap valid-symbol'
-       (fn [[sym]]
-         {:pattern  `!bind
-          :bindings [sym]})))
+(define-rule constant'
+  :grammar (s/and list? (s/spec (s/cat :_tag #{:constant} :expr any?))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Combinators / special pattern matching features
+;;; Combinator / composite pattern rules
+;;; These reference ::pattern' which is registered below; spec resolves lazily.
 
-(declare pattern')
+(define-rule guard-pattern'
+  :grammar (s/and list? (s/spec (s/cat :_tag  #{:guard}
+                                       :inner ::pattern'
+                                       :cond  any?))))
 
-(sy/defrule guard-pattern'
-  (recap (sy/list-form (sy/cat :guard
-                               (delay pattern')
-                               (cap sy/form)))
-         (fn [inner-syntactic-pattern [cond]]
-           {:pattern  `(!guard ~(:pattern inner-syntactic-pattern) ~cond)
-            :bindings (->> inner-syntactic-pattern
-                           :bindings
-                           ensuring-well-formed-bindings)})))
+(define-rule view-pattern'
+  :grammar (s/and list? (s/spec (s/cat :_tag    #{:view}
+                                       :view-fn any?
+                                       :inner   ::pattern'))))
 
-; https://ghc.haskell.org/trac/ghc/wiki/ViewPatterns
-(sy/defrule view-pattern'
-  (recap (sy/list-form (sy/cat :view
-                               (cap sy/form)
-                               (delay pattern')))
-         (fn [[view-fn] syntactic-pattern]
-           {:pattern  `(!view ~view-fn ~(:pattern syntactic-pattern))
-            :bindings (->> syntactic-pattern
-                           :bindings
-                           ensuring-well-formed-bindings)})))
+(define-rule or-pattern'
+  :grammar (s/and list? (s/spec (s/cat :_tag     #{:or}
+                                       :patterns (s/+ ::pattern')))))
 
-(sy/defrule or-pattern'
-  (recap (sy/list-form (sy/cat :or
-                               (sy/rep+ (delay pattern'))))
-         (fn [& syntactic-patterns]
-           {:pattern  `(!or ~@(map :pattern syntactic-patterns))
-            :bindings (->> syntactic-patterns
-                           (mapcat :bindings)
-                           ensuring-no-bindings-for-or)})))
+(define-rule and-pattern'
+  :grammar (s/and list? (s/spec (s/cat :_tag     #{:and}
+                                       :patterns (s/+ ::pattern')))))
 
-(sy/defrule and-pattern'
-  (recap (sy/list-form (sy/cat :and
-                               (sy/rep+ (delay pattern'))))
-         (fn [& syntactic-patterns]
-           {:pattern  `(!and ~@(map :pattern syntactic-patterns))
-            :bindings (->> syntactic-patterns
-                           (mapcat :bindings)
-                           ensuring-well-formed-bindings)})))
+(define-rule seq-pattern'
+  :grammar (s/and list?
+                  (s/spec (s/cat :_tag    #{:seq}
+                                 :content (s/and vector?
+                                               (s/spec (s/cat :elements (s/* ::pattern')
+                                                              :rest     (s/? (s/cat :amp          #{'&}
+                                                                                   :rest-pattern ::pattern')))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Data type patterns
+(define-rule map-pattern'
+  :grammar (s/and map? (s/map-of keyword? ::pattern')))
 
-(sy/defrule seq-pattern'
-  (recap (sy/list-form (sy/cat :seq
-                               (sy/vec-form (sy/cat (recap (sy/rep* (delay pattern'))
-                                                           (fn [& synactic-patterns]
-                                                             {:patterns synactic-patterns}))
-                                                    (sy/opt (recap (sy/cat '& (delay pattern'))
-                                                                   (fn [rest-synactic-pattern]
-                                                                     {:rest rest-synactic-pattern})))))))
-         (fn [& captures]
-           (let [captures-map (apply merge captures)
-                 patterns (:patterns captures-map)
-                 rest (:rest captures-map)]
-             {:pattern  (if (nil? rest)
-                          `(!further-many !seq [~@(map :pattern patterns)])
-                          `(!further-many !seq [~@(map :pattern patterns)] ~(:pattern rest)))
-              :bindings (->> (if (nil? rest)
-                               patterns
-                               (append patterns rest))
-                             (mapcat :bindings)
-                             ensuring-well-formed-bindings)}))))
+(define-rule look-in-pattern'
+  :grammar (s/and list? (s/spec (s/cat :_tag     #{:look-in}
+                                       :map-form any?
+                                       :inner    ::pattern'))))
 
-(sy/defterminal map-key' keyword?)
+(define-rule variant-pattern'
+  :grammar (s/and list?
+                  (s/spec (s/cat :_tag   #{:variant}
+                                 :tag    any?
+                                 :fields (s/and vector? (s/spec (s/* ::pattern')))))))
 
-(sy/defrule map-entry'
-  (recap (sy/map-pair (cap map-key')
-                      (delay pattern'))
-         (fn [[k] syntactic-pattern]
-           {:pattern  `(!further (!key ~k) [~(:pattern syntactic-pattern)])
-            :bindings (->> syntactic-pattern
-                           :bindings
-                           ensuring-well-formed-bindings)})))
+(define-rule record-pattern'
+  :grammar (s/and list?
+                  (s/spec (s/cat :_tag   #{:record}
+                                 :cls    any?
+                                 :fields (s/and vector? (s/spec (s/* ::pattern')))))))
 
-(sy/defrule map-pattern'
-  (recap (sy/map-form (sy/rep* map-entry'))
-         (fn [& syntactic-patterns]
-           {:pattern  `(!and (!pred map?)
-                             ~@(map :pattern syntactic-patterns))
-            :bindings (->> syntactic-patterns
-                           (mapcat :bindings)
-                           ensuring-well-formed-bindings)})))
+(define-rule type-pattern'
+  :grammar (s/and list? (s/spec (s/cat :_tag #{:type} :cls any?))))
 
-(sy/defrule look-in-pattern'
-  (recap (sy/list-form (sy/cat :look-in (cap sy/form) (delay pattern')))
-         (fn [[map] syntactic-pattern]
-           {:pattern  `(!further (!look-in ~map) [~(:pattern syntactic-pattern)])
-            :bindings (->> syntactic-pattern
-                           :bindings
-                           ensuring-well-formed-bindings)})))
+(define-rule arbitrary-pattern'
+  :grammar (s/and vector? (s/spec (s/cat :combinator any?
+                                         :patterns   (s/* ::pattern')))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Data type patterns
+;;; Main pattern rule
 
-(sy/defrule variant-pattern'
-  (recap (sy/list-form (sy/cat :variant
-                               (cap sy/form)
-                               (sy/vec-form (sy/rep* (delay pattern')))))
-         (fn [[tag] & syntactic-patterns]
-           {:pattern  `(!further (!variant ~tag) [~@(map :pattern syntactic-patterns)])
-            :bindings (->> syntactic-patterns
-                           (mapcat :bindings)
-                           ensuring-well-formed-bindings)})))
-
-(sy/defrule record-pattern'
-  (recap (sy/list-form (sy/cat :record
-                               (cap sy/form)
-                               (sy/vec-form (sy/rep* (delay pattern')))))
-         (fn [[cls] & syntactic-patterns]
-           {:pattern  `(!further (!record ~cls) [~@(map :pattern syntactic-patterns)])
-            :bindings (->> syntactic-patterns
-                           (mapcat :bindings)
-                           ensuring-well-formed-bindings)})))
+(define-rule pattern'
+  :grammar (s/or :any       ::any'
+                 :literal   ::literal'
+                 :constant  ::constant'
+                 :bind      ::bind'
+                 :guard     ::guard-pattern'
+                 :view      ::view-pattern'
+                 :or        ::or-pattern'
+                 :and       ::and-pattern'
+                 :seq       ::seq-pattern'
+                 :map       ::map-pattern'
+                 :look-in   ::look-in-pattern'
+                 :variant   ::variant-pattern'
+                 :record    ::record-pattern'
+                 :type      ::type-pattern'
+                 :arbitrary ::arbitrary-pattern'))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Type-casing pattern
+;;; Pattern compilation
+;;;
+;;; Takes a conformed pattern' value (a tagged s/or pair [:tag value]) and
+;;; returns {:pattern <pattern-expr> :bindings [sym ...]}.
 
-(sy/defrule type-pattern'
-  (recap (sy/list-form (sy/cat :type
-                               (cap sy/form)))
-         (fn [[cls]]
-           {:pattern  `(!type ~cls)
-            :bindings []})))
+(declare compile-pattern)
+
+(defn ^:private compile-pattern [[tag value]]
+  (case tag
+    :any
+    {:pattern  `!any 
+     :bindings []}
+
+    :literal
+    (let [[_type lit] value]
+      {:pattern  `(!constant ~lit) 
+       :bindings []})
+
+    :constant
+    {:pattern  `(!constant ~(:expr value)) 
+     :bindings []}
+
+    :bind
+    {:pattern  `!bind 
+     :bindings [value]}
+
+    :guard
+    (let [{:keys [inner cond]} value
+          inner-compiled       (compile-pattern inner)]
+      {:pattern  `(!guard ~(:pattern inner-compiled) ~cond)
+       :bindings (ensuring-well-formed-bindings (:bindings inner-compiled))})
+
+    :view
+    (let [{:keys [view-fn inner]} value
+          inner-compiled          (compile-pattern inner)]
+      {:pattern  `(!view ~view-fn ~(:pattern inner-compiled))
+       :bindings (ensuring-well-formed-bindings (:bindings inner-compiled))})
+
+    :or
+    (let [{:keys [patterns]} value
+          compiled           (map compile-pattern patterns)]
+      {:pattern  `(!or ~@(map :pattern compiled))
+       :bindings (->> compiled (mapcat :bindings) ensuring-no-bindings-for-or)})
+
+    :and
+    (let [{:keys [patterns]} value
+          compiled           (map compile-pattern patterns)]
+      {:pattern  `(!and ~@(map :pattern compiled))
+       :bindings (->> compiled (mapcat :bindings) ensuring-well-formed-bindings)})
+
+    :seq
+    (let [{:keys [elements rest]} (:content value)
+          compiled-elements       (map compile-pattern elements)
+          compiled-rest           (some-> rest :rest-pattern compile-pattern)]
+      {:pattern  (if (nil? compiled-rest)
+                   `(!further-many !seq [~@(map :pattern compiled-elements)])
+                   `(!further-many !seq [~@(map :pattern compiled-elements)] ~(:pattern compiled-rest)))
+       :bindings (->> (if (nil? compiled-rest)
+                        compiled-elements
+                        (append compiled-elements compiled-rest))
+                      (mapcat :bindings)
+                      ensuring-well-formed-bindings)})
+
+    :map 
+    (let [compiled-entries (map (fn [[k conformed-v]]
+                                  {:key      k 
+                                   :compiled (compile-pattern conformed-v)})
+                                value)]
+      {:pattern  `(!and (!pred map?)
+                        ~@(map (fn [{:keys [key compiled]}]
+                                 `(!further (!key ~key) [~(:pattern compiled)]))
+                               compiled-entries))
+       :bindings (->> compiled-entries
+                      (mapcat #(:bindings (:compiled %)))
+                      ensuring-well-formed-bindings)})
+
+    :look-in
+    (let [{:keys [map-form inner]} value
+          inner-compiled           (compile-pattern inner)]
+      {:pattern  `(!further (!look-in ~map-form) [~(:pattern inner-compiled)])
+       :bindings (ensuring-well-formed-bindings (:bindings inner-compiled))})
+
+    :variant
+    (let [{:keys [tag fields]} value
+          compiled-fields      (map compile-pattern fields)]
+      {:pattern  `(!further (!variant ~tag) [~@(map :pattern compiled-fields)])
+       :bindings (->> compiled-fields (mapcat :bindings) ensuring-well-formed-bindings)})
+
+    :record
+    (let [{:keys [cls fields]} value
+          compiled-fields      (map compile-pattern fields)]
+      {:pattern  `(!further (!record ~cls) [~@(map :pattern compiled-fields)])
+       :bindings (->> compiled-fields (mapcat :bindings) ensuring-well-formed-bindings)})
+
+    :type
+    {:pattern  `(!type ~(:cls value)) 
+     :bindings []}
+
+    :arbitrary
+    (let [{:keys [combinator patterns]} value
+          compiled-patterns             (map compile-pattern patterns)]
+      {:pattern  (if (empty? compiled-patterns)
+                   combinator
+                   `(!further ~combinator [~@(map :pattern compiled-patterns)]))
+       :bindings (->> compiled-patterns (mapcat :bindings) ensuring-well-formed-bindings)})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Arbitrary patterns
+;;; Clause rule and helper
 
-(sy/defrule arbitrary-pattern'
-  (recap (sy/vec-form (sy/cat (cap sy/form)
-                              (sy/rep* (delay pattern'))))
-         (fn [[syntactic-pattern] & further-syntactic-patterns]
-           {:pattern  (if (empty? further-syntactic-patterns)
-                        syntactic-pattern
-                        `(!further ~syntactic-pattern [~@(map :pattern further-syntactic-patterns)]))
-            :bindings (->> further-syntactic-patterns
-                           (mapcat :bindings)
-                           ensuring-well-formed-bindings)})))
+(define-rule clause'
+  :grammar (s/cat :pattern ::pattern' :action any?))
+
+(defn ^:private compile-clause [{conformed-pattern :pattern action :action}]
+  (let [{:keys [pattern bindings]} (compile-pattern conformed-pattern)]
+    `(clause* ~pattern (fn [~@bindings] ~action))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Putting it all together
-
-(sy/defrule pattern'
-  (sy/alt any'
-          literal'
-          constant'
-          bind'
-          guard-pattern'
-          view-pattern'
-          or-pattern'
-          and-pattern'
-          seq-pattern'
-          map-pattern'
-          look-in-pattern'
-          variant-pattern'
-          record-pattern'
-          type-pattern'
-          arbitrary-pattern'))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Macros, and their supporting syntax rules
-
-(sy/defrule clause'
-  (recap (sy/cat pattern' (cap sy/form))
-         (fn [{:keys [pattern bindings]} [action]]
-           `(clause* ~pattern (fn [~@bindings]
-                                ~action)))))
-
-(sy/defrule clauses'
-  (recap (sy/rep+ clause')
-         (fn [& clss]
-           `(or-else ~@clss))))
-
-(sy/defrule match'
-  (recap (sy/cat (cap sy/form) clauses')
-         (fn [[arg] clss]
-           `(match* ~arg ~clss))))
-
-(sy/defrule try-match'
-  (recap (sy/cat (cap sy/form) clauses')
-         (fn [[arg] clss]
-           `(try-match* ~arg ~clss))))
-
-(sy/defrule if-match'
-  (recap (sy/cat (sy/vec-form (sy/cat pattern' (cap sy/form)))
-                 (cap sy/form)
-                 (sy/opt (cap sy/form)))
-         (fn
-           ([{:keys [pattern bindings]} [value] [then-action]]
-            `(match* ~value
-                     (clauses* ~pattern (fn [~@bindings]
-                                          ~then-action)
-                               !any (fn [] nil))))
-           ([{:keys [pattern bindings]} [value] [then-action] [else-action]]
-            `(match* ~value
-                     (clauses* ~pattern (fn [~@bindings]
-                                          ~then-action)
-                               !any (fn [] ~else-action)))))))
-
-(sy/defrule when-match'
-  (recap (sy/cat (sy/vec-form (sy/cat pattern' (cap sy/form)))
-                 (cap (sy/rep* sy/form)))
-         (fn [{:keys [pattern bindings]} [value] & [actions]]
-           `(match* ~value
-                    (clauses* ~pattern (fn [~@bindings]
-                                         (do
-                                           ~@actions))
-                              !any (fn [] nil))))))
+;;; Macros
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
-(sy/defsyntax clause clause')
+(define-syntax clause
+  :grammar (s/cat :pattern ::pattern' :action any?)
+  :target compile-clause)
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
-(sy/defsyntax clauses clauses')
+(define-syntax clauses
+  :grammar (s/+ ::clause')
+  :target (fn [clause-list]
+            `(or-else ~@(map compile-clause clause-list))))
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
-(sy/defsyntax match match')
+(define-syntax match
+  :grammar (s/cat :arg any? :clauses (s/+ ::clause'))
+  :target (fn [{:keys [arg clauses]}]
+            `(match* ~arg (or-else ~@(map compile-clause clauses)))))
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
-(sy/defsyntax try-match try-match')
+(define-syntax try-match
+  :grammar (s/cat :arg any? :clauses (s/+ ::clause'))
+  :target (fn [{:keys [arg clauses]}]
+            `(try-match* ~arg (or-else ~@(map compile-clause clauses)))))
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
-(sy/defsyntax if-match if-match')
+(define-syntax if-match
+  :grammar (s/cat :binding (s/and vector? (s/spec (s/cat :pattern ::pattern' :value any?)))
+                  :then any?
+                  :else (s/? any?))
+  :target (fn [{:keys [binding then else]}]
+            (let [{conformed-pattern :pattern 
+                   value             :value}   binding
+                  {:keys [pattern bindings]}   (compile-pattern conformed-pattern)]
+              (if else
+                `(match* ~value
+                         (clauses* ~pattern (fn [~@bindings] ~then)
+                                   !any (fn [] ~else)))
+                `(match* ~value
+                         (clauses* ~pattern (fn [~@bindings] ~then)
+                                   !any (fn [] nil)))))))
 
 #_{:clojure-lsp/ignore [:clojure-lsp/unused-public-var]}
-(sy/defsyntax when-match when-match')
+(define-syntax when-match
+  :grammar (s/cat :binding (s/and vector? (s/spec (s/cat :pattern ::pattern' :value any?)))
+                  :body (s/* any?))
+  :target (fn [{:keys [binding body]}]
+            (let [{conformed-pattern :pattern 
+                   value             :value}   binding
+                  {:keys [pattern bindings]}   (compile-pattern conformed-pattern)]
+              `(match* ~value
+                       (clauses* ~pattern (fn [~@bindings] (do ~@body))
+                                 !any (fn [] nil))))))

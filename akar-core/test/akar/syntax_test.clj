@@ -3,7 +3,7 @@
             [akar.primitives :refer :all]
             [akar.patterns :refer :all]
             [akar.combinators :refer :all]
-            [n01se.syntax :as sy]
+            [panini.core :as panini]
             [akar.syntax :refer :all]
             [akar.test-support :refer :all])
   (:import [akar.test_support Add Sub Num Node]))
@@ -249,8 +249,8 @@
                        (fn [hd tl-1] {:hd hd :tl-1 tl-1}))
              (macroexpand-1 `(clause [!cons hd [!cons 2 tl-1]] {:hd hd :tl-1 tl-1}))))))
 
-  (testing "Sensible syndoc"
+  (testing "Sensible pretty-grammar"
 
     (testing "No terminal should be marked as a rule"
-      (is (let [doc (with-out-str (sy/syndoc match))]
+      (is (let [doc (panini/pretty-grammar #'match)]
             (not (.contains doc "#<")))))))
