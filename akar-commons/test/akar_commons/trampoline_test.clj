@@ -65,4 +65,25 @@
     (is (= (non-tail-recursive-fn 10 20)
            10))
     (is (= (non-tail-recursive-fn 0 20)
-           20))))
+           20)))
+
+  (testing "should be safe to invoke concurrently"
+    (let [steps (atom 0)]
+      (defn-trampolined concurrent-tail-recursive-sum [steps x running-total]
+        (if (zero? x)
+          running-total
+          (do
+            (swap! steps inc)
+            (trampolined-recur steps (dec x) (+ running-total x)))))
+      (let [inputs   (range 1 33)
+            futures  (doall (map (fn [n]
+                                   (future
+                                     [n (concurrent-tail-recursive-sum steps n 0)]))
+                                 inputs))
+            results  (into {} (map deref futures))
+            expected (into {} (map (fn [n]
+                                     [n (/ (* n (inc n)) 2)])
+                                   inputs))]
+        (is (= expected results))
+        (is (= (reduce + inputs)
+               @steps))))))

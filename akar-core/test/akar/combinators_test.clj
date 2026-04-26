@@ -17,6 +17,18 @@
       (is (= [9 9]
              ((!and !any !bind !bind) 9))))
 
+    (testing "works the same for vector and lazy emissions"
+      (let [vector-pattern (fn [_] [1 2])
+            lazy-pattern   (fn [_] (map identity [1 2]))]
+        (is (= [1 2 1 2]
+               ((!and vector-pattern lazy-pattern) :ignored)))
+        (is (= [1 2 1 2]
+               ((!and lazy-pattern vector-pattern) :ignored)))))
+
+    (testing "treats false emissions as a contract violation when emissions are realized"
+      (is (thrown? IllegalArgumentException
+                   (doall ((!and (constantly false) !bind) 9)))))
+
     (testing "succeeds if no patterns are available"
       (is (= []
              ((!and) 9)))))
@@ -32,6 +44,10 @@
              ((!or !any !bind) 9)))
       (is (= [9]
              ((!or !bind !any) 9))))
+
+    (testing "treats false from a component pattern like a failed match"
+      (is (= [9]
+             ((!or (constantly false) !bind) 9))))
 
     (testing "fails if no pattern is available"
       (is (= nil
@@ -85,7 +101,17 @@
                                                     :tl tl}))]
       (testing "'furthers' a pattern"
         (is (= {:hd 3 :tl [4 5]}
-               (match* [3 4 5] block))))))
+               (match* [3 4 5] block)))))
+
+    (testing "accepts lazy root emissions as well as vectors"
+      (is (= [1 2]
+             ((!further (fn [_] (map identity [1 2])) [!bind !bind]) :ignored)))
+      (is (= [1 2]
+             ((!further (fn [_] [1 2]) [!bind !bind]) :ignored))))
+
+    (testing "treats false root emissions as a contract violation"
+      (is (thrown? UnsupportedOperationException
+                   ((!further (constantly false) [!bind]) :ignored)))))
 
   (testing "!further-many"
 
@@ -96,6 +122,11 @@
                (try-match* [1 :whatevs true 3] block)))
         (is (= clause-not-applied
                (try-match* [1 :whatevs false] block)))))
+
+    (testing "accepts a lazy collection emitted by the root pattern"
+      (is (= [1 2 3]
+             ((!further-many (fn [_] [(map identity [1 2 3])]) [!bind !bind !bind])
+              :ignored))))
 
     (testing "supports 'rest' patterns"
       (let [block (clauses*
