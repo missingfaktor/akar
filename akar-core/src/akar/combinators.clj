@@ -6,7 +6,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinators to compose a number of patterns into one
 
-(def !and
+(def ^{:doc "Combines patterns conjunctively. All component patterns must match,
+and their emissions are concatenated in order."} !and
   (variadic-reductive-function
     :zero !any
     :combine (fn [!p1 !p2]
@@ -15,7 +16,7 @@
                    (when-some [matches2 (!p2 arg)]
                      (concat matches1 matches2)))))))
 
-(def !or
+(def ^{:doc "Combines patterns disjunctively. Returns the first successful match."} !or
   (variadic-reductive-function
     :zero !fail
     :combine (fn [!p1 !p2]
@@ -26,19 +27,27 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinators corresponding to common pattern operations
 
-(defn !not [!p]
+(defn !not
+  "Matches when `!p` fails and emits nothing."
+  [!p]
   (fn [arg]
     (if (nil? (!p arg))
       []
       nil)))
 
-(defn !at [!p]
+(defn !at
+  "Matches with `!p` while also emitting the original input value."
+  [!p]
   (!and !bind !p))
 
-(defn !guard [!p cond]
+(defn !guard
+  "Matches with `!p` and then requires `cond` to hold for the original input."
+  [!p cond]
   (!and !p (!pred cond)))
 
-(defn !view [f !p]
+(defn !view
+  "Applies `f` to the input before matching it with `!p`."
+  [f !p]
   (comp !p f))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,13 +73,20 @@
              []
              pairings)))))))
 
-(defn !further [!root !nexts]
+(defn !further
+  "Matches with `!root`, then matches each emitted value against the
+  corresponding pattern in `!nexts`. Emits the concatenated emissions of
+  those nested matches."
+  [!root !nexts]
   (fan-out :!root !root
            :!nexts !nexts
            :modify-root-emissions identity
            :modify-nexts identity))
 
 (defn !further-many
+  "Like `!further`, but treats `!root` as emitting a single collection of
+  values to be matched variadically. With three arguments, `!rest` matches the
+  remaining emitted values after `!nexts` are satisfied."
   ([!root !nexts] (fan-out :!root !root
                            :!nexts !nexts
                            :modify-root-emissions single
@@ -85,5 +101,7 @@
                                                  (append !nexts !rest)))))
 
 ; Aliases for succinctness in direct use
-(def ^{:alias-for #'!further} !f !further)
-(def ^{:alias-for #'!further-many} !f* !further-many)
+(def ^{:doc "Alias for `!further`."
+       :alias-for #'!further} !f !further)
+(def ^{:doc "Alias for `!further-many`."
+       :alias-for #'!further-many} !f* !further-many)
