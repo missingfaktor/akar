@@ -313,7 +313,22 @@ akar.try-out=> ((!tag :cid) data)
 []
 ```
  
-I hope this gives you an idea of how pattern functions work. There are a few more stock patterns. I suggest you skim through [patterns.clj](src/akar/patterns.clj) before continuing further.
+Akar also provides `!some`, a pattern that matches any non-nil value. It follows Clojure's `some?` semantics, so it matches `false` too — `false` is a value, just not a truthy one:
+
+```clojure
+akar.try-out=> (!some 42)
+[]
+
+akar.try-out=> (!some false)
+[]
+
+akar.try-out=> (!some nil)
+nil
+```
+
+For a pattern that matches only truthy values, use `(!pred identity)`.
+
+There are a few more stock patterns. I suggest you skim through [patterns.clj](src/akar/patterns.clj) before continuing further.
 
 ...
 
@@ -447,6 +462,11 @@ akar.try-out=> ((!and (!key :name) (!key :age)) {:name "quentin" :age 25})
 
 akar.try-out=> ((!and (!key :name) (!key :age)) {:name "quentin"})
 nil
+
+; !key matches when the key is present, even if the value is nil.
+; Use !optional-key when you want the value (or nil) regardless of presence.
+akar.try-out=> ((!key :name) {:name nil})
+[nil]
 ```
 
 #### Disjunction/alternation of multiple patterns

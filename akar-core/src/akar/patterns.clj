@@ -24,8 +24,10 @@
   (!pred (fn [arg]
            (= value arg))))
 
+; Matches any non-nil value, including `false`.
+; Follows Clojure's `some?` semantics: present ≠ nil.
 (def !some
-  (!pred (comp not nil?)))
+  (!pred some?))
 
 (def !nil
   (!constant nil))
@@ -57,8 +59,8 @@
 (defn !key [key]
   (fn [arg]
     (when (map? arg)
-      (when-some [value (get arg key)]
-        [value]))))
+      (when (contains? arg key)
+        [(get arg key)]))))
 
 (defn !optional-key [key]
   (fn [arg]

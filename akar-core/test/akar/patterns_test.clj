@@ -52,6 +52,8 @@
                     !nil (fn [] :nil))]
         (is (= :some
                (match* 21 block)))
+        (is (= :some
+               (match* false block)))
         (is (= :nil
                (match* nil block))))))
 
@@ -90,16 +92,33 @@
         (is (= :stuff
                (match* [] block)))))
 
-    (let [block (clauses*
-                  (!key :tag) (fn [tag] tag)
-                  (!optional-key :contents) (fn [contents] contents))]
-      (testing "!key and !optional-key, with records"
-        (is (= "i"
-               (match* (->Node "i" "k") block)))
-        (is (= "c"
-               (match* (->Node nil "c") block)))
-        (is (= nil
-               (match* (->Node nil nil) block)))))
+    (testing "!key with nil values in maps"
+      (let [block (clauses*
+                    (!key :k) (fn [v] [:matched v])
+                    !any (fn [] :no-match))]
+        (testing "matches when key is present with a non-nil value"
+          (is (= [:matched 42]
+                 (match* {:k 42} block))))
+        (testing "matches when key is present with a nil value"
+          (is (= [:matched nil]
+                 (match* {:k nil} block))))
+        (testing "does not match when key is absent"
+          (is (= :no-match
+                 (match* {:other 1} block))))))
+
+    (testing "!key and !optional-key, with records"
+      (let [block (clauses*
+                    (!key :tag) (fn [tag] [:tag-matched tag])
+                    (!optional-key :contents) (fn [contents] [:contents-matched contents]))]
+        (testing "!key matches record field with non-nil value"
+          (is (= [:tag-matched "i"]
+                 (match* (->Node "i" "k") block))))
+        (testing "!key matches record field even when value is nil"
+          (is (= [:tag-matched nil]
+                 (match* (->Node nil "c") block))))
+        (testing "!key matches and !optional-key also handles nil"
+          (is (= [:tag-matched nil]
+                 (match* (->Node nil nil) block))))))
 
     (let [some-map {"XBD" 112}
           block (clauses*
