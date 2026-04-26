@@ -92,12 +92,9 @@
 (defn !regex [rgx]
   (fn [arg]
     (when (string? arg)
-      (when-some [out (some->> arg
-                             (re-seq rgx)
-                             first)]
-        (cond
-          (string? out) []
-          (sequential? out) (vec (rest out)))))))
+      (let [matcher (re-matcher rgx arg)]
+        (when (.find matcher)
+          (mapv #(.group matcher %) (range 1 (inc (.groupCount matcher)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Type-casing patterns

@@ -189,7 +189,20 @@
 
         (testing "doesn't match invalid srings"
           (is (= :no-match
-                 (try-match* "F 11" block)))))))
+                 (try-match* "F 11" block)))))
+
+      (let [block (clauses*
+                    (!regex #"^F (?:@)?([^ ]+) (.*)$") (fn [handle name]
+                                                          {:event  :followed
+                                                           :handle handle
+                                                           :name   name})
+                    !any (fn [] :bad-event))]
+
+        (testing "captures only capturing groups when non-capturing groups are present"
+          (is (= {:event  :followed
+                  :handle "doofus"
+                  :name   "Doofus"}
+                 (try-match* "F @doofus Doofus" block)))))))
 
   (testing "type-casing patterns"
 

@@ -107,8 +107,10 @@ nil
 
 akar.try-out=> (defn !header [rec]
                  (if (= (:tag rec) :record)
-                     (if-let [header (:header rec)]
-                       (some->> header (re-seq valid-header) first rest))))
+                   (if-let [header (:header rec)]
+                     (let [matcher (re-matcher valid-header header)]
+                       (when (.find matcher)
+                         (mapv #(.group matcher %) (range 1 (inc (.groupCount matcher)))))))))
 #'akar.try-out/!header
 
 akar.try-out=> (defn extract-header [rec]
