@@ -16,5 +16,3 @@
       x
       (fail-with (str "Collection does not contain a single element. The size is " (count coll) ".")))))
 
-(defmacro define-alias [alias original]
-  `(def ~(vary-meta alias assoc :alias-for original) ~original))

@@ -1,7 +1,7 @@
 (ns akar.combinators
   (:require [akar.patterns :refer [!fail !bind !pred !any]]
             [akar.internal.utilities :refer [append clump-after same-size?]]
-            [akar-commons.miscellaneous :refer [define-alias single variadic-reductive-function]]))
+            [akar-commons.miscellaneous :refer [single variadic-reductive-function]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Combinators to compose a number of patterns into one
@@ -85,5 +85,5 @@
                                                  (append !nexts !rest)))))
 
 ; Aliases for succinctness in direct use
-(define-alias !f !further)
-(define-alias !f* !further-many)
+(def ^{:alias-for #'!further} !f !further)
+(def ^{:alias-for #'!further-many} !f* !further-many)
